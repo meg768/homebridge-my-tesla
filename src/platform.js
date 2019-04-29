@@ -17,6 +17,9 @@ module.exports = class Platform {
         this.log = log;
         this.homebridge = homebridge;
         this.teslas = [];
+        this.api = require('teslajs');
+        this.token = undefined;
+        this.vehicles = undefined;
 
         // Load .env
         require('dotenv').config({
@@ -31,7 +34,75 @@ module.exports = class Platform {
             this.teslas.push(new Tesla(this, config));
         });
 
+        this.login().then((token) => {
+            this.token = token;
 
+            return this.getVehicles();
+    
+        })
+        .then((response) => {
+            this.log(response);
+        })
+
+        .then(() => {
+
+
+
+        })
+
+
+        .catch((error) => {
+            this.log(JSON.stringify(error));
+            process.exit(1);
+
+        })
+        
+
+    }
+
+    getVehicles() {
+        return new Promise((resolve, reject) => {
+
+            if (this.vehicles)
+                resolve(this.vehicles);
+            else {
+                var options = {};
+                options.authToken = this.token;
+    
+                this.api.vehicles(options, (error, response) => {
+                    if (error)
+                        reject(error);
+                    else
+                        resolve(response);
+                });    
+            }
+        });
+    }
+
+ 
+    login() {
+        return new Promise((resolve, reject) => {
+            var tjs = require('teslajs');
+ 
+            var username = process.env.TESLA_USER;
+            var password = process.env.TESLA_PASSWORD;
+        
+            tjs.login(username, password, function(error, response) {
+                if (error) {
+                    reject(error);
+                }
+                else if (response.error) {
+                    reject(new Error(response.error));
+                }
+                else if (response.authToken == undefined) {
+                    reject(new Error('Cannot find an authToken.'));
+
+                }
+                else
+                    resolve(response.authToken);
+            });
+    
+        });
     }
 
 

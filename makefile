@@ -8,6 +8,9 @@ pull:
 config:
 	node ./scripts/install-config.js
 
+copy-config:
+	cp ./config.json ~/.homebridge/config.json
+
 install:
 	npm install -g --unsafe-perm 
 
