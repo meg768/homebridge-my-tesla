@@ -2,7 +2,7 @@
 
 var Path = require('path');
 var Events = require('events');
-var Tilt = require('./tilt.js');
+var Tesla = require('./tesla.js');
 
 var sprintf = require('yow/sprintf');
 var isString = require('yow/is').isString;
@@ -16,7 +16,7 @@ module.exports = class Platform {
         this.config = config;
         this.log = log;
         this.homebridge = homebridge;
-        this.tilts = [];
+        this.teslas = [];
 
         // Load .env
         require('dotenv').config({
@@ -27,8 +27,8 @@ module.exports = class Platform {
     		this.log('Environment variables PUSHOVER_USER and/or PUSHOVER_TOKEN not defined. Push notifications will not be able to be sent.');
     	}
 
-        this.config.tilts.forEach((config, index) => {
-            this.tilts.push(new Tilt(this, config));
+        this.config.teslas.forEach((config, index) => {
+            this.teslas.push(new Tesla(this, config));
         });
 
 
@@ -73,7 +73,7 @@ module.exports = class Platform {
     }
 
     accessories(callback) {
-        callback(this.tilts);
+        callback(this.teslas);
 
     }
 }

@@ -1,0 +1,25 @@
+
+{
+    "bridge": {
+        "name": "Tesla",
+        "username": "AC:27:3E:E4:CD:58",
+        "port": 51826,
+        "pin": "042-78-234"
+    },
+
+    "description": "Sample configuration file",
+
+    "platforms": [{
+        "platform": "Tesla",
+        "name": "Tesla",
+        "teslas": [
+            {         
+                "name": "Model 3",       
+                "vin": "XXXX"
+
+
+            }
+        ]
+    }]
+
+}
