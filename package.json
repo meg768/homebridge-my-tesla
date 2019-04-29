@@ -1,0 +1,31 @@
+{
+  "name": "homebridge-my-tesla",
+  "version": "1.0.0",
+  "description": "Homebridge plugin for Teslas",
+  "main": "index.js",
+  "scripts": {
+    "commit": "git add -A && git commit -m '-' && git push",
+    "goto-github": "open https://github.com/meg768/homebridge-my-tesla.git",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/meg768/homebridge-my-tesla.git"
+  },
+  "engines": {
+    "node": ">=6.11.0",
+    "homebridge": ">=0.4.33"
+  },
+  "keywords": [
+    "homebridge-plugin",
+    "Tilt Hydrometer",
+    "Tilt Thermostat",
+    "homebridge"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/meg768/homebridge-my-tesla/issues"
+  },
+  "homepage": "https://github.com/meg768/homebridge-my-tesla#readme"
+}
