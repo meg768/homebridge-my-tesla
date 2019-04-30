@@ -113,7 +113,7 @@ module.exports = class Tesla extends Events  {
 
             this.refresh(() => {
                 if (this.climateState && this.climateState.inside_temp != undefined)
-                    callback(null, this.climateState.inside_temp);
+                    callback(null, null /*this.climateState.inside_temp*/);
                 else
                     callback(null);
             });
