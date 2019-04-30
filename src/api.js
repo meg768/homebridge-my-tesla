@@ -169,7 +169,7 @@ module.exports = class API {
         });
     }
 
-    wakeUpX(vin, timeout = 60000) {
+    wakeUp(vin, timeout = 60000) {
 
         var now = new Date();
 
@@ -212,7 +212,7 @@ module.exports = class API {
     }
 
 
-    wakeUp(vin, timestamp) {
+    wakeUpXXX(vin, timestamp) {
 
         var vehicleID = this.getVehicleID(vin);
 
