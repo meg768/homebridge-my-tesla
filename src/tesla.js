@@ -16,7 +16,6 @@ const OFF = true;
 const ON = false;
 
 
-
 module.exports = class Tesla extends Events  {
 
     constructor(platform, config) {
@@ -33,6 +32,7 @@ module.exports = class Tesla extends Events  {
         this.platform = platform;
         this.lastRefresh = null;
         this.busy = false;
+        this.queue = [];
 
         this.vehicle = null;
         this.vehicleState = null;
@@ -49,7 +49,9 @@ module.exports = class Tesla extends Events  {
 
         this.on('ready', () => {
             this.log('Ready!');
-            this.refresh();
+            this.refresh(() => {
+                this.log('Initial refresh completed.');
+            });
         });
 
 
@@ -62,7 +64,56 @@ module.exports = class Tesla extends Events  {
         });
     }
 
+    refresh(fn) {
 
+        var vin = this.config.vin;
+
+        if (this.queue.length > 0) {
+            this.queue.push(fn.bind(this));
+        }
+        else {
+            this.queue.push(fn.bind(this));
+
+            this.log('Getting car state...');
+
+            this.api.wakeUp(vin).then((response) => {
+                this.vehicle = response;
+                return this.api.getChargeState(vin);         
+            })
+            .then((response) => {
+                this.chargeState = response;
+                return this.api.getClimateState(vin);
+            })
+            .then((response) => {
+                this.climateState = response;
+                return this.api.getVehicleState(vin);
+            })
+            .then((response) => {
+                this.vehicleState = response;
+            })
+            .catch((error) => {
+                this.log(error.stack);
+            })
+            .then(() => {
+                this.log('Getting car state finished...');
+
+                this.queue.forEach((fn) => {
+                    this.log('Updating...');
+                    fn();
+                });
+
+                this.log('Completed.');
+                this.queue = [];
+            });
+
+
+        }
+
+
+    }
+
+
+/*
     refresh() {
 
         return new Promise((resolve, reject) => {
@@ -119,11 +170,22 @@ module.exports = class Tesla extends Events  {
     
         }); 
     }
-    
-    enableTemperature() {
+
+*/
+
+
+enableTemperature() {
         var service = new Service.TemperatureSensor("Temperatur");
 
         service.getCharacteristic(Characteristic.CurrentTemperature).on('get', (callback) => {
+
+            this.refresh(() => {
+                if (this.climateState && this.climateState.inside_temp != undefined)
+                    callback(null, this.climateState.inside_temp);
+                else
+                    callback(null);
+            });
+            /*
             this.refresh().then(() => {
 
                 if (this.climateState && this.climateState.inside_temp != undefined)
@@ -132,6 +194,7 @@ module.exports = class Tesla extends Events  {
                     callback(null);
 
             });
+            */
 
         });
 
@@ -144,6 +207,14 @@ module.exports = class Tesla extends Events  {
 
         service.getCharacteristic(Characteristic.BatteryLevel).on('get', (callback) => {
 
+            this.refresh(() => {
+                if (this.chargeState && this.chargeState.battery_level != undefined)
+                    callback(null, this.chargeState.battery_level);
+                else
+                    callback(null);
+
+            });
+            /*
             this.refresh().then(() => {
                 if (this.chargeState && this.chargeState.battery_level != undefined)
                     callback(null, this.chargeState.battery_level);
@@ -151,6 +222,7 @@ module.exports = class Tesla extends Events  {
                     callback(null);
 
             });
+            */
 
         });
 
@@ -162,9 +234,14 @@ module.exports = class Tesla extends Events  {
 
         var getHVACState = (callback) => {
 
+            this.refresh(() => {
+                callback(null, this.climateState && this.climateState.is_climate_on);
+            });
+            /*
             this.refresh().then(() => {
                 callback(null, this.climateState && this.climateState.is_climate_on);
             });
+            */
 
         };
 
@@ -198,10 +275,15 @@ module.exports = class Tesla extends Events  {
 
         var getLockedState = (callback) => {
 
+            this.refresh(() => {
+                callback(null, this.vehicleState && this.vehicleState.locked);
+
+            });
+/*
             this.refresh().then(() => {
                 callback(null, this.vehicleState && this.vehicleState.locked);
             });
-
+*/
 
         };
 
