@@ -154,7 +154,7 @@ module.exports = class Tesla extends Events  {
         };
 
         var setHVACState = (value, callback) => {
-            this.log('Setting climate to ', value);
+            this.log('Turning HVAC state to %s.', value ? 'on' : 'off');
 
             Promise.resolve().then(() => {
                 return this.api.wakeUp(this.config.vin);
@@ -191,7 +191,7 @@ module.exports = class Tesla extends Events  {
         };
 
         var setLockedState = (value, callback) => {
-            this.log('Setting door locks to ', value);
+            this.log('Turning door lock to state %s.', value ? 'on' : 'off');
 
             Promise.resolve().then(() => {
                 return this.api.wakeUp(this.config.vin);
@@ -208,17 +208,6 @@ module.exports = class Tesla extends Events  {
                 callback(null);
             })            
         };
-
-        /*
-        this.once('ready', () => {
-            this.log('Lock state ready!');
-
-            this.refresh(() => {
-                this.log('Updating initial state for locks.');
-                service.getCharacteristic(Characteristic.LockCurrentState).updateValue(this.vehicleState && this.vehicleState.locked); 
-            });
-        });
-        */
 
         service.getCharacteristic(Characteristic.LockCurrentState).on('get', getLockedState.bind(this));
 
