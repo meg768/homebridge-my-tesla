@@ -216,6 +216,7 @@ module.exports = class Tesla extends Events  {
             })
             .then(() => {
                 //service.setCharacteristic(Characteristic.LockCurrentState, value); 
+                service.getCharacteristic(Characteristic.LockCurrentState).updateValue(value);
                 callback(null, value);    
             })
 
