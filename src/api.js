@@ -171,34 +171,42 @@ module.exports = class API {
 
     wakeUp(vin, timeout = 60000) {
 
-        var vehicleID = this.getVehicleID(vin);
         var now = new Date();
 
         var pause = (ms) => {
             return new Promise((resolve, reject) => {
+                this.log('Pausing...');
                 setTimeout(resolve, ms);
             });            
         };
 
-        this.teslajs.wakeUp({authToken: this.authToken, vehicleID:vehicleID});
+        this.log('Calling wakeup..')
+//        this.teslajs.wakeUp({authToken: this.authToken, vehicleID:vehicleID});
 
         return new Promise((resolve, reject) => {
-            while (Date.now() - now < timeout) {
-                pause(1000).then(() => {
-                    return this.getVehicle(vin); 
-                })
-                .then((response) => {
-                    if (response.state == 'online') {
-                        return resolve(response);
-                    }
+            var online = false;
 
+            while (!online || Date.now() - now < timeout) {
+                this.getVehicle(vin).then((response) => {
+                    this.log('Checking online state.')
+
+                    // Are we online?
+                    online = response.state == 'online';
+
+                    if (online)
+                        resolve(response);
+
+                    return pause(online ? 0 : 500); 
                 })
                 .catch((error) => {
-                    break;
-                })
+                });
+
             }
 
-            reject(new Error('The Tesla cannot be reached.'));
+            if (!online) {
+                reject(new Error('The Tesla cannot be reached.'));
+            }
+
         });
     }
 
