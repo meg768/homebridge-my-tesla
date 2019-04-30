@@ -31,96 +31,192 @@ module.exports = class Tesla extends Events  {
         this.services = [];
         this.api = platform.api;
         this.platform = platform;
+        this.lastRefresh = null;
+        this.busy = false;
+
+        this.vehicle = null;
+        this.vehicleState = null;
+        this.climateState = null;
+        this.chargeState = null;
+
 
         this.enableAccessoryInfo();
-        this.enableDoors();
+        this.enableDoorsLock();
         this.enableBatteryLevel();
+        this.enableHVAC();
+        this.enableTemperature();
+
+
+        this.on('ready', () => {
+            this.log('Ready!');
+            this.refresh();
+        });
+
 
     }
 
-    getVehicleState() {
+
+    delay(ms) {
         return new Promise((resolve, reject) => {
+            setTimeout(resolve, ms);
+        });
+    }
 
-            this.getVehicle().then((vehicle) => {
 
-                this.log('Fetching vehicle state', vehicle);
+    refresh() {
 
-                this.api.vehicleState(vehicle, (error, response) => {
+        return new Promise((resolve, reject) => {
+            var vin = this.config.vin;
+            var now = new Date();
 
-                    if (error) {
-                        reject(new Error(error));
-                    }
-                    else    
-                        resolve(response);
+            if (this.busy) {
+                this.log('Busy, trying again...');
+
+                this.delay(1000).then(() => {
+                    return this.refresh();
                 })
+                .then(() => {
+                    resolve();
+                })
+
+                return;
+            }
+
+            if (this.lastRefresh && (now.getTime() - this.lastRefresh.getTime() < 5000)) {
+                this.log('Using cached car state...');
+                resolve();
+                return;
+            }
+    
+            this.log('Getting car state...');
+            this.busy = true;
+            this.lastRefresh = new Date();
+    
+            this.api.wakeUp(vin).then((response) => {
+                this.vehicle = response;
+                return this.api.getChargeState(vin);         
+            })
+            .then((response) => {
+                this.chargeState = response;
+                return this.api.getClimateState(vin);
+            })
+            .then((response) => {
+                this.climateState = response;
+                return this.api.getVehicleState(vin);
+            })
+            .then((response) => {
+                this.vehicleState = response;
             })
             .catch((error) => {
-                this.log('GIVK INTE')
-                reject(error);
+                this.log(error.stack);
             })
-        })
-    }
-
+            .then(() => {
+                this.lastRefresh = new Date();
+                this.busy = false;
+                this.log('Getting car state finished...');
+                resolve();
+            });
     
+        }); 
+    }
+    
+    enableTemperature() {
+        var service = new Service.TemperatureSensor("Temperatur");
+
+        service.getCharacteristic(Characteristic.CurrentTemperature).on('get', (callback) => {
+            this.refresh().then(() => {
+
+                if (this.climateState && this.climateState.inside_temp != undefined)
+                    callback(null, this.climateState.inside_temp);
+                else
+                    callback(null);
+
+            });
+
+        });
+
+        this.services.push(service);
+
+    }
     enableBatteryLevel() {
         var service = new Service.BatteryService(this.name);
 
         service.getCharacteristic(Characteristic.BatteryLevel).on('get', (callback) => {
 
-            this.log('get BatteryLevel');
+            this.refresh().then(() => {
+                if (this.chargeState && this.chargeState.battery_level != undefined)
+                    callback(null, this.chargeState.battery_level);
+                else
+                    callback(null);
 
-            this.getVehicle().then((vehicle) => {
-                this.api.chargeState(vehicle, (error, response) => {
+            });
 
-                    this.log(response);
-                    if (response && response.battery_level != undefined)
-                        callback(null, response.battery_level);
-                    else
-                        callback(null);
-
-                })
-            })
-            .catch((error) => {
-                this.log('Could not get battery level');
-                this.log(error);
-                callback(null);
-
-            })
         });
 
         this.services.push(service);
     }
 
-    enableDoors() {
-        var service = new Service.LockMechanism("Bilen");
+    enableHVAC() {
+        var service = new Service.Fan("Fläkten");
+
+        var getHVACState = (callback) => {
+
+            this.refresh().then(() => {
+                callback(null, this.climateState && this.climateState.is_climate_on);
+            });
+
+        };
+
+        var setHVACState = (value, callback) => {
+            this.log('Setting climate to ', value);
+
+            Promise.resolve().then(() => {
+                return this.api.wakeUp(this.config.vin);
+            })
+            .then(() => {
+                return this.api.setClimateState(this.config.vin, value);
+            })
+            .then(() => {
+                callback(null, value);    
+            })
+
+            .catch((error) => {
+                callback(null);
+            })            
+        };
+
+        service.getCharacteristic(Characteristic.On).on('get', getHVACState.bind(this));
+        service.getCharacteristic(Characteristic.On).on('set', setHVACState.bind(this));
+
+        this.services.push(service);
+
+    }
+    enableDoorsLock() {
+        var service = new Service.LockMechanism("Dörrar");
 
         var getLockedState = (callback) => {
-            this.getVehicleState().then((state) => {
-                callback(null, state.locked);
-            })
-            .catch((error) => {
-                this.log('Could not get LockCurrentState');
-                this.log(error);
-                callback(null);
-            })
+
+            this.refresh().then(() => {
+                callback(null, this.vehicleState && this.vehicleState.locked);
+            });
+
+
         };
 
         var setLockedState = (value, callback) => {
-            this.getVehicle().then((vehicle) => {
+            this.log('Setting door locks to ', value);
 
-                this.log('Setting door locks to ', value);
-
-                var method = value ? this.api.doorLock : this.api.doorUnlock;
-
-                method(vehicle, (error, response) => {
-                    this.log('setLockState response', response);
-                    this.log('setLockState error', error);
-
-                    service.setCharacteristic(Characteristic.LockCurrentState, value); 
-                    callback(null, value);
-
-                })
+            Promise.resolve().then(() => {
+                return this.api.wakeUp(this.config.vin);
             })
+            .then(() => {
+                return this.api.setDoorLockState(this.config.vin, value);
+            })
+            .then(() => {
+                service.setCharacteristic(Characteristic.LockCurrentState, value); 
+                callback(null, value);    
+            })
+
             .catch((error) => {
                 callback(null);
             })            
@@ -137,77 +233,6 @@ module.exports = class Tesla extends Events  {
 
 
 
-    wakeUp(vehicle) {
-        return new Promise((resolve, reject) => {
-
-            if (vehicle.state != 'asleep')
-                resolve();
-            else {
-                var options = {};
-                options.authToken = this.platform.token;
-                options.vehicleID = vehicle.id_s;
-
-                this.api.wakeUp(options, (error, response) => {
-
-                })
-
-            }
-            this.platform.getVehicles().then((vehicles) => {
-
-                var vehicle = vehicles.find((item) => {
-                    return item.vin == this.config.vin;
-                });
-
-                if (vehicle == undefined)
-                    reject(new Error('Vehicle not found.'));
-                else {
-                    if (vehicle.state == 'asleep') {
-
-                    }
-                }
-                    resolve({authToken:this.platform.token, vehicleID:vehicle.id_s});
-
-            })
-            .catch((error) => {
-                this.log(error);
-                reject(error);
-            })
-        });
-    }
-
-    wakeUp() {
-
-    }
-
-
-    getVehicle() {
-        return new Promise((resolve, reject) => {
-
-            this.platform.getVehicles().then((vehicles) => {
-
-                var vehicle = vehicles.find((item) => {
-                    return item.vin == this.config.vin;
-                });
-
-                if (vehicle == undefined)
-                    reject(new Error('Vehicle not found.'));
-                else {
-                    resolve({authToken:this.platform.token, vehicleID:vehicle.id_s});
-                    if (vehicle.state == 'asleep') {
-
-                    }
-                }
-
-            })
-            .then(() => {
-                
-            })
-            .catch((error) => {
-                this.log(error);
-                reject(error);
-            })
-        });
-    }
 
     enableAccessoryInfo() {
         const service = new Service.AccessoryInformation();

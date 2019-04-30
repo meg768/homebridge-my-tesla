@@ -3,6 +3,7 @@
 var Path = require('path');
 var Events = require('events');
 var Tesla = require('./tesla.js');
+var API = require('./api.js');
 
 var sprintf = require('yow/sprintf');
 var isString = require('yow/is').isString;
@@ -17,9 +18,7 @@ module.exports = class Platform {
         this.log = log;
         this.homebridge = homebridge;
         this.teslas = [];
-        this.api = require('teslajs');
-        this.token = undefined;
-        this.vehicles = undefined;
+        this.api = new API({log:log});
 
         // Load .env
         require('dotenv').config({
@@ -34,23 +33,12 @@ module.exports = class Platform {
             this.teslas.push(new Tesla(this, config));
         });
 
-        this.login().then((token) => {
-            this.token = token;
-
-            return this.getVehicles();
-    
+        this.api.login().then(() => {
+            this.teslas.forEach((tesla, index) => {
+                tesla.emit('ready');
+            });
+        
         })
-        .then((response) => {
-            this.log(response);
-        })
-
-        .then(() => {
-
-
-
-        })
-
-
         .catch((error) => {
             this.log(JSON.stringify(error));
             process.exit(1);
@@ -59,52 +47,6 @@ module.exports = class Platform {
         
 
     }
-
-    getVehicles() {
-        return new Promise((resolve, reject) => {
-
-            if (this.vehicles)
-                resolve(this.vehicles);
-            else {
-                var options = {};
-                options.authToken = this.token;
-    
-                this.api.vehicles(options, (error, response) => {
-                    if (error)
-                        reject(error);
-                    else
-                        resolve(response);
-                });    
-            }
-        });
-    }
-
- 
-    login() {
-        return new Promise((resolve, reject) => {
-            var tjs = require('teslajs');
- 
-            var username = process.env.TESLA_USER;
-            var password = process.env.TESLA_PASSWORD;
-        
-            tjs.login(username, password, function(error, response) {
-                if (error) {
-                    reject(error);
-                }
-                else if (response.error) {
-                    reject(new Error(response.error));
-                }
-                else if (response.authToken == undefined) {
-                    reject(new Error('Cannot find an authToken.'));
-
-                }
-                else
-                    resolve(response.authToken);
-            });
-    
-        });
-    }
-
 
     pushover(payload) {
 
