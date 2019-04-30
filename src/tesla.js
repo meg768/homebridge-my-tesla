@@ -44,7 +44,7 @@ module.exports = class Tesla extends Events  {
         this.enableHVAC();
         this.enableTemperature();
 
-/*
+
         this.on('ready', () => {
             this.log('Ready!');
 
@@ -52,7 +52,6 @@ module.exports = class Tesla extends Events  {
                 this.log('Initial refresh completed.');
             });
         });
-*/
 
     }
 
@@ -210,15 +209,17 @@ module.exports = class Tesla extends Events  {
             })            
         };
 
+        /*
         this.once('ready', () => {
             this.log('Lock state ready!');
-            
+
             this.refresh(() => {
                 this.log('Updating initial state for locks.');
-                service.setCharacteristic(Characteristic.LockCurrentState, this.vehicleState && this.vehicleState.locked); 
+                service.getCharacteristic(Characteristic.LockCurrentState).updateValue(this.vehicleState && this.vehicleState.locked); 
             });
         });
-
+        */
+       
         service.getCharacteristic(Characteristic.LockCurrentState).on('get', getLockedState.bind(this));
 
         service.getCharacteristic(Characteristic.LockTargetState).on('get', getLockedState.bind(this));
