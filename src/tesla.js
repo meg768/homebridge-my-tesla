@@ -138,6 +138,7 @@ module.exports = class Tesla extends Events  {
         this.services.push(service);
 
     }
+
     enableBatteryLevel() {
         var service = new Service.BatteryService(this.name);
 
@@ -191,8 +192,9 @@ module.exports = class Tesla extends Events  {
         this.services.push(service);
 
     }
+
     enableDoorsLock() {
-        var service = new Service.LockMechanism("Dörrar");
+        var service = new Service.LockMechanism("Bildörren");
 
         var getLockedState = (callback) => {
 
