@@ -199,6 +199,7 @@ module.exports = class API {
                     return pause(online ? 0 : 500); 
                 })
                 .catch((error) => {
+                    console.log(error);
                 });
 
             }
