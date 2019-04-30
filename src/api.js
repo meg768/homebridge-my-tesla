@@ -169,7 +169,41 @@ module.exports = class API {
         });
     }
 
-    wakeUp(vin, timestamp) {
+    wakeUp(vin, timeout = 60000) {
+
+        var vehicleID = this.getVehicleID(vin);
+        var now = new Date();
+
+        var pause = (ms) => {
+            return new Promise((resolve, reject) => {
+                setTimeout(resolve, ms);
+            });            
+        };
+
+        this.teslajs.wakeUp({authToken: this.authToken, vehicleID:vehicleID});
+
+        return new Promise((resolve, reject) => {
+            while (Date.now() - now < timeout) {
+                pause(1000).then(() => {
+                    return this.getVehicle(vin); 
+                })
+                .then((response) => {
+                    if (response.state == 'online') {
+                        return resolve(response);
+                    }
+
+                })
+                .catch((error) => {
+                    break;
+                })
+            }
+
+            reject(new Error('The Tesla cannot be reached.'));
+        });
+    }
+
+
+    wakeUpOld(vin, timestamp) {
 
         var vehicleID = this.getVehicleID(vin);
 
