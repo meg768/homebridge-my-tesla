@@ -215,8 +215,7 @@ module.exports = class Tesla extends Events  {
                 return this.api.setDoorLockState(this.config.vin, value);
             })
             .then(() => {
-                //service.setCharacteristic(Characteristic.LockCurrentState, value); 
-                service.getCharacteristic(Characteristic.LockCurrentState).updateValue(value);
+                service.setCharacteristic(Characteristic.LockCurrentState, value); 
                 callback(null, value);    
             })
 
