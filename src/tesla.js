@@ -64,15 +64,12 @@ module.exports = class Tesla extends Events  {
         });
     }
 
-    refresh(fn) {
+    refresh(callback) {
 
-        var vin = this.config.vin;
+        this.queue.push(callback);
 
-        if (this.queue.length > 0) {
-            this.queue.push(fn);
-        }
-        else {
-            this.queue.push(fn);
+        if (this.queue.length == 1) {
+            var vin = this.config.vin;
 
             this.log('Getting car state...');
 
@@ -95,21 +92,16 @@ module.exports = class Tesla extends Events  {
                 this.log(error.stack);
             })
             .then(() => {
-                this.log('Getting car state finished...');
+                this.log('Getting car state finished. Updating %d callbacks.', this.queue.length);
 
-                this.queue.forEach((fn) => {
-                    this.log('Updating...');
-                    fn();
+                this.queue.forEach((callback) => {
+                    callback();
                 });
 
                 this.log('Completed.');
                 this.queue = [];
             });
-
-
         }
-
-
     }
 
 
