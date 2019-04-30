@@ -95,7 +95,7 @@ module.exports = class Tesla extends Events  {
                     callback();
                 });
 
-                this.log('Getting car state finished. Updated %d callbacks.', this.refreshQueue.length);
+                this.log('Getting car state completed. Updated %d callbacks.', this.refreshQueue.length);
                 this.refreshQueue = [];
             })
             .catch((error) => {
@@ -219,7 +219,7 @@ module.exports = class Tesla extends Events  {
             });
         });
         */
-       
+
         service.getCharacteristic(Characteristic.LockCurrentState).on('get', getLockedState.bind(this));
 
         service.getCharacteristic(Characteristic.LockTargetState).on('get', getLockedState.bind(this));
