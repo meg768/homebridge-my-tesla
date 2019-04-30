@@ -30,9 +30,7 @@ module.exports = class Tesla extends Events  {
         this.services = [];
         this.api = platform.api;
         this.platform = platform;
-        this.lastRefresh = null;
-        this.busy = false;
-        this.queue = [];
+        this.refreshQueue = [];
 
         this.vehicle = null;
         this.vehicleState = null;
@@ -49,6 +47,7 @@ module.exports = class Tesla extends Events  {
 
         this.on('ready', () => {
             this.log('Ready!');
+
             this.refresh(() => {
                 this.log('Initial refresh completed.');
             });
@@ -66,9 +65,9 @@ module.exports = class Tesla extends Events  {
 
     refresh(callback) {
 
-        this.queue.push(callback);
+        this.refreshQueue.push(callback);
 
-        if (this.queue.length == 1) {
+        if (this.refreshQueue.length == 1) {
             var vin = this.config.vin;
 
             this.log('Getting car state...');
@@ -92,81 +91,20 @@ module.exports = class Tesla extends Events  {
                 this.log(error.stack);
             })
             .then(() => {
-                this.log('Getting car state finished. Updating %d callbacks.', this.queue.length);
 
-                this.queue.forEach((callback) => {
+                this.refreshQueue.forEach((callback) => {
                     callback();
                 });
 
-                this.log('Completed.');
-                this.queue = [];
+                this.log('Getting car state finished. Updated %d callbacks.', this.queue.length);
+                this.refreshQueue = [];
             });
         }
     }
 
 
-/*
-    refresh() {
 
-        return new Promise((resolve, reject) => {
-            var vin = this.config.vin;
-            var now = new Date();
-
-            if (this.busy) {
-                this.log('Busy, trying again...');
-
-                this.delay(1000).then(() => {
-                    return this.refresh();
-                })
-                .then(() => {
-                    resolve();
-                })
-
-                return;
-            }
-
-            if (this.lastRefresh && (now.getTime() - this.lastRefresh.getTime() < 5000)) {
-                this.log('Using cached car state...');
-                resolve();
-                return;
-            }
-    
-            this.log('Getting car state...');
-            this.busy = true;
-            this.lastRefresh = new Date();
-    
-            this.api.wakeUp(vin).then((response) => {
-                this.vehicle = response;
-                return this.api.getChargeState(vin);         
-            })
-            .then((response) => {
-                this.chargeState = response;
-                return this.api.getClimateState(vin);
-            })
-            .then((response) => {
-                this.climateState = response;
-                return this.api.getVehicleState(vin);
-            })
-            .then((response) => {
-                this.vehicleState = response;
-            })
-            .catch((error) => {
-                this.log(error.stack);
-            })
-            .then(() => {
-                this.lastRefresh = new Date();
-                this.busy = false;
-                this.log('Getting car state finished...');
-                resolve();
-            });
-    
-        }); 
-    }
-
-*/
-
-
-enableTemperature() {
+    enableTemperature() {
         var service = new Service.TemperatureSensor("Temperatur");
 
         service.getCharacteristic(Characteristic.CurrentTemperature).on('get', (callback) => {
@@ -177,16 +115,6 @@ enableTemperature() {
                 else
                     callback(null);
             });
-            /*
-            this.refresh().then(() => {
-
-                if (this.climateState && this.climateState.inside_temp != undefined)
-                    callback(null, this.climateState.inside_temp);
-                else
-                    callback(null);
-
-            });
-            */
 
         });
 
@@ -206,15 +134,6 @@ enableTemperature() {
                     callback(null);
 
             });
-            /*
-            this.refresh().then(() => {
-                if (this.chargeState && this.chargeState.battery_level != undefined)
-                    callback(null, this.chargeState.battery_level);
-                else
-                    callback(null);
-
-            });
-            */
 
         });
 
@@ -229,11 +148,6 @@ enableTemperature() {
             this.refresh(() => {
                 callback(null, this.climateState && this.climateState.is_climate_on);
             });
-            /*
-            this.refresh().then(() => {
-                callback(null, this.climateState && this.climateState.is_climate_on);
-            });
-            */
 
         };
 
