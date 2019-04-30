@@ -69,10 +69,10 @@ module.exports = class Tesla extends Events  {
         var vin = this.config.vin;
 
         if (this.queue.length > 0) {
-            this.queue.push(fn.bind(this));
+            this.queue.push(fn);
         }
         else {
-            this.queue.push(fn.bind(this));
+            this.queue.push(fn);
 
             this.log('Getting car state...');
 
