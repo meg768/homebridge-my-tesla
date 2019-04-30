@@ -96,7 +96,7 @@ module.exports = class Tesla extends Events  {
                     callback();
                 });
 
-                this.log('Getting car state finished. Updated %d callbacks.', this.queue.length);
+                this.log('Getting car state finished. Updated %d callbacks.', this.refreshQueue.length);
                 this.refreshQueue = [];
             });
         }
