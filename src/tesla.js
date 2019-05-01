@@ -91,12 +91,6 @@ module.exports = class Tesla extends Events  {
                 })
 
             }
-            this.refresh(() => {
-                if (this.chargeState && this.chargeState.charging_state != undefined)
-                    callback(null, this.chargeState.charging_state == 'Charging');
-                else
-                    callback(null);
-            });
 
         });
 
