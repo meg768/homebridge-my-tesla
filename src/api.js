@@ -245,10 +245,16 @@ module.exports = class API {
 
                     if (now.getTime() - timestamp.getTime() < 60000) {
 
-                        return pause(1000).then(() => {
+                        pause(1000).then(() => {
                             this.log('wakeUp() failed, trying to wake up again...');
                             return this.wakeUp(vin, timestamp);
-                        });
+                        })
+                        .then((response) => {
+                            resolve(response);
+                        })
+                        .catch((error) => {
+                            reject(error);
+                        })
                     }
                     else {
                         throw new Error('The Tesla cannot be reached.');
