@@ -187,6 +187,8 @@ module.exports = class API {
             var online = false;
 
             while (!online || Date.now() - now < timeout) {
+                this.log('Getting vehicle information...');
+                
                 this.getVehicle(vin).then((response) => {
                     this.log('Checking online state...');
 
