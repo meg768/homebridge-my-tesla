@@ -169,7 +169,7 @@ module.exports = class API {
         });
     }
 
-    wakeUpNew(vin, timeout = 60000) {
+    wakeUp(vin, timeout = 60000) {
 
         var now = new Date();
 
@@ -181,14 +181,14 @@ module.exports = class API {
         };
 
         this.log('Calling wakeup..')
-//        this.teslajs.wakeUp({authToken: this.authToken, vehicleID:vehicleID});
+        this.teslajs.wakeUp({authToken: this.authToken, vehicleID:vehicleID});
 
         return new Promise((resolve, reject) => {
             var online = false;
 
             while (!online || Date.now() - now < timeout) {
                 this.getVehicle(vin).then((response) => {
-                    this.log('Checking online state.')
+                    this.log('Checking online state...');
 
                     // Are we online?
                     online = response.state == 'online';
@@ -212,7 +212,7 @@ module.exports = class API {
     }
 
 
-    wakeUp(vin, timestamp) {
+    wakeUpOLd(vin, timestamp) {
 
         var vehicleID = this.getVehicleID(vin);
 
