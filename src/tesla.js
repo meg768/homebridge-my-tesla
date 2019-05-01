@@ -78,6 +78,9 @@ module.exports = class Tesla extends Events  {
                 this.api.setChargeState(vin, true).then(() => {
                     callback(null, value);
                 })
+                .catch((error) => {
+                    this.log(error);
+                })
             }
             else {
                 this.api.setChargeState(vin, false).then(() => {
@@ -88,6 +91,9 @@ module.exports = class Tesla extends Events  {
                 })
                 .then(() => {
                     callback(null, value);
+                })
+                .catch((error) => {
+                    this.log(error);
                 })
 
             }
