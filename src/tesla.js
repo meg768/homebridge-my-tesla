@@ -70,6 +70,38 @@ module.exports = class Tesla extends Events  {
 
         });
 
+        service.getCharacteristic(Characteristic.On).on('set', (value, callback) => {
+
+            var vin = this.config.vin;
+
+            if (value) {
+                this.api.setChargeState(vin, true).then(() => {
+                    callback(null, value);
+                })
+            }
+            else {
+                this.api.setChargeState(vin, false).then(() => {
+                    return Promise.resolve();
+                })
+                .then(() => {
+                    return this.api.openChargePort(vin);
+                })
+                .then(() => {
+                    callback(null, value);
+                })
+
+            }
+            this.refresh(() => {
+                if (this.chargeState && this.chargeState.charging_state != undefined)
+                    callback(null, this.chargeState.charging_state == 'Charging');
+                else
+                    callback(null);
+            });
+
+        });
+
+
+
         this.services.push(service);
 
     }

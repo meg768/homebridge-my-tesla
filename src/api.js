@@ -169,6 +169,38 @@ module.exports = class API {
         });
     }
 
+    openChargePort(vin) {
+        return new Promise((resolve, reject) => {
+
+            var vehicleID = this.getVehicleID(vin);
+
+            this.teslajs.openChargePort({authToken: this.authToken, vehicleID:vehicleID}, (error, response) => {
+                if (error)
+                    reject(error);
+                else
+                    resolve(response);
+            });    
+        });
+
+    }
+
+    setChargeState(vin, state) {
+        return new Promise((resolve, reject) => {
+
+            var vehicleID = this.getVehicleID(vin);
+            var method = state ? this.teslajs.startCharge : this.teslajs.stopCharge;
+
+            method({authToken: this.authToken, vehicleID:vehicleID}, (error, response) => {
+                if (error)
+                    reject(error);
+                else
+                    resolve(response);
+            });    
+        });
+    }
+
+        
+
     wakeUpXXX(vin, timeout = 60000) {
 
         var now = new Date();
