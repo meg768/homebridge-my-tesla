@@ -169,7 +169,7 @@ module.exports = class API {
         });
     }
 
-    wakeUp(vin, timeout = 60000) {
+    wakeUpXXX(vin, timeout = 60000) {
 
         var now = new Date();
         var vehicleID = this.getVehicleID(vin);
@@ -202,7 +202,7 @@ module.exports = class API {
                     return pause(online ? 0 : 500); 
                 })
                 .catch((error) => {
-                    console.log(error);
+                    this.log(error);
                 });
 
             }
@@ -215,7 +215,7 @@ module.exports = class API {
     }
 
 
-    wakeUpOLd(vin, timestamp) {
+    wakeUp(vin, timestamp) {
 
         var vehicleID = this.getVehicleID(vin);
 
@@ -224,6 +224,7 @@ module.exports = class API {
                 setTimeout(resolve, ms);
             });            
         };
+
 
         return new Promise((resolve, reject) => {
 
