@@ -43,6 +43,7 @@ module.exports = class Tesla extends Events  {
         this.enableBatteryLevel();
         this.enableHVAC();
         this.enableTemperature();
+        this.enableCharging();
 
 
         this.on('ready', () => {
@@ -52,6 +53,24 @@ module.exports = class Tesla extends Events  {
                 this.log('Initial refresh completed.');
             });
         });
+
+    }
+
+    enableCharging() {
+        var service = new Service.Switch("Laddning");
+
+        service.getCharacteristic(Characteristic.On).on('get', (callback) => {
+
+            this.refresh(() => {
+                if (this.chargeState && this.chargeState.charging_state != undefined)
+                    callback(null, this.chargeState.charging_state == 'Charging');
+                else
+                    callback(null);
+            });
+
+        });
+
+        this.services.push(service);
 
     }
 
