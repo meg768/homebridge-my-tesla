@@ -172,6 +172,7 @@ module.exports = class API {
     wakeUp(vin, timeout = 60000) {
 
         var now = new Date();
+        var vehicleID = this.getVehicleID(vin);
 
         var pause = (ms) => {
             return new Promise((resolve, reject) => {
@@ -188,7 +189,7 @@ module.exports = class API {
 
             while (!online || Date.now() - now < timeout) {
                 this.log('Getting vehicle information...');
-                
+
                 this.getVehicle(vin).then((response) => {
                     this.log('Checking online state...');
 
