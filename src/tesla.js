@@ -59,10 +59,22 @@ module.exports = class Tesla extends Events  {
         service.getCharacteristic(Characteristic.On).on('get', (callback) => {
 
             this.refresh(() => {
-                var portOpen = this.data.charge_state && this.data.charge_state.charge_port_door_open;
-                var charging = this.data.charge_state && this.data.charge_state.charging_state != 'Disconnected';
+                var charging = false;
 
-                callback(null, portOpen || charging);
+                if (this.data.charge_state) {
+                    switch (this.data.charge_state.charging_state) {
+                        case 'Disconnected': {
+                            charging = false;
+                            break;
+                        }
+                        case 'Stopped': {
+                            charging = false;
+                            break;
+                        }
+                    }
+                }
+
+                callback(null, charging);
             });
 
         });
