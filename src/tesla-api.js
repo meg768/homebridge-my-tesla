@@ -1,8 +1,8 @@
 "use strict";
 
 var isFunction = require('yow/is').isFunction;
-//var Request = require('yow/request');
-var Request = require('./request.js');
+var Request = require('yow/request');
+//var Request = require('./request.js');
 
 
 var querystring  = require('querystring');
@@ -84,7 +84,7 @@ module.exports = class API {
 
                 if (!teslaClientID || !teslaClientSecret)
                     throw new Error('Need Tesla credentials.');
-                    
+
                 var options = {
                     body: {
                         "grant_type": "password",
