@@ -120,7 +120,6 @@ module.exports = class Tesla extends Events  {
             this.log('Getting car state...');
 
             this.api.wakeUp(vin).then((response) => {
-                this.vehicle = response;
                 return this.api.getVehicleData(vin);         
             })
             .then((response) => {

@@ -3,7 +3,7 @@
 var Path = require('path');
 var Events = require('events');
 var Tesla = require('./tesla.js');
-var API = require('./api.js');
+var API = require('./tesla-api.js');
 
 var sprintf = require('yow/sprintf');
 var isString = require('yow/is').isString;
