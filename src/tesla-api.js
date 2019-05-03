@@ -226,7 +226,7 @@ module.exports = class API {
 
     setDoorState(vin, state) {
         var vehicleID = this.getVehicleID(vin);
-        var path = `/api/1/vehicles/${vehicleID}/door_${state ? 'lock' : 'unlock'}`;
+        var path = `/api/1/vehicles/${vehicleID}/command/door_${state ? 'lock' : 'unlock'}`;
 
         return this.request('POST', path);
     }
