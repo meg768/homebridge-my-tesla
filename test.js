@@ -7,7 +7,7 @@ require('dotenv').config({
 });
 
 
-var API = require('./src/tesla-api.js');
+var API = require('./src/api.js');
 var api = new API({log:console.log});
 var vin = "5YJ3E7EB9KF240654";
 
