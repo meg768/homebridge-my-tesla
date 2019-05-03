@@ -247,7 +247,7 @@ module.exports = class API {
 
     setChargeState(vin, state) {
         var vehicleID = this.getVehicleID(vin);
-        var path = `/api/1/vehicles/${vehicleID}/command/charge_${state ? 'open' : 'close'}`;
+        var path = `/api/1/vehicles/${vehicleID}/command/charge_${state ? 'start' : 'stop'}`;
 
         return this.request('POST', path);
     }

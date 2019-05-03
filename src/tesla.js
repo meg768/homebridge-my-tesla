@@ -186,8 +186,6 @@ module.exports = class Tesla extends Events  {
 
         var getHVACState = (callback) => {
 
-            this.log('get HVAC state called!!');
-
             this.refresh(() => {
                 callback(null, this.data.climate_state && this.data.climate_state.is_climate_on);
             });
