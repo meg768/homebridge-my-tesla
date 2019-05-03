@@ -71,6 +71,10 @@ module.exports = class Tesla extends Events  {
                             charging = false;
                             break;
                         }
+                        default: {
+                            charging = true;
+                            break;
+                        }
                     }
                 }
 
