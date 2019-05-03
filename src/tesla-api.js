@@ -1,7 +1,8 @@
 "use strict";
 
 var isFunction = require('yow/is').isFunction;
-var Request = require('yow/request');
+//var Request = require('yow/request');
+var Request = require('./request.js');
 
 
 var querystring  = require('querystring');
