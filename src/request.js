@@ -179,7 +179,7 @@ function Gopher() {
 					if (response.headers && isString(response.headers['content-type'])) {
 						contentType = response.headers['content-type'];
 					}
-console.log(response);
+console.log(body);
 					if (contentType.match("application/json")) {
 						try {
 							body = JSON.parse(body);
