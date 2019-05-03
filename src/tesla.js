@@ -60,7 +60,7 @@ module.exports = class Tesla extends Events  {
 
             this.refresh(() => {
                 if (this.data.charge_state && this.data.charge_state.charging_state != undefined)
-                    callback(null, this.chargeState.charging_state != 'Disconnected');
+                    callback(null, this.data.charge_state.charging_state != 'Disconnected');
                 else
                     callback(null);
             });

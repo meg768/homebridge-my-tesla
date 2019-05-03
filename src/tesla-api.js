@@ -45,7 +45,7 @@ module.exports = class API {
     request(method, path, options) {
         return new Promise((resolve, reject) => {
 
-            this.log('Seding request', method, path)
+            this.log('Seding request', method, path);
             this.api.request(method, path, options).then((response) => {
                 resolve(response.body.response);
             })
