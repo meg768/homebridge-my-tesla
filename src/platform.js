@@ -40,7 +40,7 @@ module.exports = class Platform {
         
         })
         .catch((error) => {
-            this.log(JSON.stringify(error));
+            this.log(error);
             process.exit(1);
 
         })
