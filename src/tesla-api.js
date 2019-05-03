@@ -81,6 +81,10 @@ module.exports = class API {
             var accessToken = undefined;
 
             Promise.resolve().then(() => {
+
+                if (!teslaClientID || !teslaClientSecret)
+                    throw new Error('Need Tesla credentials.');
+                    
                 var options = {
                     body: {
                         "grant_type": "password",
