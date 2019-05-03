@@ -221,7 +221,7 @@ module.exports = class Tesla extends Events  {
                 return this.api.wakeUp(this.config.vin);
             })
             .then(() => {
-                return this.api.setClimateState(this.config.vin, value);
+                return this.api.setAutoConditioningState(this.config.vin, value);
             })
             .then(() => {
                 callback(null, value);    
