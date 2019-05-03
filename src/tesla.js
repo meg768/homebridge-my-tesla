@@ -59,10 +59,10 @@ module.exports = class Tesla extends Events  {
         service.getCharacteristic(Characteristic.On).on('get', (callback) => {
 
             this.refresh(() => {
-                if (this.data.charge_state && this.data.charge_state.charging_state != undefined)
-                    callback(null, this.data.charge_state.charging_state != 'Disconnected');
-                else
-                    callback(null);
+                var portOpen = this.data.charge_state && this.data.charge_state.charge_port_door_open;
+                var charging = this.data.charge_state && this.data.charge_state.charging_state != 'Disconnected';
+
+                callback(null, portOpen || charging);
             });
 
         });
@@ -72,7 +72,13 @@ module.exports = class Tesla extends Events  {
             var vin = this.config.vin;
 
             if (value) {
-                this.api.setChargeState(vin, true).then(() => {
+                Promise.resolve().then(() => {
+                    return this.api.setChargePortDoorState(vin, true);
+                })
+                .then(() => {
+                    return this.api.setChargeState(vin, true);
+                })
+                .then(() => {
                     callback(null, value);
                 })
                 .catch((error) => {
@@ -80,11 +86,11 @@ module.exports = class Tesla extends Events  {
                 })
             }
             else {
-                this.api.setChargeState(vin, false).then(() => {
-                    return Promise.resolve();
+                Promise.resolve().then(() => {
+                    return this.api.setChargeState(vin, false);    
                 })
                 .then(() => {
-                    return this.api.setChargePortDoorState(vin, true);
+                    return this.api.setChargePortDoorState(vin, false);
                 })
                 .then(() => {
                     callback(null, value);

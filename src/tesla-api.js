@@ -254,3 +254,6 @@ module.exports = class API {
 
 
 }
+Disengaged
+Engaged
+Disconnected
