@@ -7,7 +7,7 @@ require('dotenv').config({
 });
 
 
-var API = require('./src/api.js');
+var API = require('./src/tesla-api.js');
 var api = new API({log:console.log});
 var vin = "5YJ3E7EB9KF240654";
 
@@ -21,33 +21,13 @@ api.login().then((authToken) => {
     return api.wakeUp(vehicle.vin);
 })
 .then((vehicle) => {
-    console.log('------------------------------------------------------');
-    console.log('Vehicle:');
-    console.log(vehicle);
-    console.log('------------------------------------------------------');
-    console.log('Getting vehicle state for VIN', vehicle.vin);
-    return api.getVehicleState(vehicle.vin);
+    return api.getVehicleData(vehicle.vin);
 })
-.then((state) => {
-    console.log('------------------------------------------------------');
-    console.log('Vehicle state:');
-    console.log(state);
-    console.log('------------------------------------------------------');
-    console.log('Getting charge state');
-    return api.getChargeState(vin);
+.then((data) => {
+    console.log(data);
 })
-.then((state) => {
-    console.log('------------------------------------------------------');
-    console.log('Charge state:');
-    console.log(state);
-    console.log('------------------------------------------------------');
-    return api.getClimateState(vin)
-})
-.then((state) => {
-    console.log('------------------------------------------------------');
-    console.log('Climate state:');
-    console.log(state);
-    console.log('------------------------------------------------------');
+.then(() => {
+    return api.setAutoConditioningState(vin, true);
 })
 .then(() => {
     console.log('Done.');
@@ -55,3 +35,6 @@ api.login().then((authToken) => {
 .catch((error) => {
     console.log(error.stack);
 })
+
+
+

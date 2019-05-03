@@ -32,10 +32,7 @@ module.exports = class Tesla extends Events  {
         this.platform = platform;
         this.refreshQueue = [];
 
-        this.vehicle = null;
-        this.vehicleState = null;
-        this.climateState = null;
-        this.chargeState = null;
+        this.data = {};
 
 
         this.enableAccessoryInfo();
@@ -62,8 +59,8 @@ module.exports = class Tesla extends Events  {
         service.getCharacteristic(Characteristic.On).on('get', (callback) => {
 
             this.refresh(() => {
-                if (this.chargeState && this.chargeState.charging_state != undefined)
-                    callback(null, this.chargeState.charging_state == 'Charging');
+                if (this.data.charge_state && this.data.charge_state.charging_state != undefined)
+                    callback(null, this.chargeState.charging_state != 'Disconnected');
                 else
                     callback(null);
             });
@@ -87,7 +84,7 @@ module.exports = class Tesla extends Events  {
                     return Promise.resolve();
                 })
                 .then(() => {
-                    return this.api.openChargePort(vin);
+                    return this.api.setChargePortDoorState(vin, true);
                 })
                 .then(() => {
                     callback(null, value);
@@ -124,18 +121,10 @@ module.exports = class Tesla extends Events  {
 
             this.api.wakeUp(vin).then((response) => {
                 this.vehicle = response;
-                return this.api.getChargeState(vin);         
+                return this.api.getVehicleData(vin);         
             })
             .then((response) => {
-                this.chargeState = response;
-                return this.api.getClimateState(vin);
-            })
-            .then((response) => {
-                this.climateState = response;
-                return this.api.getVehicleState(vin);
-            })
-            .then((response) => {
-                this.vehicleState = response;
+                this.data = response;
             })
             .catch((error) => {
                 this.log(error.stack);
@@ -163,8 +152,8 @@ module.exports = class Tesla extends Events  {
         service.getCharacteristic(Characteristic.CurrentTemperature).on('get', (callback) => {
 
             this.refresh(() => {
-                if (this.climateState && this.climateState.inside_temp != undefined)
-                    callback(null, this.climateState.inside_temp);
+                if (this.data.climate_state && this.data.climate_state.inside_temp != undefined)
+                    callback(null, this.data.climate_state.inside_temp);
                 else
                     callback(null);
             });
@@ -181,8 +170,8 @@ module.exports = class Tesla extends Events  {
         service.getCharacteristic(Characteristic.BatteryLevel).on('get', (callback) => {
 
             this.refresh(() => {
-                if (this.chargeState && this.chargeState.battery_level != undefined)
-                    callback(null, this.chargeState.battery_level);
+                if (this.data.charge_state && this.data.charge_state.battery_level != undefined)
+                    callback(null, this.data.charge_state.battery_level);
                 else
                     callback(null);
 
@@ -201,7 +190,7 @@ module.exports = class Tesla extends Events  {
             this.log('get HVAC state called!!');
 
             this.refresh(() => {
-                callback(null, this.climateState && this.climateState.is_climate_on);
+                callback(null, this.data.climate_state && this.data.climate_state.is_climate_on);
             });
 
         };
@@ -237,7 +226,7 @@ module.exports = class Tesla extends Events  {
         var getLockedState = (callback) => {
 
             this.refresh(() => {
-                callback(null, this.vehicleState && this.vehicleState.locked);
+                callback(null, this.data.vehicle_state && this.data.vehicle_state.locked);
 
             });
 
@@ -250,7 +239,7 @@ module.exports = class Tesla extends Events  {
                 return this.api.wakeUp(this.config.vin);
             })
             .then(() => {
-                return this.api.setDoorLockState(this.config.vin, value);
+                return this.api.setDoorState(this.config.vin, value);
             })
             .then(() => {
                 service.setCharacteristic(Characteristic.LockCurrentState, value); 
