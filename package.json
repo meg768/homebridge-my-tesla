@@ -31,7 +31,6 @@
   "dependencies": {
     "dotenv": "^7.0.0",
     "pushover-notifications": "^1.2.0",
-    "teslajs": "^4.3.8",
     "yow": "^1.0.104"
   }
 }
