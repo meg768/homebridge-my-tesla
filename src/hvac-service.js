@@ -31,6 +31,7 @@ module.exports = class extends Service.Fan {
             })
         
             .catch((error) => {
+                tesla.log(error);
                 callback(null);
             })            
         };
