@@ -4,9 +4,11 @@
   "description": "Homebridge plugin for Teslas",
   "main": "index.js",
   "scripts": {
-    "git-commit": "git add -A && git commit -m '-' && git push",
     "config-homebridge": "node ./scripts/install-config.js",
     "goto-github": "open https://github.com/meg768/homebridge-my-tesla.git",
+    "git-reset": "git reset --hard HEAD",
+    "git-pull": "git pull",
+    "git-commit": "git add -A && git commit -m '-' && git push",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -14,13 +16,12 @@
     "url": "git+https://github.com/meg768/homebridge-my-tesla.git"
   },
   "engines": {
-    "node": ">=6.11.0",
+    "node": ">=10.0.0",
     "homebridge": ">=0.4.33"
   },
   "keywords": [
     "homebridge-plugin",
-    "Tilt Hydrometer",
-    "Tilt Thermostat",
+    "tesla",
     "homebridge"
   ],
   "author": "",
