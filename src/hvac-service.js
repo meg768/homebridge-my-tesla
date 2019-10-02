@@ -16,13 +16,13 @@ module.exports = class extends Service.Fan {
         };
         
         var setHVACState = (value, callback) => {
+            console.log('fdsgsgsfd');
             tesla.log('Turning HVAC state to %s.', value ? 'on' : 'off');
         
             Promise.resolve().then(() => {
                 return tesla.api.wakeUp(this.config.vin);
             })
             .then(() => {
-                console.log('fdsgsgsfd');
                 return tesla.api.setAutoConditioningState(tesla.config.vin, value);
             })
             .then(() => {
