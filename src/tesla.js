@@ -10,6 +10,7 @@ var AirConditionerService = require('./hvac-service.js');
 var DoorLockService = require('./door-lock-service.js');
 var TemperatureSensor = require('./temperature-service.js');
 var AccessoryInformation = require('./accessory-information-service.js');
+var ChargingService = require('./charging-service.js');
 
 module.exports = class Tesla extends Events  {
 
@@ -50,6 +51,8 @@ module.exports = class Tesla extends Events  {
     }
 
     enableCharging() {
+        return new ChargingService(this, 'LaddningX');
+        
         var service = new Service.Switch("Laddning");
 
         service.getCharacteristic(Characteristic.On).on('get', (callback) => {
