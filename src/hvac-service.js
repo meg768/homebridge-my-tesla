@@ -21,7 +21,7 @@ module.exports = class extends Service.Fan {
         
             Promise.resolve().then(() => {
                 console.log('wakeup');
-                return tesla.api.wakeUp(this.config.vin);
+                return tesla.api.wakeUp(tesla.config.vin);
             })
             .then(() => {
                 console.log('fdsgsgsfd XXX');
