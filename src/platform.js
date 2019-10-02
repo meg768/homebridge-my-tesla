@@ -14,8 +14,8 @@ module.exports = class Platform {
         this.log = log;
         this.homebridge = homebridge;
         this.teslas = [];
-        this.api = new API({log:log});
         this.debug = config.debug ? log : () => {};
+        this.api = new API({log:log, debug:this.debug});
 
         // Load .env
         require('dotenv').config();

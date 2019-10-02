@@ -1,19 +1,8 @@
 "use strict";
 
 var Events   = require('events');
-var isString = require('yow/is').isString;
-var isObject = require('yow/is').isObject;
-var isArray = require('yow/is').isArray;
-var sprintf  = require('yow/sprintf');
-
-var Request = require('yow/request');
-var Timer   = require('yow/timer');
-
 var Service  = require('./homebridge.js').Service;
 var Characteristic  = require('./homebridge.js').Characteristic;
-
-const OFF = true;
-const ON = false;
 
 
 module.exports = class Tesla extends Events  {
