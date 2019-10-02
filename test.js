@@ -2,9 +2,7 @@
 var Path = require('path');
 
 // Load .env
-require('dotenv').config({
-    path: Path.join(process.env.HOME, '.homebridge/.env')
-});
+require('dotenv').config();
 
 
 var API = require('./src/tesla-api.js');

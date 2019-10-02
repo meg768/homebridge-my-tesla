@@ -1,29 +1,24 @@
 "use strict";
 
-var Path = require('path');
-var Events = require('events');
 var Tesla = require('./tesla.js');
 var API = require('./tesla-api.js');
-
-var sprintf = require('yow/sprintf');
-var isString = require('yow/is').isString;
-
 
 
 module.exports = class Platform {
 
     constructor(log, config, homebridge) {
 
+        log(config);
+
         this.config = config;
         this.log = log;
         this.homebridge = homebridge;
         this.teslas = [];
         this.api = new API({log:log});
+        this.debug = config.debug ? log : () => {};
 
         // Load .env
-        require('dotenv').config({
-            path: Path.join(process.env.HOME, '.homebridge/.env')
-        });
+        require('dotenv').config();
 
         if (process.env.PUSHOVER_USER == undefined || process.env.PUSHOVER_TOKEN == undefined) {
     		this.log('Environment variables PUSHOVER_USER and/or PUSHOVER_TOKEN not defined. Push notifications will not be able to be sent.');
@@ -81,9 +76,6 @@ module.exports = class Platform {
         return this.homebridge.hap.uuid.generate(id.toString());
     }
 
-
-    debug() {
-    }
 
     accessories(callback) {
         callback(this.teslas);

@@ -23,6 +23,7 @@ module.exports = class Tesla extends Events  {
         super();
 
         this.log = platform.log;
+        this.debug = platform.debug;
         this.pushover = platform.pushover;
         this.config = config;
         this.name = config.name;

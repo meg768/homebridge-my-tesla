@@ -4,7 +4,9 @@
   "description": "Homebridge plugin for Teslas",
   "main": "index.js",
   "scripts": {
-    "config-homebridge": "node ./scripts/install-config.js",
+    "install-config": "node ./scripts/install-config.js",
+    "npm-install": "npm install -g",
+    "run-homebridge": "homebridge",
     "goto-github": "open https://github.com/meg768/homebridge-my-tesla.git",
     "git-reset": "git reset --hard HEAD",
     "git-pull": "git pull",
