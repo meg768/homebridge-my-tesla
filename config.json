@@ -2,9 +2,9 @@
 {
     "bridge": {
         "name": "Tesla",
-        "username": "AD:27:3E:E4:CF:62",
+        "username": "AD:27:3E:E4:CF:63",
         "port": 51826,
-        "pin": "046-12-346"
+        "pin": "046-12-347"
     },
 
     "description": "Sample configuration file",
@@ -17,6 +17,7 @@
                 "name": "Model 3",       
                 "vin": "5YJ3E7EB9KF240654"
 
+                
 
             }
         ]
