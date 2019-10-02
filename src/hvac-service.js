@@ -22,6 +22,7 @@ module.exports = class extends Service.Fan {
                 return tesla.api.wakeUp(this.config.vin);
             })
             .then(() => {
+                console.log('fdsgsgsfd');
                 return tesla.api.setAutoConditioningState(tesla.config.vin, value);
             })
             .then(() => {
