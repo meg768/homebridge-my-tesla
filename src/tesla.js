@@ -51,8 +51,10 @@ module.exports = class Tesla extends Events  {
     }
 
     enableCharging() {
-        return new ChargingService(this, 'LaddningX');
-        
+        return this.services.push(new ChargingService(this, "Laddning"));
+
+
+    
         var service = new Service.Switch("Laddning");
 
         service.getCharacteristic(Characteristic.On).on('get', (callback) => {
