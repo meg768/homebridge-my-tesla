@@ -3,7 +3,13 @@
 var Events   = require('events');
 var Service  = require('./homebridge.js').Service;
 var Characteristic  = require('./homebridge.js').Characteristic;
+
+
 var BatteryLevelService = require('./battery-level-service.js')
+var AirConditionerService = require('./hvac-service.js');
+var DoorLockService = require('./door-lock-service.js');
+var TemperatureSensor = require('./temperature-service.js');
+var AccessoryInformation = require('./accessory-information-service.js');
 
 module.exports = class Tesla extends Events  {
 
@@ -28,7 +34,7 @@ module.exports = class Tesla extends Events  {
         this.enableAccessoryInfo();
         this.enableDoorsLock();
         this.enableBatteryLevel();
-        this.enableHVAC();
+        this.enableAirConditioner();
         this.enableTemperature();
         this.enableCharging();
 
@@ -159,124 +165,38 @@ module.exports = class Tesla extends Events  {
 
 
     enableTemperature() {
-        var service = new Service.TemperatureSensor("Temperatur");
-
-        service.getCharacteristic(Characteristic.CurrentTemperature).on('get', (callback) => {
-
-            this.refresh((response) => {
-                if (response.climate_state && response.climate_state.inside_temp != undefined)
-                    callback(null, response.climate_state.inside_temp);
-                else
-                    callback(null);
-            });
-
-        });
-
+        var service = new TemperatureSensor(this, "Temperatur");
         this.services.push(service);
+        return;
 
     }
 
     enableBatteryLevel() {
-        /*
-        var service = new Service.BatteryService(this.name);
-
-        service.getCharacteristic(Characteristic.BatteryLevel).on('get', (callback) => {
-
-            this.refresh((response) => {
-                if (response.charge_state && response.charge_state.battery_level != undefined)
-                    callback(null, response.charge_state.battery_level);
-                else
-                    callback(null);
-
-            });
-
-        });
-        */
         var service = new BatteryLevelService(this, this.name);
-
         this.services.push(service);
     }
 
-    enableHVAC() {
-        var service = new Service.Fan("Fläkten");
-
-        var getHVACState = (callback) => {
-
-            this.refresh((response) => {
-                callback(null, response.climate_state && response.climate_state.is_climate_on);
-            });
-
-        };
-
-        var setHVACState = (value, callback) => {
-            this.log('Turning HVAC state to %s.', value ? 'on' : 'off');
-
-            Promise.resolve().then(() => {
-                return this.api.wakeUp(this.config.vin);
-            })
-            .then(() => {
-                return this.api.setAutoConditioningState(this.config.vin, value);
-            })
-            .then(() => {
-                callback(null, value);    
-            })
-
-            .catch((error) => {
-                callback(null);
-            })            
-        };
-
-        service.getCharacteristic(Characteristic.On).on('get', getHVACState.bind(this));
-        service.getCharacteristic(Characteristic.On).on('set', setHVACState.bind(this));
-
+    enableAirConditioner() {
+        var service = new AirConditionerService(this, "Fläkten");
         this.services.push(service);
+        return;
 
     }
 
     enableDoorsLock() {
-        var service = new Service.LockMechanism("Bildörren");
-
-        var getLockedState = (callback) => {
-
-            this.refresh((response) => {
-                callback(null, response.vehicle_state && response.vehicle_state.locked);
-
-            });
-
-        };
-
-        var setLockedState = (value, callback) => {
-            this.log('Turning door lock to state %s.', value ? 'on' : 'off');
-
-            Promise.resolve().then(() => {
-                return this.api.wakeUp(this.config.vin);
-            })
-            .then(() => {
-                return this.api.setDoorState(this.config.vin, value);
-            })
-            .then(() => {
-                service.setCharacteristic(Characteristic.LockCurrentState, value); 
-                callback(null, value);    
-            })
-
-            .catch((error) => {
-                callback(null);
-            })            
-        };
-
-        service.getCharacteristic(Characteristic.LockCurrentState).on('get', getLockedState.bind(this));
-
-        service.getCharacteristic(Characteristic.LockTargetState).on('get', getLockedState.bind(this));
-        service.getCharacteristic(Characteristic.LockTargetState).on('set', setLockedState.bind(this));
-
-        
+        var service = new DoorLockService(this, "Dörrar");
         this.services.push(service);
+        return;
     }
 
 
 
 
     enableAccessoryInfo() {
+        var service = new AccessoryInformation(this, {});
+        this.services.push(service);
+
+/*
         const service = new Service.AccessoryInformation();
 
         service.setCharacteristic(Characteristic.Manufacturer, 'meg768');
@@ -284,6 +204,7 @@ module.exports = class Tesla extends Events  {
         service.setCharacteristic(Characteristic.SerialNumber, '1.0');
 
         this.services.push(service);
+*/
     }
 
     getServices() {
