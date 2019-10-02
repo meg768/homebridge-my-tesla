@@ -165,46 +165,23 @@ module.exports = class Tesla extends Events  {
 
 
     enableTemperature() {
-        var service = new TemperatureSensor(this, "Temperatur");
-        this.services.push(service);
-        return;
-
+        this.services.push(new TemperatureSensor(this, "Temperatur"));
     }
 
     enableBatteryLevel() {
-        var service = new BatteryLevelService(this, this.name);
-        this.services.push(service);
+        this.services.push(new BatteryLevelService(this, this.name));
     }
 
     enableAirConditioner() {
-        var service = new AirConditionerService(this, "Fläkten");
-        this.services.push(service);
-        return;
-
+        this.services.push(new AirConditionerService(this, "Fläkten"));
     }
 
     enableDoorsLock() {
-        var service = new DoorLockService(this, "Dörrar");
-        this.services.push(service);
-        return;
+        this.services.push(new DoorLockService(this, "Dörrar"));
     }
 
-
-
-
     enableAccessoryInfo() {
-        var service = new AccessoryInformation(this, {});
-        this.services.push(service);
-
-/*
-        const service = new Service.AccessoryInformation();
-
-        service.setCharacteristic(Characteristic.Manufacturer, 'meg768');
-        service.setCharacteristic(Characteristic.Model, 'Tesla');
-        service.setCharacteristic(Characteristic.SerialNumber, '1.0');
-
-        this.services.push(service);
-*/
+        this.services.push(new AccessoryInformation(this, {}));
     }
 
     getServices() {
