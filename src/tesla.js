@@ -3,7 +3,7 @@
 var Events   = require('events');
 var Service  = require('./homebridge.js').Service;
 var Characteristic  = require('./homebridge.js').Characteristic;
-
+var BatteryLevelService = require('./battery-level-service.js')
 
 module.exports = class Tesla extends Events  {
 
@@ -177,6 +177,7 @@ module.exports = class Tesla extends Events  {
     }
 
     enableBatteryLevel() {
+        /*
         var service = new Service.BatteryService(this.name);
 
         service.getCharacteristic(Characteristic.BatteryLevel).on('get', (callback) => {
@@ -190,6 +191,8 @@ module.exports = class Tesla extends Events  {
             });
 
         });
+        */
+        var service = new BatteryLevelService(this, this.name);
 
         this.services.push(service);
     }
