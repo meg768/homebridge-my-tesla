@@ -50,81 +50,6 @@ module.exports = class Tesla extends Events  {
 
     }
 
-    enableCharging() {
-        return this.services.push(new ChargingService(this, "Laddning"));
-
-
-    
-        var service = new Service.Switch("Laddning");
-
-        service.getCharacteristic(Characteristic.On).on('get', (callback) => {
-
-            this.refresh((response) => {
-                var charging = false;
-
-                if (response.charge_state) {
-                    switch (response.charge_state.charging_state) {
-                        case 'Disconnected': {
-                            charging = false;
-                            break;
-                        }
-                        case 'Stopped': {
-                            charging = false;
-                            break;
-                        }
-                        default: {
-                            charging = true;
-                            break;
-                        }
-                    }
-                }
-
-                callback(null, charging);
-            });
-
-        });
-
-        service.getCharacteristic(Characteristic.On).on('set', (value, callback) => {
-
-            var vin = this.config.vin;
-
-            if (value) {
-                Promise.resolve().then(() => {
-                    return this.api.setChargePortDoorState(vin, true);
-                })
-                .then(() => {
-                    return this.api.setChargeState(vin, true);
-                })
-                .then(() => {
-                    callback(null, value);
-                })
-                .catch((error) => {
-                    this.log(error);
-                })
-            }
-            else {
-                Promise.resolve().then(() => {
-                    return this.api.setChargeState(vin, false);    
-                })
-                .then(() => {
-                    return this.api.setChargePortDoorState(vin, false);
-                })
-                .then(() => {
-                    callback(null, value);
-                })
-                .catch((error) => {
-                    this.log(error);
-                })
-
-            }
-
-        });
-
-
-
-        this.services.push(service);
-
-    }
 
 
     delay(ms) {
@@ -167,6 +92,11 @@ module.exports = class Tesla extends Events  {
         }
     }
 
+    enableCharging() {
+        return this.services.push(new ChargingService(this, "Laddning"));
+
+
+    }
 
 
     enableTemperature() {
