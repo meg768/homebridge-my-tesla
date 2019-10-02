@@ -12,7 +12,7 @@
     "platforms": [{
         "platform": "Tesla",
         "name": "Tesla",
-        "debug": true,
+        "debug": false,
         "teslas": [
             {         
                 "name": "Model 3",       
