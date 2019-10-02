@@ -20,6 +20,7 @@ module.exports = class extends Service.Fan {
             tesla.log('Turning HVAC state to %s.', value ? 'on' : 'off');
         
             Promise.resolve().then(() => {
+                console.log('wakeup');
                 return tesla.api.wakeUp(this.config.vin);
             })
             .then(() => {
@@ -27,6 +28,7 @@ module.exports = class extends Service.Fan {
                 return tesla.api.setAutoConditioningState(tesla.config.vin, value);
             })
             .then(() => {
+                console.log('YYY');
                 callback(null, value);    
             })
         
