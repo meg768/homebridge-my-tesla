@@ -2,7 +2,7 @@
 var Service  = require('./homebridge.js').Service;
 var Characteristic  = require('./homebridge.js').Characteristic;
 
-module.exports = class extends XXX {
+module.exports = class extends Service.Switch {
 
     constructor(tesla, options) {
         super(options);
