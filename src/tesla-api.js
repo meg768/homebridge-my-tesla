@@ -223,6 +223,7 @@ module.exports = class API {
     }
 
     setAutoConditioningState(vin, state) {
+        console.log('sas');
         var vehicleID = this.getVehicleID(vin);
         var path = `/api/1/vehicles/${vehicleID}/command/auto_conditioning_${state ? 'start' : 'stop'}`;
 this.log(path);
