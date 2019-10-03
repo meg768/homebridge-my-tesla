@@ -70,7 +70,9 @@ As for now, it is only intended for Swedish users...
 
 ![alt text](./images/bob.jpeg)
 
-![alt text](./images/bob.jpeg=250x)
+## Siri
+
+If you name things correctly you might get Siri to work by saying "Lås bilen", "Lås upp bilen", "Sätt på fläkten" or "Stäng av fläkten"...
 
 ## Usage
 
