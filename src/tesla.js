@@ -71,12 +71,6 @@ module.exports = class Tesla extends Events  {
                 return this.api.getVehicleData(vin);         
             })
             .then((response) => {
-                return response;
-            })
-            .catch((error) => {
-                this.log(error.stack);
-            })
-            .then((response) => {
                 this.data = response;
 
                 this.refreshQueue.forEach((callback) => {
