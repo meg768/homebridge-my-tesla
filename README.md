@@ -68,15 +68,12 @@ it only adds controls to open the doors, control the HVAC and to display current
 
 As for now, it is only intended for Swedish users...
 
-![alt text](./images/bob.jpeg){width=50%}
+![alt text](./images/bob.jpeg)
+
+![alt text](./images/bob.jpeg=250x)
 
 ## Usage
 
 As for now, it is a good idea to create a new home in Apple's Home app. Name
 the new home to the same name of your car. Then add the this accessory to the newly created home.
 
-## Bugfixes/Updates
-* None so far
-
-## Useful Links
-* Nothing yet
