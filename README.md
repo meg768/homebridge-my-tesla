@@ -1,9 +1,8 @@
 # homebridge-my-tesla
 
-**Currently under construction...**
+** **Under construction...** **
 
 Homebridge plugin for Tesla owners. This plugin assumes you are familiar with Homebridge. 
-
 
 ## Installation
 
@@ -70,6 +69,11 @@ it only adds controls to open the doors, control the HVAC and to display current
 As for now, it is only intended for Swedish users...
 
 ![alt text](./images/bob.jpeg){width=50%}
+
+## Usage
+
+As for now, it is a good idea to create a new home in Apple's Home app. Name
+the new home to the same name of your car. Then add the this accessory to the newly created home.
 
 ## Bugfixes/Updates
 * None so far
