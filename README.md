@@ -1,8 +1,9 @@
 # homebridge-my-tesla
 
+**Currently under construction...**
+
 Homebridge plugin for Tesla owners. This plugin assumes you are familiar with Homebridge. 
 
-**Note: Currently under construction...**
 
 ## Installation
 
