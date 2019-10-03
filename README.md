@@ -68,8 +68,7 @@ it only adds controls to open the doors, control the HVAC and to display current
 
 As for now, it is only intended for Swedish users...
 
-![alt text](./images/bob.jpeg)
-![](./images/bob.jpeg=250x)
+![alt text](./images/bob.jpeg){width=50%}
 
 ## Bugfixes/Updates
 * None so far
