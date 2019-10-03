@@ -1,6 +1,6 @@
 {
   "name": "homebridge-my-tesla",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Homebridge plugin for Teslas",
   "main": "index.js",
   "scripts": {
@@ -11,7 +11,6 @@
     "git-reset": "git reset --hard HEAD",
     "git-pull": "git pull",
     "git-commit": "git add -A && git commit -m '-' && git push",
-		"publish-to-npm": "npm run increase-package-version && npm run git-commit && npm publish",
 		"publish-to-npm": "npm run git-commit && npm publish",
 		"goto-npm": "open https://github.com/meg768/homebridge-my-tesla.git",
     "test": "echo \"Error: no test specified\" && exit 1"
