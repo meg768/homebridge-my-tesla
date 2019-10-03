@@ -50,7 +50,21 @@ Configure your **~/.homebridge/config.json** with the following platform.
 
 ```
 
+If you already have a configuration file just add this to the **platforms** section.
 
+```json
+
+{
+        "platform": "Tesla",
+        "name": "Tesla",
+        "debug": false,
+        "teslas": [
+            {"name": "Model 3", "vin": "5YJ3E7EB9KF240654"}
+        ]
+
+}
+
+```
 
 
 ## What This Plugin Does
