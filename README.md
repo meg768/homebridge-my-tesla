@@ -2,7 +2,7 @@
 
 Homebridge plugin for Tesla owners. This plugin assumes you are familiar with Homebridge. 
 
-Note: Currently under construction...
+**Note: Currently under construction...**
 
 ## Installation
 
@@ -68,15 +68,8 @@ it only adds controls to open the doors, control the HVAC and to display current
 
 As for now, it is only intended for Swedish users...
 
-## To Do
-
-* Support motion sensors and remote controls if possible
-* Handle reboot or connection break of gateway
-
 ## Bugfixes/Updates
-
 * None so far
 
 ## Useful Links
-
 * Nothing yet
