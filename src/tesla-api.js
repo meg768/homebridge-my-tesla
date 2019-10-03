@@ -213,34 +213,47 @@ module.exports = class API {
 
     }
 
-
-
-    setDoorState(vin, state) {
+    postCommand(vin, command) {
         var vehicleID = this.getVehicleID(vin);
-        var path = `/api/1/vehicles/${vehicleID}/command/door_${state ? 'lock' : 'unlock'}`;
-
+        var path = `/api/1/vehicles/${vehicleID}/command/${command}`;
         return this.request('POST', path);
+
     }
 
-    setAutoConditioningState(vin, state) {
-        var vehicleID = this.getVehicleID(vin);
-        var path = `/api/1/vehicles/${vehicleID}/command/auto_conditioning_${state ? 'start' : 'stop'}`;
-
-        return this.request('POST', path);
+    doorLock(vin) {
+        return this.postCommand(vin, 'door_lock');
     }
 
-    setChargePortDoorState(vin, state) {
-        var vehicleID = this.getVehicleID(vin);
-        var path = `/api/1/vehicles/${vehicleID}/command/charge_port_door_${state ? 'open' : 'close'}`;
-
-        return this.request('POST', path);
+    doorUnlock(vin) {
+        return this.postCommand(vin, 'door_unlock');
     }
 
-    setChargeState(vin, state) {
-        var vehicleID = this.getVehicleID(vin);
-        var path = `/api/1/vehicles/${vehicleID}/command/charge_${state ? 'start' : 'stop'}`;
+    autoConditioningStart(vin) {
+        return this.postCommand(vin, 'auto_conditioning_start');
+    }
 
-        return this.request('POST', path);
+    autoConditioningStop(vin) {
+        return this.postCommand(vin, 'auto_conditioning_stop');
+    }
+
+    chargePortDoorOpen(vin) {
+        return this.postCommand(vin, 'charge_port_door_open');
+    }
+
+    chargePortDoorClose(vin) {
+        return this.postCommand(vin, 'charge_port_door_close');
+    }
+
+    chargeStart(vin) {
+        return this.postCommand(vin, 'charge_start');
+    }
+
+    chargeStop(vin) {
+        return this.postCommand(vin, 'charge_stop');
+    }
+
+    remoteStartDrive(vin) {
+        return this.postCommand(vin, `remote_start_drive?password=${process.env.TESLA_PASSWORD}`);
     }
 
 

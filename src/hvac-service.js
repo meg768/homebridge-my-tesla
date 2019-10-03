@@ -21,17 +21,20 @@ module.exports = class extends Service.Fan {
             Promise.resolve().then(() => {
                 return tesla.api.wakeUp(tesla.config.vin);
             })
-                .then(() => {
-                    return tesla.api.setAutoConditioningState(tesla.config.vin, value);
-                })
-                .then(() => {
-                    callback(null, value);
-                })
+            .then(() => {
+                if (value)
+                    return tesla.api.autoConditioningStart(tesla.config.vin);
+                else
+                    return tesla.api.autoConditioningStop(tesla.config.vin);
+            })
+            .then(() => {
+                callback(null, value);
+            })
 
-                .catch((error) => {
-                    tesla.log(error);
-                    callback(null);
-                })
+            .catch((error) => {
+                tesla.log(error);
+                callback(null);
+            })
         };
 
         this.getCharacteristic(Characteristic.On).on('get', getHVACState.bind(this));

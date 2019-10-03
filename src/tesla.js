@@ -88,8 +88,6 @@ module.exports = class Tesla extends Events  {
 
     enableCharging() {
         return this.services.push(new ChargingService(this, "Laddning"));
-
-
     }
 
 

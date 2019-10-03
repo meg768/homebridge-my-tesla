@@ -23,7 +23,16 @@ module.exports = class extends Service.LockMechanism {
                 return tesla.api.wakeUp(tesla.config.vin);
             })
             .then(() => {
-                return tesla.api.setDoorState(tesla.config.vin, value);
+                if (value)
+                    return tesla.api.doorLock(tesla.config.vin);
+                else
+                    return tesla.api.doorUnlock(tesla.config.vin);
+            })
+            .then(() => {
+                if (!value)
+                    return tesla.api.remoteStartDrive(tesla.config.vin);
+                else
+                    return Promise.resolve();
             })
             .then(() => {
                 this.setCharacteristic(Characteristic.LockCurrentState, value); 
@@ -42,12 +51,3 @@ module.exports = class extends Service.LockMechanism {
     
     }
 }; 
-
-/*
-enableDoorsLock() {
-    var service = new Service.LockMechanism("Bildörren");
-
-    
-    this.services.push(service);
-}
-*/
