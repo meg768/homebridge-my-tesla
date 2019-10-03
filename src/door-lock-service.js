@@ -11,7 +11,6 @@ module.exports = class extends Service.LockMechanism {
 
             tesla.refresh((response) => {
                 callback(null, response.vehicle_state && response.vehicle_state.locked);
-    
             });
     
         };
@@ -45,7 +44,6 @@ module.exports = class extends Service.LockMechanism {
         };
     
         this.getCharacteristic(Characteristic.LockCurrentState).on('get', getLockedState.bind(this));
-    
         this.getCharacteristic(Characteristic.LockTargetState).on('get', getLockedState.bind(this));
         this.getCharacteristic(Characteristic.LockTargetState).on('set', setLockedState.bind(this));
     

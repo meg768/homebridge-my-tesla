@@ -41,6 +41,9 @@ module.exports = class extends Service.Switch {
     
             if (value) {
                 Promise.resolve().then(() => {
+                    return tesla.api.wakeUp(vin);
+                })
+                .then(() => {
                     return tesla.api.chargePortDoorOpen(vin);
                 })
                 .then(() => {
@@ -55,6 +58,9 @@ module.exports = class extends Service.Switch {
             }
             else {
                 Promise.resolve().then(() => {
+                    return tesla.api.wakeUp(vin);
+                })
+                .then(() => {
                     return tesla.api.chargeStop(vin);    
                 })
                 .then(() => {
