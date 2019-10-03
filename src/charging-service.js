@@ -58,7 +58,7 @@ module.exports = class extends Service.Switch {
                     return tesla.api.chargeStop(vin);    
                 })
                 .then(() => {
-                    return tesla.api.chargePortDoorClose(vin);
+                    return tesla.api.chargePortDoorOpen(vin);
                 })
                 .then(() => {
                     callback(null, value);
