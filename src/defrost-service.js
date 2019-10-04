@@ -36,16 +36,17 @@ module.exports = class extends Service.Switch {
             })
             .then((response) => {
                 response = new VehicleData(response);
+                var temperature = response.getInsideTemperature();
 
                 if (!response.isCharging()) {
                     return Promise.resolve();
                 }
                 else if (response.getInsideTemperature() <= 20) {
-                    log('Starting air conditioner.');
+                    log(`Starting air conditioner since temperature is ${temperature}.`);
                     return tesla.api.autoConditioningStart(vin);
                 }
                 else {
-                    log('Stopping air conditioner.');
+                    log(`Stopping air conditioner since temperature is ${temperature}.`);
                     return tesla.api.autoConditioningStop(vin);        
                 }
             })
