@@ -43,15 +43,8 @@ module.exports = class Tesla extends Events  {
         this.services.push(new DefrostService(this, "Frostfri"));
 
         this.on('ready', () => {
+            this.update();
             this.log('Ready!');
-
-            this.refresh((response) => {
-                this.log('Initial refresh completed.');
-
-                this.services.forEach((service) => {
-                    service.emit('update', response);
-                });
-            });
         });
 
     }
