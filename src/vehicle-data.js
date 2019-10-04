@@ -48,6 +48,10 @@ module.exports = class VehicleData {
                     charging = false;
                     break;
                 }
+                case 'Complete': {
+                    charging = false;
+                    break;
+                }
                 default: {
                     charging = true;
                     break;
