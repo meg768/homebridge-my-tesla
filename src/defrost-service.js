@@ -67,17 +67,17 @@ module.exports = class extends Service.Switch {
                 if (!isCharging(response)) {
                     return Promise.resolve();
                 }
-                if (isFreezing(response)) {
+                else if (isFreezing(response)) {
                     log('Starting air conditioner.');
                     return tesla.api.autoConditioningStart(vin);
                 }
-                log('Stopping air conditioner.');
-                return tesla.api.autoConditioningStop(vin);    
+                else {
+                    log('Stopping air conditioner.');
+                    return tesla.api.autoConditioningStop(vin);        
+                }
             })
             .then(() => {
-                tesla.services.forEach((service) => {
-                    service.emit('update', response);
-                });
+                tesla.update();
             })
             .catch((error) => {
                 log(error);

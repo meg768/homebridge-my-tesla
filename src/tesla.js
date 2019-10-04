@@ -64,6 +64,24 @@ module.exports = class Tesla extends Events  {
         });
     }
 
+    update() {
+        var vin = this.config.vin;
+
+        this.log(`Updating ${vin}...`);
+
+        this.api.wakeUp(vin).then(() => {
+            return this.api.getVehicleData(vin);         
+        })
+        .then((response) => {
+            services.forEach((service) => {
+                service.emit('update', response);
+            });
+        })
+        .catch((error) => {
+            this.log(error);
+        });
+    }
+
     refresh(callback) {
 
         this.refreshQueue.push(callback);
