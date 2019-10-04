@@ -10,7 +10,7 @@ module.exports = class extends Service.TemperatureSensor {
         this.getCharacteristic(Characteristic.CurrentTemperature).on('get', (callback) => {
 
             tesla.refresh((response) => {
-                if (response.climate_state && response.climate_state.inside_temp != undefined)
+                if (response && response.climate_state && response.climate_state.inside_temp != undefined)
                     callback(null, response.climate_state.inside_temp);
                 else
                     callback(null);

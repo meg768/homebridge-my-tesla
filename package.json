@@ -11,8 +11,8 @@
     "git-reset": "git reset --hard HEAD",
     "git-pull": "git pull",
     "git-commit": "git add -A && git commit -m '-' && git push",
-		"publish-to-npm": "npm publish",
-		"goto-npm": "open https://npmjs.com/meg768/homebridge-my-tesla.git",
+    "publish-to-npm": "npm publish",
+    "goto-npm": "open https://npmjs.com/meg768/homebridge-my-tesla.git",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -36,6 +36,7 @@
   "homepage": "https://github.com/meg768/homebridge-my-tesla#readme",
   "dependencies": {
     "dotenv": "^7.0.0",
+    "node-schedule": "^1.3.2",
     "pushover-notifications": "^1.2.0",
     "yow": "^1.0.104"
   }
