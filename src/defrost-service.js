@@ -43,7 +43,7 @@ module.exports = class extends Service.Switch {
         };
 
         var isFreezing = (response) => {
-            return (response && response.climate_state && response.climate_state.inside_temp <= 10);
+            return (response && response.climate_state && response.climate_state.inside_temp <= 20);
         };
 
         var isAirConditionerOn = () => {
