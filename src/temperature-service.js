@@ -8,7 +8,7 @@ module.exports = class extends Service.TemperatureSensor {
         super(name, subtype);
 
         this.on('update', (response) => {                
-            this.getCharacteristic(Characteristic.On).updateValue(this.getTemperature(response));
+            this.getCharacteristic(Characteristic.CurrentTemperature).updateValue(this.getTemperature(response));
         });
 
         this.getCharacteristic(Characteristic.CurrentTemperature).on('get', (callback) => {
