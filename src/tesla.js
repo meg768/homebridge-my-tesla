@@ -105,7 +105,7 @@ module.exports = class Tesla extends Events  {
                 this.log(error);
 
                 this.refreshQueue.forEach((callback) => {
-                    callback(null);
+                    callback(new VehicleData(null));
                 });
             })
             .then(() => {

@@ -175,9 +175,9 @@ module.exports = class API {
                         this.log('Still not awake. State is now %s', response.state);
                     }
 
-                    if (now.getTime() - timestamp.getTime() < 60000) {
+                    if (now.getTime() - timestamp.getTime() < 60000 * 2) {
 
-                        pause(1000).then(() => {
+                        pause(5000).then(() => {
                             this.log('wakeUp() failed, trying to wake up again...');
                             return this.wakeUp(vin, timestamp);
                         })
