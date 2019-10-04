@@ -41,7 +41,7 @@ module.exports = class extends Service.Switch {
                 if (!response.isCharging()) {
                     return Promise.resolve();
                 }
-                else if (response.getInsideTemperature() <= 20) {
+                else if (response.getInsideTemperature() < 4) {
                     log(`Starting air conditioner since temperature is ${temperature}.`);
                     return tesla.api.autoConditioningStart(vin);
                 }
