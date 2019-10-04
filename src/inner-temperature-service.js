@@ -8,7 +8,7 @@ module.exports = class extends TemperatureService {
     }; 
 
     getTemperature(response) {
-        response.getInsideTemperature();
+        return response.getInsideTemperature();
     }    
 }
 

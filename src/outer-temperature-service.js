@@ -8,7 +8,7 @@ module.exports = class extends TemperatureService {
     }; 
 
     getTemperature(response) {
-        response.getOutsideTemperature();
+        return response.getOutsideTemperature();
     }    
 }
 
