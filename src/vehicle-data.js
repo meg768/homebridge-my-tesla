@@ -1,6 +1,6 @@
 
 
-export default class VehicleData {
+module.exports = class VehicleData {
 
     constructor(response) {
         this.response = response;
