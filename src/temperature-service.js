@@ -14,7 +14,7 @@ module.exports = class extends Service.TemperatureSensor {
         this.getCharacteristic(Characteristic.CurrentTemperature).on('get', (callback) => {
 
             tesla.refresh((response) => {
-                callback(null, getInsideTemperature(response));
+                callback(null, response.getInsideTemperature());
             });
 
         });
