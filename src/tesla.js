@@ -67,7 +67,7 @@ module.exports = class Tesla extends Events  {
         if (this.refreshQueue.length == 1) {
             var vin = this.config.vin;
 
-            this.log('Getting car state...');
+            this.log(`Getting car state for ${vin}...`);
 
             this.api.wakeUp(vin).then(() => {
                 return this.api.getVehicleData(vin);         
