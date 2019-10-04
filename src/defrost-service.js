@@ -76,7 +76,7 @@ module.exports = class extends Service.Switch {
             })
             .then(() => {
                 tesla.services.forEach((service) => {
-                    service.emit('refresh');
+                    service.emit('update', response);
                 });
             })
             .catch((error) => {
