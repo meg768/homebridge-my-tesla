@@ -11,6 +11,7 @@ var DoorLockService = require('./door-lock-service.js');
 var TemperatureSensor = require('./temperature-service.js');
 var AccessoryInformation = require('./accessory-information-service.js');
 var ChargingService = require('./charging-service.js');
+var DefrostService = require('./defrost-service.js');
 
 module.exports = class Tesla extends Events  {
 
@@ -39,6 +40,7 @@ module.exports = class Tesla extends Events  {
         this.enableTemperature();
         this.enableCharging();
 
+        this.services.push(new DefrostService(this, "Frostfri"));
 
         this.on('ready', () => {
             this.log('Ready!');
