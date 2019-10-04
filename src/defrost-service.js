@@ -33,6 +33,7 @@ module.exports = class extends Service.Switch {
             })
             .then((response) => {
                 if (response && response.climate_state && response.climate_state.inside_temp < 4) {
+                    is_climate_on
                     log('Starting air conditioner.');
                     return tesla.api.autoConditioningStart(vin);
                 }

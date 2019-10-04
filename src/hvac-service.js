@@ -7,6 +7,10 @@ module.exports = class extends Service.Fan {
     constructor(tesla, name) {
         super(name, "hvac");
 
+        this.on('update', (response) => {                
+            this.getCharacteristic(Characteristic.On).updateValue(response && response.climate_state && response.climate_state.is_climate_on);
+        });
+
         this.on('refresh', () => {                
             tesla.refresh((response) => {
                 this.getCharacteristic(Characteristic.On).updateValue(response && response.climate_state && response.climate_state.is_climate_on);

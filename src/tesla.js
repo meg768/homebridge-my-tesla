@@ -45,8 +45,12 @@ module.exports = class Tesla extends Events  {
         this.on('ready', () => {
             this.log('Ready!');
 
-            this.refresh(() => {
+            this.refresh((response) => {
                 this.log('Initial refresh completed.');
+
+                this.services.forEach((service) => {
+                    service.emit('update', response);
+                });
             });
         });
 
