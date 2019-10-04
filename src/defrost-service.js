@@ -18,6 +18,33 @@ module.exports = class extends Service.Switch {
             callback(null, defrostActive = value);    
         });
 
+        var isCharging = (response) => {
+            var charging = false;
+    
+            if (response && response.charge_state) {
+                switch (response.charge_state.charging_state) {
+                    case 'Disconnected': {
+                        charging = false;
+                        break;
+                    }
+                    case 'Stopped': {
+                        charging = false;
+                        break;
+                    }
+                    default: {
+                        charging = true;
+                        break;
+                    }
+                }
+            }
+
+            return charging;
+        };
+
+        var isFreezing = (response) => {
+            return (response && response.climate_state && response.climate_state.inside_temp < 4);
+        };
+
         var loop = () => {
             var vin = tesla.config.vin;
 
@@ -32,15 +59,15 @@ module.exports = class extends Service.Switch {
                 return tesla.api.getVehicleData(vin);         
             })
             .then((response) => {
-                if (response && response.climate_state && response.climate_state.inside_temp < 4) {
-                    is_climate_on
+                if (!isCharging(response)) {
+                    return Promise.resolve();
+                }
+                if (isFreezing(response)) {
                     log('Starting air conditioner.');
                     return tesla.api.autoConditioningStart(vin);
                 }
-                else {
-                    log('Stopping air conditioner.');
-                    return tesla.api.autoConditioningStop(vin);    
-                }
+                log('Stopping air conditioner.');
+                return tesla.api.autoConditioningStop(vin);    
             })
             .then(() => {
                 tesla.services.forEach((service) => {
