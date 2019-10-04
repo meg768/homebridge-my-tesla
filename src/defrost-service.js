@@ -9,6 +9,7 @@ module.exports = class extends Service.Switch {
 
         var defrostActive = false;
         var log = tesla.log;
+        var interval = 60000;
 
         this.getCharacteristic(Characteristic.On).on('get', (callback) => {
             callback(null, defrostActive);    
@@ -45,12 +46,16 @@ module.exports = class extends Service.Switch {
             return (response && response.climate_state && response.climate_state.inside_temp < 4);
         };
 
+        var isAirConditionerOn = () => {
+            return (response && response.climate_state && response.climate_state.is_climate_on);            
+        };
+
         var loop = () => {
             var vin = tesla.config.vin;
 
             if (!defrostActive) {
                 log(`Defrost not active...`);
-                return setTimeout(loop.bind(this), 60000);
+                return setTimeout(loop.bind(this), interval);
             }
 
             log(`Checking temperature for vehicle ${vin}...`);
@@ -78,7 +83,7 @@ module.exports = class extends Service.Switch {
                 log(error);
             })
             .then(() => {
-                setTimeout(loop.bind(this), 60000);
+                setTimeout(loop.bind(this), interval);
             })
         }
 
