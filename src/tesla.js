@@ -66,7 +66,7 @@ module.exports = class Tesla extends Events  {
             return this.api.getVehicleData(vin);         
         })
         .then((response) => {
-            services.forEach((service) => {
+            this.services.forEach((service) => {
                 service.emit('update', response);
             });
         })
