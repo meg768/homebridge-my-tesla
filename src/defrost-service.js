@@ -10,7 +10,8 @@ module.exports = class extends Service.Switch {
 
         var defrostActive = false;
         var log = tesla.log;
-        var interval = 60000;
+        var interval = 5 * 60000;
+        var minTemperature = 4;
 
         this.getCharacteristic(Characteristic.On).on('get', (callback) => {
             callback(null, defrostActive);    
@@ -41,7 +42,7 @@ module.exports = class extends Service.Switch {
                 if (!response.isCharging()) {
                     return Promise.resolve();
                 }
-                else if (response.getInsideTemperature() < 4) {
+                else if (response.getInsideTemperature() < minTemperature) {
                     log(`Starting air conditioner since temperature is ${temperature}.`);
                     return tesla.api.autoConditioningStart(vin);
                 }
