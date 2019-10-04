@@ -34,14 +34,17 @@ module.exports = class extends Service.Switch {
             .then((response) => {
                 if (response && response.climate_state && response.climate_state.inside_temp < 4) {
                     log('Starting air conditioner.');
-                    return Promise.resolve();
                     return tesla.api.autoConditioningStart(vin);
                 }
                 else {
                     log('Stopping air conditioner.');
-                    return Promise.resolve();
                     return tesla.api.autoConditioningStop(vin);    
                 }
+            })
+            .then(() => {
+                tesla.services.forEach((service) => {
+                    service.emit('refresh');
+                });
             })
             .catch((error) => {
                 log(error);
