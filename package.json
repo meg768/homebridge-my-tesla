@@ -1,6 +1,6 @@
 {
   "name": "homebridge-my-tesla",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Homebridge plugin for Teslas",
   "main": "index.js",
   "scripts": {
