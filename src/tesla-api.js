@@ -38,7 +38,6 @@ module.exports = class API {
             this.log('Seding request', method, path);
             this.api.request(method, path, options).then((response) => {
 //                this.debug(JSON.stringify(response, null, 4));
-                this.log('Request completed.');
                 resolve(response.body.response);
             })
             .catch((error) => {
