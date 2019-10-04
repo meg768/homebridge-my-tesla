@@ -8,7 +8,8 @@ var Characteristic  = require('./homebridge.js').Characteristic;
 var BatteryLevelService = require('./battery-level-service.js')
 var AirConditionerService = require('./hvac-service.js');
 var DoorLockService = require('./door-lock-service.js');
-var TemperatureSensor = require('./temperature-service.js');
+var InnerTemperatureSensor = require('./inner-temperature-service.js');
+var OuterTemperatureSensor = require('./outer-temperature-service.js');
 var AccessoryInformation = require('./accessory-information-service.js');
 var ChargingService = require('./charging-service.js');
 var DefrostService = require('./defrost-service.js');
@@ -35,12 +36,15 @@ module.exports = class Tesla extends Events  {
 
 
         this.enableAccessoryInfo();
-        this.enableDoorsLock();
-        this.enableBatteryLevel();
-        this.enableAirConditioner();
-        this.enableTemperature();
-        this.enableCharging();
 
+        this.services.push(new AccessoryInformation(this, {}));
+
+        this.services.push(new BatteryLevelService(this, "Batteri"));
+        this.services.push(new AirConditionerService(this, "Fläkten"));
+        this.services.push(new DoorLockService(this, "Dörrar"));
+        this.services.push(new ChargingService(this, "Laddning"));
+        this.services.push(new InnerTemperatureSensor(this, "Inne"));
+        this.services.push(new OuterTemperatureSensor(this, "Ute"));
         this.services.push(new DefrostService(this, "Frostfri"));
 
         this.on('ready', () => {
@@ -112,31 +116,7 @@ module.exports = class Tesla extends Events  {
         }
     }
 
-    enableCharging() {
-        return this.services.push(new ChargingService(this, "Laddning"));
-    }
-
-
-    enableTemperature() {
-        this.services.push(new TemperatureSensor(this, "Temperatur"));
-    }
-
-    enableBatteryLevel() {
-        this.services.push(new BatteryLevelService(this, this.name));
-    }
-
-    enableAirConditioner() {
-        this.services.push(new AirConditionerService(this, "Fläkten"));
-    }
-
-    enableDoorsLock() {
-        this.services.push(new DoorLockService(this, "Dörrar"));
-    }
-
-    enableAccessoryInfo() {
-        this.services.push(new AccessoryInformation(this, {}));
-    }
-
+    
     getServices() {
         return this.services;
     }

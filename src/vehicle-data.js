@@ -21,6 +21,13 @@ module.exports = class VehicleData {
         return defaultValue;
     }
 
+    getOutsideTemperature(defaultValue = 20) {
+        if (this.response && this.response.climate_state && this.response.climate_state.outside_temp)
+            return this.response.climate_state.outside_temp;
+            
+        return defaultValue;
+    }
+
     getBatteryLevel(defaultValue = 0) {
         if (this.response.charge_state && this.response.charge_state.battery_level != undefined)
             return this.response.charge_state.battery_level;
