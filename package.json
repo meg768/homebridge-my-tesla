@@ -36,7 +36,6 @@
   "homepage": "https://github.com/meg768/homebridge-my-tesla#readme",
   "dependencies": {
     "dotenv": "^7.0.0",
-    "node-schedule": "^1.3.2",
     "pushover-notifications": "^1.2.0",
     "yow": "^1.0.104"
   }
