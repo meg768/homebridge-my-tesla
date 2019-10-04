@@ -7,14 +7,18 @@ module.exports = class extends Service.Switch {
     constructor(tesla, name) {
         super(name, "charging");
 
+        this.on('update', (response) => {                
+            this.getCharacteristic(Characteristic.On).updateValue(response.isCharging());
+        });
+
         this.getCharacteristic(Characteristic.On).on('get', (callback) => {
-            tesla.refresh((response) => {
+            tesla.getVehicleData((response) => {
                 callback(null, response.isCharging());
             });
         });
     
         this.getCharacteristic(Characteristic.On).on('set', (value, callback) => {
-    
+
             var vin = tesla.config.vin;
     
             if (value) {

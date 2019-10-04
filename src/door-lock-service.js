@@ -13,7 +13,7 @@ module.exports = class extends Service.LockMechanism {
 
         var getLockedState = (callback) => {
 
-            tesla.refresh((response) => {
+            tesla.getVehicleData((response) => {
                 callback(null, response.isVehicleLocked());
             });
     

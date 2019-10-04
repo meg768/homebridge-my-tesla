@@ -13,7 +13,7 @@ module.exports = class extends Service.Fan {
 
         var getHVACState = (callback) => {
 
-            tesla.refresh((response) => {
+            tesla.getVehicleData((response) => {
                 callback(null, response.isAirConditionerOn());
             });
 

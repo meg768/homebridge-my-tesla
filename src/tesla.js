@@ -78,7 +78,7 @@ module.exports = class Tesla extends Events  {
         });
     }
 
-    refresh(callback) {
+    getVehicleData(callback) {
 
         this.refreshQueue.push(callback);
 
