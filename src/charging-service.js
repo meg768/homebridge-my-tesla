@@ -7,32 +7,10 @@ module.exports = class extends Service.Switch {
     constructor(tesla, name) {
         super(name, "charging");
 
-
         this.getCharacteristic(Characteristic.On).on('get', (callback) => {
-
             tesla.refresh((response) => {
-                var charging = false;
-    
-                if (response.charge_state) {
-                    switch (response.charge_state.charging_state) {
-                        case 'Disconnected': {
-                            charging = false;
-                            break;
-                        }
-                        case 'Stopped': {
-                            charging = false;
-                            break;
-                        }
-                        default: {
-                            charging = true;
-                            break;
-                        }
-                    }
-                }
-    
-                callback(null, charging);
+                callback(null, response.isCharging());
             });
-    
         });
     
         this.getCharacteristic(Characteristic.On).on('set', (value, callback) => {

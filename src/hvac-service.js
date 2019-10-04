@@ -8,19 +8,13 @@ module.exports = class extends Service.Fan {
         super(name, "hvac");
 
         this.on('update', (response) => {                
-            this.getCharacteristic(Characteristic.On).updateValue(response && response.climate_state && response.climate_state.is_climate_on);
-        });
-
-        this.on('refresh', () => {                
-            tesla.refresh((response) => {
-                this.getCharacteristic(Characteristic.On).updateValue(response && response.climate_state && response.climate_state.is_climate_on);
-            });
+            this.getCharacteristic(Characteristic.On).updateValue(response.isAirConditionerOn());
         });
 
         var getHVACState = (callback) => {
 
             tesla.refresh((response) => {
-                callback(null, response && response.climate_state && response.climate_state.is_climate_on);
+                callback(null, response.isAirConditionerOn());
             });
 
         };

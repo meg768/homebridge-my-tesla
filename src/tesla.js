@@ -12,6 +12,7 @@ var TemperatureSensor = require('./temperature-service.js');
 var AccessoryInformation = require('./accessory-information-service.js');
 var ChargingService = require('./charging-service.js');
 var DefrostService = require('./defrost-service.js');
+var VehicleData = require('./vehicle-data.js');
 
 module.exports = class Tesla extends Events  {
 
@@ -66,8 +67,10 @@ module.exports = class Tesla extends Events  {
             return this.api.getVehicleData(vin);         
         })
         .then((response) => {
+            var data = new VehicleData(response);
+
             this.services.forEach((service) => {
-                service.emit('update', response);
+                service.emit('update', data);
             });
         })
         .catch((error) => {
@@ -88,10 +91,10 @@ module.exports = class Tesla extends Events  {
                 return this.api.getVehicleData(vin);         
             })
             .then((response) => {
-                this.data = response;
+                var data = new VehicleData(response);
 
                 this.refreshQueue.forEach((callback) => {
-                    callback(response);
+                    callback(data);
                 });
 
                 this.log('Getting car state completed. Updated %d callbacks.', this.refreshQueue.length);

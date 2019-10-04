@@ -1,6 +1,7 @@
 
 var Service  = require('./homebridge.js').Service;
 var Characteristic  = require('./homebridge.js').Characteristic;
+var VehicleData = require('./vehicle-data.js');
 
 module.exports = class extends Service.Switch {
 
@@ -19,36 +20,6 @@ module.exports = class extends Service.Switch {
             callback(null, defrostActive = value);    
         });
 
-        var isCharging = (response) => {
-            var charging = false;
-    
-            if (response && response.charge_state) {
-                switch (response.charge_state.charging_state) {
-                    case 'Disconnected': {
-                        charging = false;
-                        break;
-                    }
-                    case 'Stopped': {
-                        charging = false;
-                        break;
-                    }
-                    default: {
-                        charging = true;
-                        break;
-                    }
-                }
-            }
-
-            return charging;
-        };
-
-        var isFreezing = (response) => {
-            return (response && response.climate_state && response.climate_state.inside_temp <= 20);
-        };
-
-        var isAirConditionerOn = () => {
-            return (response && response.climate_state && response.climate_state.is_climate_on);            
-        };
 
         var loop = () => {
             var vin = tesla.config.vin;
@@ -64,10 +35,12 @@ module.exports = class extends Service.Switch {
                 return tesla.api.getVehicleData(vin);         
             })
             .then((response) => {
-                if (!isCharging(response)) {
+                response = new VehicleData(response);
+
+                if (!response.isCharging()) {
                     return Promise.resolve();
                 }
-                else if (isFreezing(response)) {
+                else if (response.getInsideTemperature() <= 20) {
                     log('Starting air conditioner.');
                     return tesla.api.autoConditioningStart(vin);
                 }
