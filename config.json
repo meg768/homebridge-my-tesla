@@ -16,9 +16,12 @@
         "teslas": [
             {         
                 "name": "Model 3",       
-                "vin": "5YJ3E7EB9KF240654"
+                "vin": "5YJ3E7EB9KF240654",
 
-
+                "doors": {
+                    "name": "Dörrar",
+                    "enabled": true
+                }
 
             }
         ]
