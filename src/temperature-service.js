@@ -4,8 +4,8 @@ var Characteristic  = require('./homebridge.js').Characteristic;
 
 module.exports = class extends Service.TemperatureSensor {
 
-    constructor(tesla, options) {
-        super(options);
+    constructor(tesla, name) {
+        super(name, "inner-temperature");
 
         this.getCharacteristic(Characteristic.CurrentTemperature).on('get', (callback) => {
 

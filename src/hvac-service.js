@@ -4,8 +4,8 @@ var Characteristic = require('./homebridge.js').Characteristic;
 
 module.exports = class extends Service.Fan {
 
-    constructor(tesla, options) {
-        super(options);
+    constructor(tesla, name) {
+        super(name, "hvac");
 
         var getHVACState = (callback) => {
 

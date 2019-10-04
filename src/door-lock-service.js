@@ -4,8 +4,8 @@ var Characteristic  = require('./homebridge.js').Characteristic;
 
 module.exports = class extends Service.LockMechanism {
 
-    constructor(tesla, options) {
-        super(options);
+    constructor(tesla, name) {
+        super(name, "door-lock");
 
         var getLockedState = (callback) => {
 

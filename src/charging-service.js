@@ -4,8 +4,8 @@ var Characteristic  = require('./homebridge.js').Characteristic;
 
 module.exports = class extends Service.Switch {
 
-    constructor(tesla, options) {
-        super(options);
+    constructor(tesla, name) {
+        super(name, "charging");
 
 
         this.getCharacteristic(Characteristic.On).on('get', (callback) => {
