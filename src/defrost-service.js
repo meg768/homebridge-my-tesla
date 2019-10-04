@@ -1,7 +1,6 @@
 
 var Service  = require('./homebridge.js').Service;
 var Characteristic  = require('./homebridge.js').Characteristic;
-var Schedule = require('node-schedule');
 
 module.exports = class extends Service.Switch {
 
