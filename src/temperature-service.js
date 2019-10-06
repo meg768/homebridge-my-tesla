@@ -14,11 +14,15 @@ module.exports = class extends Service.TemperatureSensor {
 
         this.getCharacteristic(Characteristic.CurrentTemperature).on('get', (callback) => {
 
-            tesla.api.getVehicleData((response) => {
-                response = new VehicleData(response);
-                callback(null, this.getTemperature(response));
-            });
-
+            if (tesla.token) {
+                tesla.api.getVehicleData((response) => {
+                    response = new VehicleData(response);
+                    callback(null, this.getTemperature(response));
+                });
+    
+            }
+            else
+                callback(null);
         });
 
         
