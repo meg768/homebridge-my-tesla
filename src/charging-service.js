@@ -1,6 +1,7 @@
 
 var Service  = require('./homebridge.js').Service;
 var Characteristic  = require('./homebridge.js').Characteristic;
+var VehicleData = require('./vehicle-data.js');
 
 module.exports = class extends Service.Switch {
 
@@ -12,24 +13,23 @@ module.exports = class extends Service.Switch {
         });
 
         this.getCharacteristic(Characteristic.On).on('get', (callback) => {
-            tesla.getVehicleData((response) => {
+            tesla.api.getVehicleData((response) => {
+                response = new VehicleData(response);
                 callback(null, response.isCharging());
             });
         });
     
         this.getCharacteristic(Characteristic.On).on('set', (value, callback) => {
 
-            var vin = tesla.config.vin;
-    
             if (value) {
                 Promise.resolve().then(() => {
-                    return tesla.api.wakeUp(vin);
+                    return tesla.api.wakeUp();
                 })
                 .then(() => {
-                    return tesla.api.chargePortDoorOpen(vin);
+                    return tesla.api.chargePortDoorOpen();
                 })
                 .then(() => {
-                    return tesla.api.chargeStart(vin);
+                    return tesla.api.chargeStart();
                 })
                 .then(() => {
                     callback(null, value);
@@ -40,13 +40,13 @@ module.exports = class extends Service.Switch {
             }
             else {
                 Promise.resolve().then(() => {
-                    return tesla.api.wakeUp(vin);
+                    return tesla.api.wakeUp();
                 })
                 .then(() => {
-                    return tesla.api.chargeStop(vin);    
+                    return tesla.api.chargeStop();    
                 })
                 .then(() => {
-                    return tesla.api.chargePortDoorOpen(vin);
+                    return tesla.api.chargePortDoorOpen();
                 })
                 .then(() => {
                     callback(null, value);

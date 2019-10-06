@@ -23,17 +23,16 @@ module.exports = class extends Service.Switch {
 
 
         var loop = () => {
-            var vin = tesla.config.vin;
 
             if (!defrostActive) {
                 log(`Defrost not active...`);
                 return setTimeout(loop.bind(this), interval);
             }
 
-            log(`Checking temperature for vehicle ${vin}...`);
+            log(`Checking temperature for vehicle...`);
 
-            tesla.api.wakeUp(vin).then(() => {
-                return tesla.api.getVehicleData(vin);         
+            tesla.api.wakeUp().then(() => {
+                return tesla.api.getVehicleData();         
             })
             .then((response) => {
                 response = new VehicleData(response);

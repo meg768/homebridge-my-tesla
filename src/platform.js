@@ -1,7 +1,6 @@
 "use strict";
 
 var Tesla = require('./tesla.js');
-var API = require('./tesla-api.js');
 
 
 module.exports = class Platform {
@@ -27,18 +26,6 @@ module.exports = class Platform {
         this.config.teslas.forEach((config, index) => {
             this.teslas.push(new Tesla(this, config));
         });
-
-        this.api.login().then(() => {
-            this.teslas.forEach((tesla, index) => {
-                tesla.emit('ready');
-            });
-        
-        })
-        .catch((error) => {
-            this.log(error);
-            process.exit(1);
-
-        })
         
 
     }

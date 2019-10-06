@@ -5,27 +5,33 @@ var Path = require('path');
 require('dotenv').config();
 
 
-var API = require('./src/tesla-api.js');
-var api = new API({log:console.log});
 var vin = "5YJ3E7EB9KF240654";
+var API = require('./src/tesla-api.js');
+var api = new API({vin:vin, debug:console.log, log:console.log});
 
-api.login().then((authToken) => {
-    console.log('Token', authToken);
+api.login().then((token) => {
+    console.log('Token', token);
 })
 .then(() => {
-    return api.getVehicle(vin);
+    console.log('Waking up');
+    return api.wakeUp();
 })
-.then((vehicle) => {
-    return api.wakeUp(vehicle.vin);
-})
-.then((vehicle) => {
-    return api.getVehicleData(vehicle.vin);
+.then(() => {
+    console.log('Gettings vehicle data');
+    return api.getVehicleData();
 })
 .then((data) => {
     console.log(data);
 })
 .then(() => {
-    return api.setAutoConditioningState(vin, true);
+    console.log('Gettings vehicle data');
+    return api.getVehicleData();
+})
+.then((data) => {
+    console.log(data);
+})
+.then(() => {
+    return api.autoConditioningStart();
 })
 .then(() => {
     console.log('Done.');

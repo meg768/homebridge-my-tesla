@@ -1,6 +1,7 @@
 
 var Service = require('./homebridge.js').Service;
 var Characteristic = require('./homebridge.js').Characteristic;
+var VehicleData = require('./vehicle-data.js');
 
 module.exports = class extends Service.Fan {
 
@@ -13,7 +14,8 @@ module.exports = class extends Service.Fan {
 
         var getHVACState = (callback) => {
 
-            tesla.getVehicleData((response) => {
+            tesla.api.getVehicleData((response) => {
+                response = new VehicleData(response);
                 callback(null, response.isAirConditionerOn());
             });
 
@@ -23,13 +25,13 @@ module.exports = class extends Service.Fan {
             tesla.log('Turning HVAC state to %s.', value ? 'on' : 'off');
 
             Promise.resolve().then(() => {
-                return tesla.api.wakeUp(tesla.config.vin);
+                return tesla.api.wakeUp();
             })
             .then(() => {
                 if (value)
-                    return tesla.api.autoConditioningStart(tesla.config.vin);
+                    return tesla.api.autoConditioningStart();
                 else
-                    return tesla.api.autoConditioningStop(tesla.config.vin);
+                    return tesla.api.autoConditioningStop();
             })
             .then(() => {
                 callback(null, value);

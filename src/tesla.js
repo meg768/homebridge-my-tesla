@@ -4,6 +4,7 @@ var Events   = require('events');
 var Service  = require('./homebridge.js').Service;
 var Characteristic  = require('./homebridge.js').Characteristic;
 
+var API = require('./tesla-api.js');
 
 var BatteryLevelService = require('./battery-level-service.js')
 var AirConditionerService = require('./hvac-service.js');
@@ -28,12 +29,12 @@ module.exports = class Tesla extends Events  {
         this.name = config.name;
         this.uuid = platform.generateUUID(config.vin);
         this.services = [];
-        this.api = platform.api;
+        this.api = new API(log:this.log, debug:this.debug, vin:config.vin);
         this.platform = platform;
         this.refreshQueue = [];
+        this.vehicleData = null;
 
         this.data = {};
-
 
         this.services.push(new AccessoryInformation());
 
@@ -45,11 +46,9 @@ module.exports = class Tesla extends Events  {
         //this.services.push(new OuterTemperatureSensor(this, "Ute"));
         this.services.push(new DefrostService(this, "Frostfri"));
 
-        this.on('ready', () => {
+        this.api.login().then((response) => {
             this.update();
-            this.log('Ready!');
         });
-
     }
 
 
@@ -65,8 +64,8 @@ module.exports = class Tesla extends Events  {
 
         this.log(`Updating ${vin}...`);
 
-        this.api.wakeUp(vin).then(() => {
-            return this.api.getVehicleData(vin);         
+        this.api.wakeUp().then(() => {
+            return this.api.getVehicleData();         
         })
         .then((response) => {
             var data = new VehicleData(response);
@@ -79,7 +78,7 @@ module.exports = class Tesla extends Events  {
             this.log(error);
         });
     }
-
+/*
     getVehicleData(callback) {
 
         this.refreshQueue.push(callback);
@@ -113,7 +112,7 @@ module.exports = class Tesla extends Events  {
             })
         }
     }
-
+*/
     
     getServices() {
         return this.services;

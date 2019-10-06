@@ -9,19 +9,25 @@ module.exports = class API {
 
     constructor(options) {
 
-        var defaultOptions = {
-            headers: {
-                "x-tesla-user-agent": "TeslaApp/3.4.4-350/fad4a582e/android/8.1.0",
-                "user-agent": "Mozilla/5.0 (Linux; Android 8.1.0; Pixel XL Build/OPM4.171019.021.D1; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/68.0.3440.91 Mobile Safari/537.36",
-                "content-type": "application/json; charset=utf-8"
-            }
-        };
+        var {vin, username = process.env.TESLA_USER, password = process.env.TESLA_PASSWORD, clientID = process.env.TESLA_CLIENT_ID, clientSecret = process.env.TESLA_CLIENT_SECRET} = options;
 
-        this.accessToken = undefined;
-        this.vehicleID = {};
+        if (!clientID || !clientSecret || !username || !password)
+            throw new Error('Need Tesla credentials.');
+
+        if (!vin) 
+            throw new Error('Need the VIN number of your Tesla.');
+
+        this.api          = null;
+        this.vehicle      = null;
+        this.vin          = vin;
+        this.username     = username;
+        this.password     = password;
+        this.clientID     = clientID;
+        this.clientSecret = clientSecret;
+        this.cache        = {};
+
         this.log = () => {};
         this.debug = () => {};
-        this.api = new Request('https://owner-api.teslamotors.com', defaultOptions);
 
         if (options && isFunction(options.log))
             this.log = options.log;
@@ -29,13 +35,13 @@ module.exports = class API {
         if (options && isFunction(options.debug))
             this.debug = options.debug;
 
-
     }
 
     request(method, path, options) {
         return new Promise((resolve, reject) => {
 
             this.log('Seding request', method, path);
+
             this.api.request(method, path, options).then((response) => {
                 this.debug(JSON.stringify(response, null, 4));
                 resolve(response.body.response);
@@ -48,65 +54,86 @@ module.exports = class API {
 
     }
 
-    getVehicleID(vin) {
-        var vehicleID = this.vehicleID[vin];
+    cachedRequest(method, path, timeout) {
 
-        if (vehicleID == undefined)
-            throw new Error('Cannot find a vehicle with VIN ' + vin);
+        return new Promise((resolve, reject) => {
+            var key = `${method}:${path}`;
+            var cache = this.cache[key];
+            var now = new Date();
 
-        return vehicleID;
-    }
+            if (timeout && cache && (now.valueOf() - cache.timestamp.valueOf() < timeout)) {
+                this.log(`Returning cached information for ${path}...`);
+                resolve(cache.data);
+            }
+            else {
+                this.request(method, path).then((result) => {
+                    this.cache[key] = {timestamp:new Date(), data:result};
+                    resolve(result)
+                })
+                .catch((error) => {
+                    reject(error);
+                })
+            }
+        });
+    }  
+
 
     login() {
+        if (this.vehicle)
+            return Promise.resolve(this.vehicle);
 
-        if (this.accessToken)
-            return Promise.resolve(this.accessToken);
+        var defaultOptions = {
+            headers: {
+                "x-tesla-user-agent": "TeslaApp/3.4.4-350/fad4a582e/android/8.1.0",
+                "user-agent": "Mozilla/5.0 (Linux; Android 8.1.0; Pixel XL Build/OPM4.171019.021.D1; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/68.0.3440.91 Mobile Safari/537.36",
+                "content-type": "application/json; charset=utf-8"
+            }
+        };
+
+        var api = new Request('https://owner-api.teslamotors.com', defaultOptions);
+        var token = null;
 
         return new Promise((resolve, reject) => {
  
-            var username = process.env.TESLA_USER;
-            var password = process.env.TESLA_PASSWORD;
-            var teslaClientID = process.env.TESLA_CLIENT_ID;
-            var teslaClientSecret = process.env.TESLA_CLIENT_SECRET;
-
-            var accessToken = undefined;
-
             Promise.resolve().then(() => {
-
-                if (!teslaClientID || !teslaClientSecret)
-                    throw new Error('Need Tesla credentials.');
 
                 var options = {
                     body: {
                         "grant_type": "password",
-                        "client_id": teslaClientID,
-                        "client_secret": teslaClientSecret,
-                        "email": username,
-                        "password": password      
+                        "client_id": this.clientID,
+                        "client_secret": this.clientSecret,
+                        "email": this.username,
+                        "password": this.password      
                     }
                 }
 
-                return this.api.request('POST', '/oauth/token', options);
+                return api.request('POST', '/oauth/token', options);
 
             })
             .then((response) => {
-                accessToken = response.body.access_token;
+                token = response.body;
 
-                this.api.defaultOptions.headers['authorization'] = 'Bearer ' + accessToken;
+                api.defaultOptions.headers['authorization'] = 'Bearer ' + response.body.access_token;
 
-                return this.api.request('GET', '/api/1/vehicles');
+                return api.request('GET', '/api/1/vehicles');
             })
             .then((response) => {
 
                 var vehicles = response.body.response;
 
-                vehicles.forEach((vehicle) => {
-                    this.vehicleID[vehicle.vin] = vehicle.id_s;
+                var vehicle = vehicles.find((item) => {
+                    return item.vin == this.vin;
                 });
 
-                this.accessToken = accessToken;
+                if (vehicle == undefined) {
+                    throw new Error(`Vehicle ${this.vin} could not be found.`);
+                }
 
-                resolve(this.accessToken = accessToken);
+                this.api = api;
+                this.token = token;
+                this.vehicle = vehicle;
+
+                resolve(this.vehicle);
 
             })
 
@@ -117,53 +144,29 @@ module.exports = class API {
         });
     }
 
-    getVehicle(vin, wakeup) {
-        if (wakeup)
-            return this.wakeUp(vin);
-
-        return new Promise((resolve, reject) => {
-
-            var vehicleID = this.getVehicleID(vin);
-
-            this.api.request('GET', `/api/1/vehicles/${vehicleID}`).then((response) => {
-                resolve(response.body.response);
-            })
-
-            .catch((error) => {
-                reject(error);
-            });   
-        });
+    getVehicle() {
+        return this.vehicle;
     }
 
+    getVehicleID() {
+        return this.vehicle.id_s;
+    }
 
-    wakeUp(vin, timestamp) {
-
-        var vehicleID = this.getVehicleID(vin);
-
-        var pause = (ms) => {
-            return new Promise((resolve, reject) => {
-                setTimeout(resolve, ms);
-            });            
-        };
-
-        var tryToWakeUp = () => {
-
-            return new Promise((resolve, reject) => {
-    
-                this.api.request('POST', `/api/1/vehicles/${vehicleID}/wake_up`).then((response) => {
-                    resolve(response.body.response);
-                })
-                .catch((error) => {
-                    reject(error);
-                });   
-            });
-        }        
+    wakeUp(timestamp) {
 
         return new Promise((resolve, reject) => {
 
-            tryToWakeUp(vin).then((response) => {
+            var vehicleID = this.getVehicleID();
+            var wakeupInterval = 5 * 60000;
+
+            var pause = (ms) => {
+                return new Promise((resolve, reject) => {
+                    setTimeout(resolve, ms);
+                });            
+            };
+    
+            this.cachedRequest('POST', `/api/1/vehicles/${vehicleID}/wake_up`, wakeupInterval).then((response) => {
                 if (response.state != 'online') {
-
                     var now = new Date();
 
                     if (timestamp == undefined) {
@@ -179,7 +182,7 @@ module.exports = class API {
 
                         pause(5000).then(() => {
                             this.log('wakeUp() failed, trying to wake up again...');
-                            return this.wakeUp(vin, timestamp);
+                            return this.wakeUp(timestamp);
                         })
                         .then((response) => {
                             resolve(response);
@@ -200,59 +203,50 @@ module.exports = class API {
                 reject(error);
             })
         });
-
-
     }
 
-    getVehicleData(vin) {
-        var vehicleID = this.getVehicleID(vin);
-        var path = `/api/1/vehicles/${vehicleID}/vehicle_data`;
-
-        return this.request('GET', path);
-
+    getVehicleData() {
+        return this.cachedRequest('GET', `/api/1/vehicles/${this.getVehicleID()}/vehicle_data`, 1000);
     }
 
-    postCommand(vin, command) {
-        var vehicleID = this.getVehicleID(vin);
-        var path = `/api/1/vehicles/${vehicleID}/command/${command}`;
-        return this.request('POST', path);
-
+    postCommand(command) {
+        return this.request('POST', `/api/1/vehicles/${this.getVehicleID()}/command/${command}`);
     }
 
-    doorLock(vin) {
-        return this.postCommand(vin, 'door_lock');
+    doorLock() {
+        return this.postCommand('door_lock');
     }
 
-    doorUnlock(vin) {
-        return this.postCommand(vin, 'door_unlock');
+    doorUnlock() {
+        return this.postCommand('door_unlock');
     }
 
-    autoConditioningStart(vin) {
-        return this.postCommand(vin, 'auto_conditioning_start');
+    autoConditioningStart() {
+        return this.postCommand('auto_conditioning_start');
     }
 
-    autoConditioningStop(vin) {
-        return this.postCommand(vin, 'auto_conditioning_stop');
+    autoConditioningStop() {
+        return this.postCommand('auto_conditioning_stop');
     }
 
-    chargePortDoorOpen(vin) {
-        return this.postCommand(vin, 'charge_port_door_open');
+    chargePortDoorOpen() {
+        return this.postCommand('charge_port_door_open');
     }
 
-    chargePortDoorClose(vin) {
-        return this.postCommand(vin, 'charge_port_door_close');
+    chargePortDoorClose() {
+        return this.postCommand('charge_port_door_close');
     }
 
-    chargeStart(vin) {
-        return this.postCommand(vin, 'charge_start');
+    chargeStart() {
+        return this.postCommand('charge_start');
     }
 
-    chargeStop(vin) {
-        return this.postCommand(vin, 'charge_stop');
+    chargeStop() {
+        return this.postCommand('charge_stop');
     }
 
-    remoteStartDrive(vin) {
-        return this.postCommand(vin, `remote_start_drive?password=${process.env.TESLA_PASSWORD}`);
+    remoteStartDrive() {
+        return this.postCommand(`remote_start_drive?password=${this.password}`);
     }
 
 

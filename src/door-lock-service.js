@@ -1,6 +1,7 @@
 
 var Service  = require('./homebridge.js').Service;
 var Characteristic  = require('./homebridge.js').Characteristic;
+var VehicleData = require('./vehicle-data.js');
 
 module.exports = class extends Service.LockMechanism {
 
@@ -13,7 +14,8 @@ module.exports = class extends Service.LockMechanism {
 
         var getLockedState = (callback) => {
 
-            tesla.getVehicleData((response) => {
+            tesla.api.getVehicleData((response) => {
+                response = new VehicleData(response);
                 callback(null, response.isVehicleLocked());
             });
     
@@ -23,17 +25,17 @@ module.exports = class extends Service.LockMechanism {
             tesla.log('Turning door lock to state %s.', value ? 'on' : 'off');
     
             Promise.resolve().then(() => {
-                return tesla.api.wakeUp(tesla.config.vin);
+                return tesla.api.wakeUp();
             })
             .then(() => {
                 if (value)
-                    return tesla.api.doorLock(tesla.config.vin);
+                    return tesla.api.doorLock();
                 else
-                    return tesla.api.doorUnlock(tesla.config.vin);
+                    return tesla.api.doorUnlock();
             })
             .then(() => {
                 if (!value)
-                    return tesla.api.remoteStartDrive(tesla.config.vin);
+                    return tesla.api.remoteStartDrive();
                 else
                     return Promise.resolve();
             })
