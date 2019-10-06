@@ -13,11 +13,15 @@ module.exports = class extends Service.Fan {
         });
 
         var getHVACState = (callback) => {
-
-            tesla.api.getVehicleData((response) => {
-                response = new VehicleData(response);
-                callback(null, response.isAirConditionerOn());
-            });
+            if (tesla.token) {
+                tesla.api.getVehicleData((response) => {
+                    response = new VehicleData(response);
+                    callback(null, response.isAirConditionerOn());
+                });
+    
+            }
+            else
+                callback(null);
 
         };
 
