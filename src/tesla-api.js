@@ -261,7 +261,7 @@ module.exports = class API {
     }
 
     getVehicleData() {
-        return this.cachedRequest('GET', `/api/1/vehicles/${this.getVehicleID()}/vehicle_data`, 1000);
+        return this.request('GET', `/api/1/vehicles/${this.getVehicleID()}/vehicle_data`);
     }
 
     postCommand(command) {
