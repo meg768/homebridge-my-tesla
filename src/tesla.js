@@ -45,6 +45,7 @@ module.exports = class Tesla extends Events  {
         this.services.push(new DoorLockService(this, "Dörren"));
 
         this.api.login().then((response) => {
+            this.log('Login completed.');
             this.update();
         });
     }
