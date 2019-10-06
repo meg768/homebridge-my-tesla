@@ -13,6 +13,7 @@ module.exports = class extends Service.LockMechanism {
         });
 
         var getLockedState = (callback) => {
+            tesla.api.log('Getting door locked state');
 
             tesla.api.getVehicleData((response) => {
                 tesla.api.log('Got door locked state');
