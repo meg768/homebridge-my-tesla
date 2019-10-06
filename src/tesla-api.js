@@ -25,7 +25,7 @@ module.exports = class API {
         this.clientID     = clientID;
         this.clientSecret = clientSecret;
         this.cache        = {};
-        this.requests     = {};
+        this.promises     = {};
         this.token        = undefined;
 
         this.log = () => {};
@@ -40,37 +40,36 @@ module.exports = class API {
     }
 
     request(method, path) {
-        var that = this;
 
         return new Promise(function(resolve, reject) {
 
             var key = `${method}:${path}`;
 
-            if (that.requests[key] == undefined) {
-                that.requests[key] = [this];
+            if (this.promises[key] == undefined) {
+                this.promises[key] = [{resolve:resolve, reject:reject}];
 
-                that.log('Seding request', method, path);
+                this.log('Seding request', method, path);
 
-                that.api.request(method, path).then((response) => {
+                this.api.request(method, path).then((response) => {
 
-                    that.log('Request completed', method, path);
-                    that.debug(JSON.stringify(response, null, 4));
+                    this.log('Request completed', method, path);
+                    this.debug(JSON.stringify(response, null, 4));
 
-                    that.requests[key].forEach((request) => {
-                        request.resolve(response.body.response);
+                    this.promises[key].forEach((promise) => {
+                        promise.resolve(response.body.response);
                     });
                 })
                 .catch((error) => {
-                    that.requests[key].forEach((request) => {
-                        request.reject(error);
+                    this.promises[key].forEach((promise) => {
+                        promise.reject(error);
                     });
                 })
                 .then(() => {
-                    delete that.requests[key];
+                    delete this.promises[key];
                 });   
             }
             else {
-                that.requests[key].push(this);                
+                this.promises[key].push({resolve:resolve, reject:reject});             
             }
 
 
