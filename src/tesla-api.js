@@ -54,7 +54,7 @@ module.exports = class API {
 
                     this.log('Request completed', method, path);
                     this.debug(JSON.stringify(response, null, 4));
-
+                    this.log('Updating', this.promises[key].length, 'items');
                     this.promises[key].forEach((promise) => {
                         promise.resolve(response.body.response);
                     });
@@ -65,6 +65,7 @@ module.exports = class API {
                     });
                 })
                 .then(() => {
+                    
                     delete this.promises[key];
                 });   
             }
