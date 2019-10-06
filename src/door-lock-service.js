@@ -13,19 +13,25 @@ module.exports = class extends Service.LockMechanism {
         });
 
         var getLockedState = (callback) => {
-            tesla.api.log('Getting door locked state');
+            if (tesla.token) {
+                tesla.api.log('Getting door locked state');
 
-            tesla.api.getVehicleData((response) => {
-                tesla.api.log('Got door locked state');
-                response = new VehicleData(response);
-                tesla.api.log('Got door locked state', response);
-                callback(null, response.isVehicleLocked());
-            })
-            .catch((error) => {
-                tesla.api.log('Could not get vehicle data');
+                tesla.api.getVehicleData((response) => {
+                    tesla.api.log('Got door locked state');
+                    response = new VehicleData(response);
+                    tesla.api.log('Got door locked state', response);
+                    callback(null, response.isVehicleLocked());
+                })
+                .catch((error) => {
+                    tesla.api.log('Could not get vehicle data');
+                    callback(null);
+                    
+                });
+    
+            }
+            else {
                 callback(null);
-                
-            });
+            }
     
         };
     

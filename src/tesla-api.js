@@ -26,6 +26,7 @@ module.exports = class API {
         this.clientSecret = clientSecret;
         this.cache        = {};
         this.queue        = [];
+        this.token        = undefined;
 
         this.log = () => {};
         this.debug = () => {};
