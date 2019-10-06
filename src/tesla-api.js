@@ -69,6 +69,9 @@ module.exports = class API {
                     delete that.requests[key];
                 });   
             }
+            else {
+                that.requests[key].push(this);                
+            }
 
 
         });
