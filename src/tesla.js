@@ -1,9 +1,6 @@
 "use strict";
 
-var Events   = require('events');
-var Service  = require('./homebridge.js').Service;
-var Characteristic  = require('./homebridge.js').Characteristic;
-
+var Events = require('events');
 var API = require('./tesla-api.js');
 
 var BatteryLevelService = require('./battery-level-service.js')
