@@ -25,7 +25,7 @@ module.exports = class API {
         this.clientID     = clientID;
         this.clientSecret = clientSecret;
         this.cache        = {};
-        this.request      = {};
+        this.requests     = {};
         this.token        = undefined;
 
         this.log = () => {};
