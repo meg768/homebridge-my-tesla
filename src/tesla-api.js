@@ -69,6 +69,7 @@ module.exports = class API {
             }
             else {
                 this.request(method, path).then((result) => {
+                    this.log('Got result', method, path);
                     this.cache[key] = {timestamp:new Date(), data:result};
                     resolve(result);
                 })
