@@ -70,7 +70,7 @@ module.exports = class API {
             else {
                 this.request(method, path).then((result) => {
                     this.cache[key] = {timestamp:new Date(), data:result};
-                    resolve(result)
+                    resolve(result);
                 })
                 .catch((error) => {
                     reject(error);
