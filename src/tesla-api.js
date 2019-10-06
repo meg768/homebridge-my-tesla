@@ -25,7 +25,7 @@ module.exports = class API {
         this.clientID     = clientID;
         this.clientSecret = clientSecret;
         this.cache        = {};
-        this.promises     = {};
+        this.requestQueue = {};
         this.token        = undefined;
 
         this.log = () => {};
@@ -45,8 +45,12 @@ module.exports = class API {
 
             var key = `${method}:${path}`;
 
-            if (this.promises[key] == undefined) {
-                this.promises[key] = [{resolve:resolve, reject:reject}];
+            if (this.requestQueue[key] == undefined)
+                this.requestQueue[key] = [];
+
+            this.requestQueue[key].push({resolve:resolve, reject:reject});
+
+            if (this.requestQueue[key].length == 1) {
 
                 this.log('Seding request', method, path);
 
@@ -54,25 +58,21 @@ module.exports = class API {
 
                     this.log('Request completed', method, path);
                     this.debug(JSON.stringify(response, null, 4));
-                    this.log('Updating', this.promises[key].length, 'items');
-                    this.promises[key].forEach((promise) => {
-                        promise.resolve(response.body.response);
+                    this.log('Updating', this.requestQueue[key].length, 'items');
+
+                    this.requestQueue[key].forEach((request) => {
+                        request.resolve(response.body.response);
                     });
                 })
                 .catch((error) => {
-                    this.promises[key].forEach((promise) => {
-                        promise.reject(error);
+                    this.requestQueue[key].forEach((request) => {
+                        request.reject(error);
                     });
                 })
                 .then(() => {
-                    
-                    delete this.promises[key];
+                    this.requestQueue[key] = [];
                 });   
             }
-            else {
-                this.promises[key].push({resolve:resolve, reject:reject});             
-            }
-
 
         });
 
