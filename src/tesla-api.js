@@ -25,7 +25,7 @@ module.exports = class API {
         this.clientID     = clientID;
         this.clientSecret = clientSecret;
         this.cache        = {};
-        this.queue        = [];
+        this.request      = {};
         this.token        = undefined;
 
         this.log = () => {};
@@ -39,19 +39,37 @@ module.exports = class API {
 
     }
 
-    request(method, path, options) {
-        return new Promise((resolve, reject) => {
+    request(method, path) {
+        var that = this;
 
-            this.log('Seding request', method, path);
+        return new Promise(function(resolve, reject) {
 
-            this.api.request(method, path, options).then((response) => {
-                this.log('Request completed', method, path);
-                this.debug(JSON.stringify(response, null, 4));
-                resolve(response.body.response);
-            })
-            .catch((error) => {
-                reject(error);
-            });   
+            var key = `${method}:${path}`;
+
+            if (that.requests[key] == undefined) {
+                that.requests[key] = [this];
+
+                that.log('Seding request', method, path);
+
+                that.api.request(method, path).then((response) => {
+
+                    that.log('Request completed', method, path);
+                    that.debug(JSON.stringify(response, null, 4));
+
+                    that.requests[key].forEach((request) => {
+                        request.resolve(response.body.response);
+                    });
+                })
+                .catch((error) => {
+                    that.requests[key].forEach((request) => {
+                        request.reject(error);
+                    });
+                })
+                .then(() => {
+                    delete that.requests[key];
+                });   
+            }
+
 
         });
 
