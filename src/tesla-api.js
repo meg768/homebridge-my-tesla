@@ -25,6 +25,7 @@ module.exports = class API {
         this.clientID     = clientID;
         this.clientSecret = clientSecret;
         this.cache        = {};
+        this.queue        = [];
 
         this.log = () => {};
         this.debug = () => {};
@@ -77,6 +78,37 @@ module.exports = class API {
         });
     }  
 
+/*
+    enqueue(promise) {
+
+        this.queue.push(promise);
+
+        if (this.queue.length == 1) {
+            this.api.wakeUp(vin).then(() => {
+                return this.api.getVehicleData(vin);         
+            })
+            .then((response) => {
+                var data = new VehicleData(response);
+
+                this.refreshQueue.forEach((callback) => {
+                    callback(data);
+                });
+
+                this.log('Getting car state completed. Updated %d callbacks.', this.refreshQueue.length);
+            })
+            .catch((error) => {
+                this.log(error);
+
+                this.refreshQueue.forEach((callback) => {
+                    callback(new VehicleData(null));
+                });
+            })
+            .then(() => {
+                this.refreshQueue = [];
+            })
+        }
+    }
+*/
 
     login() {
         if (this.vehicle)
