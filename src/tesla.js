@@ -70,7 +70,7 @@ module.exports = class Tesla extends Events  {
             var data = new VehicleData(response);
 
             this.services.forEach((service) => {
-                service.emit('update', data);
+                service.emit('refresh', data);
             });
         })
         .catch((error) => {

@@ -8,7 +8,7 @@ module.exports = class BatteryLevel extends Service.BatteryService {
     constructor(tesla, name) {
         super(name);
 
-        this.on('update', (response) => {                
+        this.on('refresh', (response) => {                
             this.getCharacteristic(Characteristic.BatteryLevel).updateValue(response.getBatteryLevel());
         });
 

@@ -8,7 +8,7 @@ module.exports = class extends Service.TemperatureSensor {
     constructor(tesla, name, subtype) {
         super(name, subtype);
 
-        this.on('update', (response) => {                
+        this.on('refresh', (response) => {                
             this.getCharacteristic(Characteristic.CurrentTemperature).updateValue(this.getTemperature(response));
         });
 

@@ -8,7 +8,7 @@ module.exports = class extends Service.Switch {
     constructor(tesla, name) {
         super(name, "charging");
 
-        this.on('update', (response) => {                
+        this.on('refresh', (response) => {                
             this.getCharacteristic(Characteristic.On).updateValue(response.isCharging());
         });
 

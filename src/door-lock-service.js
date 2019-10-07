@@ -9,7 +9,7 @@ module.exports = class extends Service.LockMechanism {
         super(name, "door-lock");
 
         
-        this.on('update', (response) => {       
+        this.on('refresh', (response) => {       
             tesla.log('Updating door status', response.isVehicleLocked());
             this.getCharacteristic(Characteristic.On).updateValue(response.isVehicleLocked());
         });
