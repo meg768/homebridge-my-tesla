@@ -43,7 +43,6 @@ module.exports = class API {
 
         return new Promise((resolve, reject) => {
             
-
             this.log('Seding request', method, path);
 
             this.api.request(method, path).then((response) => {
@@ -58,18 +57,7 @@ module.exports = class API {
             });
        
         });
-
     }
-/*
-    foo(method, path) {
-        var key = `${method}:${path}`;
-        if (this.requestQueue[key] == undefined)
-        this.requestQueue[key] = [];
-
-    this.requestQueue[key].push({resolve:resolve, reject:reject});
-
-    }
-*/
 
     cachedRequest(method, path, timeout) {
 
