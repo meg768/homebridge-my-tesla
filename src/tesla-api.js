@@ -41,41 +41,38 @@ module.exports = class API {
 
     request(method, path) {
 
-        return new Promise((resolve, reject) => {
+        var key = `${method}:${path}`;
+        var promise = new Promise((resolve, reject) => {
 
-            var key = `${method}:${path}`;
+            this.log('Seding request', method, path);
 
-            if (this.requestQueue[key] == undefined)
+            this.api.request(method, path).then((response) => {
+
+                this.log('Request completed', method, path);
+                this.debug(JSON.stringify(response, null, 4));
+                this.log('Updating', this.requestQueue[key].length, 'items');
+
+                this.requestQueue[key].forEach((request) => {
+                    request.resolve(response.body.response);
+                });
+            })
+            .catch((error) => {
+                this.requestQueue[key].forEach((request) => {
+                    request.reject(error);
+                });
+            })
+            .then(() => {
                 this.requestQueue[key] = [];
-
-            this.requestQueue[key].push({resolve:resolve, reject:reject});
-
-            if (this.requestQueue[key].length == 1) {
-
-                this.log('Seding request', method, path);
-
-                this.api.request(method, path).then((response) => {
-
-                    this.log('Request completed', method, path);
-                    this.debug(JSON.stringify(response, null, 4));
-                    this.log('Updating', this.requestQueue[key].length, 'items');
-
-                    this.requestQueue[key].forEach((request) => {
-                        request.resolve(response.body.response);
-                    });
-                })
-                .catch((error) => {
-                    this.requestQueue[key].forEach((request) => {
-                        request.reject(error);
-                    });
-                })
-                .then(() => {
-                    this.requestQueue[key] = [];
-                });   
-            }
-
+            });   
+       
         });
 
+        if (this.requestQueue[key] == undefined)
+            this.requestQueue[key] = [];
+
+        this.requestQueue[key].push(promise);
+
+        return promise;
     }
 
     cachedRequest(method, path, timeout) {
