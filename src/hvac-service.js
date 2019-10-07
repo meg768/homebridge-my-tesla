@@ -8,7 +8,8 @@ module.exports = class extends Service.Fan {
     constructor(tesla, name) {
         super(name, "hvac");
 
-        this.on('refresh', (response) => {                
+        this.on('refresh', (response) => {              
+            tesla.log('Updating HVAC status to', (response.isAirConditionerOn());  
             this.getCharacteristic(Characteristic.On).updateValue(response.isAirConditionerOn());
         });
 
