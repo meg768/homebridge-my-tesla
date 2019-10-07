@@ -17,7 +17,9 @@ module.exports = class extends Accessory {
             service.getCharacteristic(Characteristic.On).updateValue(response.isAirConditionerOn());
         });
 
-        var getHVACState = (callback) => {
+
+
+        service.getCharacteristic(Characteristic.On).on('get', (callback) => {
             if (api.token) {
                 this.log(`Getting vehicle data...`);
 
@@ -34,9 +36,10 @@ module.exports = class extends Accessory {
 
             }
 
-        };
 
-        var setHVACState = (value, callback) => {
+        });
+
+        service.getCharacteristic(Characteristic.On).on('set', (value, callback) => {
             this.log('Turning HVAC state to %s.', value ? 'on' : 'off');
 
             Promise.resolve().then(() => {
@@ -60,10 +63,8 @@ module.exports = class extends Accessory {
                 this.log(error);
                 callback(null);
             })
-        };
 
-        service.getCharacteristic(Characteristic.On).on('get', getHVACState.bind(this));
-        service.getCharacteristic(Characteristic.On).on('set', setHVACState.bind(this));
+        });
 
         this.addService(service);
 
