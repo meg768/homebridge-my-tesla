@@ -51,7 +51,6 @@ module.exports = class API {
     
                     this.log('Request completed', method, path);
                     this.debug(JSON.stringify(response, null, 4));
-                    this.log('Updating', this.requestQueue[key].length, 'items');
     
                     resolve(response.body.response);
                 })
