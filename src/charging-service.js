@@ -13,10 +13,15 @@ module.exports = class extends Service.Switch {
         });
 
         this.getCharacteristic(Characteristic.On).on('get', (callback) => {
-            tesla.api.getVehicleData((response) => {
-                response = new VehicleData(response);
-                callback(null, response.isCharging());
-            });
+            if (tesla.token) {
+                tesla.api.getVehicleData((response) => {
+                    response = new VehicleData(response);
+                    callback(null, response.isCharging());
+                });
+    
+            }
+            else
+                callback(null);
         });
     
         this.getCharacteristic(Characteristic.On).on('set', (value, callback) => {

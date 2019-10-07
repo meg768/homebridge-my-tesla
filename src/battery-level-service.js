@@ -15,10 +15,15 @@ module.exports = class BatteryLevel extends Service.BatteryService {
 
         this.getCharacteristic(Characteristic.BatteryLevel).on('get', (callback) => {
     
-            tesla.api.getVehicleData((response) => {
-                response = new VehicleData(response);
-                callback(null, response.getBatteryLevel());                
-            });
+            if (tesla.token) {
+                tesla.api.getVehicleData((response) => {
+                    response = new VehicleData(response);
+                    callback(null, response.getBatteryLevel());                
+                });
+    
+            }
+            else
+                callback(null);            
     
         });
     
