@@ -28,8 +28,11 @@ module.exports = class extends Accessory {
                 });
     
             }
-            else
+            else {
+                this.log(`Could not get vehicle data. Not logged in...`);
                 callback(null);
+
+            }
 
         };
 
