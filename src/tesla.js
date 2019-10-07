@@ -31,12 +31,10 @@ module.exports = class Tesla extends Events  {
         this.refreshQueue = [];
         this.vehicleData = null;
 
-        this.data = {};
-
 
         //this.services.push(new BatteryLevelService(this, "Batteri"));
         this.features.push(new AirConditionerService(this, "Fläkten"));
-        this.services.push(new ChargingService(this, "Laddning"));
+//        this.features.push(new ChargingService(this, "LaddningXX"));
         //this.services.push(new InnerTemperatureSensor(this, "Temperatur"));
         //this.services.push(new OuterTemperatureSensor(this, "Ute"));
         //this.services.push(new DefrostService(this, "Frostfri"));
@@ -47,7 +45,7 @@ module.exports = class Tesla extends Events  {
 
 
         this.api.login().then((response) => {
-            this.log('Login completed!');
+            this.log('Login completed!!');
             this.update();
         });
     }

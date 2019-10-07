@@ -2,7 +2,7 @@
 var Service  = require('./homebridge.js').Service;
 var Characteristic  = require('./homebridge.js').Characteristic;
 var VehicleData = require('./vehicle-data.js');
-var Accesssory = require('./accessory.js');
+var Accessory = require('./accessory.js');
 
 module.exports = class extends Accessory {
 
@@ -18,7 +18,10 @@ module.exports = class extends Accessory {
 
         service.getCharacteristic(Characteristic.On).on('get', (callback) => {
             if (this.api.token) {
+                this.log(`Getting vehicle data for charging...`);
+
                 this.api.getVehicleData((response) => {
+                    this.log(`Got vehicle data for charging...`);
                     response = new VehicleData(response);
                     callback(null, response.isCharging());
                 });
