@@ -31,7 +31,7 @@ api.login().then((token) => {
     console.log(data);
 })
 .then(() => {
-    return api.autoConditioningStart();
+    return api.autoConditioningStop();
 })
 .then(() => {
     console.log('Done.');
