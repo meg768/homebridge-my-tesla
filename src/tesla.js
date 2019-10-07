@@ -116,12 +116,17 @@ module.exports = class Tesla extends Events  {
 */
     
     getServices() {
+
+        this.log('getServices() called.');
+
         var services = [];
 
         this.features.forEach((feature) => {
             services = services.concat(feature.getServices());
         });
 
+        this.log(`${services.length} services found.`);
+        
         return services;
     }
 

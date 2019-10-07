@@ -64,6 +64,7 @@ module.exports = class Platform {
 
 
     accessories(callback) {
+        this.log('accessories() called.');
         callback(this.teslas);
 
     }
