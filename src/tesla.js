@@ -47,7 +47,7 @@ module.exports = class Tesla extends Events  {
 
 
         this.api.login().then((response) => {
-            this.log('Login completed.');
+            this.log('Login completed!');
             this.update();
         });
     }
