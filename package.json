@@ -10,6 +10,7 @@
     "goto-github": "open https://github.com/meg768/homebridge-my-tesla.git",
     "git-reset": "git reset --hard HEAD",
     "git-pull": "git pull",
+    "install-config": "node ./scripts/install-config.js",
     "git-commit": "git add -A && git commit -m '-' && git push",
     "publish-to-npm": "npm publish",
     "goto-npm": "open https://npmjs.com/meg768/homebridge-my-tesla.git",
