@@ -25,7 +25,7 @@ module.exports = class Tesla extends Events  {
         this.config = config;
         this.name = config.name;
         this.uuid = platform.generateUUID(config.vin);
-        this.services = [];
+        this.features = [];
         this.api = new API({log:this.log, debug:this.debug, vin:config.vin});
         this.platform = platform;
         this.refreshQueue = [];
@@ -35,7 +35,7 @@ module.exports = class Tesla extends Events  {
 
 
         //this.services.push(new BatteryLevelService(this, "Batteri"));
-        this.services.push(new AirConditionerService(this, "Fläkten"));
+        this.features.push(new AirConditionerService(this, "Fläkten"));
         //this.services.push(new ChargingService(this, "Laddning"));
         //this.services.push(new InnerTemperatureSensor(this, "Temperatur"));
         //this.services.push(new OuterTemperatureSensor(this, "Ute"));
@@ -116,7 +116,14 @@ module.exports = class Tesla extends Events  {
 */
     
     getServices() {
-        return this.services;
+        var services = [];
+
+        this.features.forEach(() => {
+            services = services.concat(features.services);
+
+        });
+        
+        return services;
     }
 
 }
