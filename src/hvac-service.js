@@ -19,7 +19,10 @@ module.exports = class extends Accessory {
 
         var getHVACState = (callback) => {
             if (api.token) {
+                this.log(`Getting vehicle data...`);
+
                 api.getVehicleData((response) => {
+                    this.log(`Got vehicle data...`);
                     response = new VehicleData(response);
                     callback(null, response.isAirConditionerOn());
                 });
@@ -34,15 +37,19 @@ module.exports = class extends Accessory {
             this.log('Turning HVAC state to %s.', value ? 'on' : 'off');
 
             Promise.resolve().then(() => {
+                this.log('Waking up...');
                 return api.wakeUp();
             })
             .then(() => {
+                this.log(`Setting HVAC state to ${value}...`);
+
                 if (value)
                     return api.autoConditioningStart();
                 else
                     return api.autoConditioningStop();
             })
             .then(() => {
+                this.log(`Finished setting HVAC state to ${value}...`);
                 callback(null, value);
             })
 
