@@ -71,8 +71,8 @@ module.exports = class Tesla extends Events  {
         .then((response) => {
             var data = new VehicleData(response);
 
-            this.services.forEach((service) => {
-                service.emit('refresh', data);
+            this.features.forEach((feature) => {
+                feature.emit('refresh', data);
             });
         })
         .catch((error) => {
@@ -119,10 +119,9 @@ module.exports = class Tesla extends Events  {
         var services = [];
 
         this.features.forEach(() => {
-            services = services.concat(features.services);
-
+            services = services.concat(features.getServices());
         });
-        
+
         return services;
     }
 
