@@ -6,24 +6,23 @@ var Accessory = require('./accessory.js');
 
 module.exports = class extends Accessory {
 
-    constructor(tesla, name, subname) {
+    constructor(tesla, name) {
         super(tesla);
 
-        var service = new Service.Fan(name, subname);
-        var api = tesla.api;
+        var service = new Service.Fan(name, "hvac");
+        this.addService(service);
 
-        this.on('refresh', (response) => {              
+        this.on('update', (response) => {              
             this.log('Updating HVAC status to', response.isAirConditionerOn());  
             service.getCharacteristic(Characteristic.On).updateValue(response.isAirConditionerOn());
         });
 
 
-
         service.getCharacteristic(Characteristic.On).on('get', (callback) => {
-            if (api.token) {
+            if (this.api.token) {
                 this.log(`Getting vehicle data...`);
 
-                api.getVehicleData((response) => {
+                this.api.getVehicleData((response) => {
                     this.log(`Got vehicle data...`);
                     response = new VehicleData(response);
                     callback(null, response.isAirConditionerOn());
@@ -44,15 +43,15 @@ module.exports = class extends Accessory {
 
             Promise.resolve().then(() => {
                 this.log('Waking up...');
-                return api.wakeUp();
+                return this.api.wakeUp();
             })
             .then(() => {
                 this.log(`Setting HVAC state to ${value}...`);
 
                 if (value)
-                    return api.autoConditioningStart();
+                    return this.api.autoConditioningStart();
                 else
-                    return api.autoConditioningStop();
+                    return this.api.autoConditioningStop();
             })
             .then(() => {
                 this.log(`Finished setting HVAC state to ${value}...`);
@@ -66,10 +65,14 @@ module.exports = class extends Accessory {
 
         });
 
-        this.addService(service);
 
+        
     };
+
+
 }
+
+
 /*
 module.exports = class extends Service.Fan {
 
