@@ -44,20 +44,18 @@ module.exports = class API {
         return new Promise((resolve, reject) => {
             
 
-            if (this.requestQueue[key].length == 1) {
-                this.log('Seding request', method, path);
+            this.log('Seding request', method, path);
 
-                this.api.request(method, path).then((response) => {
-    
-                    this.log('Request completed', method, path);
-                    this.debug(JSON.stringify(response, null, 4));
-    
-                    resolve(response.body.response);
-                })
-                .catch((error) => {
-                    reject(error);
-                })
-            }
+            this.api.request(method, path).then((response) => {
+
+                this.log('Request completed', method, path);
+                this.debug(JSON.stringify(response, null, 4));
+
+                resolve(response.body.response);
+            })
+            .catch((error) => {
+                reject(error);
+            });
        
         });
 
