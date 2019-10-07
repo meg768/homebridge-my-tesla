@@ -41,13 +41,8 @@ module.exports = class API {
 
     request(method, path) {
 
-        var key = `${method}:${path}`;
-        var promise = new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
             
-            if (this.requestQueue[key] == undefined)
-                this.requestQueue[key] = [];
-
-            this.requestQueue[key].push({resolve:resolve, reject:reject});
 
             if (this.requestQueue[key].length == 1) {
                 this.log('Seding request', method, path);
@@ -58,26 +53,26 @@ module.exports = class API {
                     this.debug(JSON.stringify(response, null, 4));
                     this.log('Updating', this.requestQueue[key].length, 'items');
     
-                    this.requestQueue[key].forEach((request) => {
-                        request.resolve(response.body.response);
-                    });
+                    resolve(response.body.response);
                 })
                 .catch((error) => {
-                    this.requestQueue[key].forEach((request) => {
-                        request.reject(error);
-                    });
+                    reject(error);
                 })
-                .then(() => {
-                    this.requestQueue[key] = [];
-                });   
-    
             }
        
         });
 
-
-        return promise;
     }
+/*
+    foo(method, path) {
+        var key = `${method}:${path}`;
+        if (this.requestQueue[key] == undefined)
+        this.requestQueue[key] = [];
+
+    this.requestQueue[key].push({resolve:resolve, reject:reject});
+
+    }
+*/
 
     cachedRequest(method, path, timeout) {
 
