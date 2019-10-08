@@ -113,14 +113,7 @@ module.exports = class API {
     
         };
 
-        return new Promise((resolve, reject) => {
-            this.wakeUp().then(() => {
-                return timeout == undefined ? queuedRequest() : cachedRequest();
-            })
-            .catch((error) => {
-                reject(error);
-            });
-        });
+        return timeout == undefined ? queuedRequest() : cachedRequest();
 
  
     }
