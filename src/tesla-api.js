@@ -40,60 +40,69 @@ module.exports = class API {
     }
 
 
-    request(method, path) {
-        return new Promise((resolve, reject) => {
-            var key = `${method} ${path}`;
 
-            if (this.requests[key] == undefined)
-                this.requests[key] = [];
+    request(method, path, timeout) {
 
-            this.requests[key].push({resolve:resolve, reject:reject});
+        var key = `${method} ${path}`;
+
+        var queuedRequest = () => {
+            return new Promise((resolve, reject) => {
     
-            if (this.requests[key].length == 1) {
-                this.log(`${key}...`);
-
-                this.api.request(method, path).then((response) => {
-                    var response = response.body.response;
-    
-                    this.log(`${key} completed.`);
-
-                    this.requests[key].forEach((request) => {
-                        request.resolve(response);
-                    });
-                })
-                .catch((error) => {
-                    this.requests[key].forEach((request) => {
-                        request.reject(error);
-                    });
-                })
-                .then(() => {
+                if (this.requests[key] == undefined)
                     this.requests[key] = [];
-                });
-            }
-        });
+    
+                this.requests[key].push({resolve:resolve, reject:reject});
+        
+                if (this.requests[key].length == 1) {
+                    this.log(`${key}...`);
+    
+                    this.api.request(method, path).then((response) => {
+                        var response = response.body.response;
+        
+                        this.log(`${key} completed.`);
+    
+                        this.requests[key].forEach((request) => {
+                            request.resolve(response);
+                        });
+                    })
+                    .catch((error) => {
+                        this.requests[key].forEach((request) => {
+                            request.reject(error);
+                        });
+                    })
+                    .then(() => {
+                        this.requests[key] = [];
+                    });
+                }
+            });
+        };
+
+        var cachedRequest = () => {
+            return new Promise((resolve, reject) => {
+                var now = new Date();
+    
+                var cache = this.cache[key];
+    
+                if (timeout && cache && cache.data != undefined && (now.valueOf() - cache.timestamp.valueOf() < timeout)) {
+                    resolve(cache.data);
+                }
+                else {
+                    queuedRequest(method, path).then((response) => {
+                        this.cache[key] = {timestamp:new Date(), data:response};
+                        resolve(response);
+                    })
+                    .catch((error) => {
+                        reject(error);
+                    });
+                }
+            });
+    
+        };
+
+        return timeout == undefined ? queuedRequest() : cachedRequest();
+
     }
 
-    cachedRequest(method, path, timeout) {
-        return new Promise((resolve, reject) => {
-            var key = `${method}:${path}`;
-            var now = new Date();
-
-            var cache = this.cache[key];
-
-            if (timeout && cache && cache.data != undefined && (now.valueOf() - cache.timestamp.valueOf() < timeout)) {
-                resolve(cache.data);
-            }
-            else {
-                this.request(method, path).then((response) => {
-                    this.cache[key] = {timestamp:new Date(), data:response};
-                    resolve(response);
-                })
-                .catch((error) => {
-                    reject(error);
-                });
-            }
-        });
-    }
 
 
     login() {
@@ -183,7 +192,7 @@ module.exports = class API {
                 });            
             };
     
-            this.cachedRequest('POST', `/api/1/vehicles/${vehicleID}/wake_up`, wakeupInterval).then((response) => {
+            this.request('POST', `/api/1/vehicles/${vehicleID}/wake_up`, wakeupInterval).then((response) => {
                 if (response.state != 'online') {
                     var now = new Date();
 
