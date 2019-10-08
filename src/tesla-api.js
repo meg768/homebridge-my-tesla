@@ -45,6 +45,24 @@ module.exports = class API {
 
         var key = `${method} ${path}`;
 
+        var rawRequest = () => {
+            this.log(`${key}...`);
+    
+            this.api.request(method, path).then((response) => {
+                this.log(`${key} completed...`);
+
+                reponse = response.body.response;
+
+                // Store in cache
+                this.cache[key] = {timestamp:new Date(), data:response};
+
+                reolve(response);
+            })
+            .catch((error) => {
+                reject(error);
+            })
+        };
+
         var queuedRequest = () => {
             return new Promise((resolve, reject) => {
     
@@ -54,13 +72,7 @@ module.exports = class API {
                 this.requests[key].push({resolve:resolve, reject:reject});
         
                 if (this.requests[key].length == 1) {
-                    this.log(`${key}...`);
-    
-                    this.api.request(method, path).then((response) => {
-                        var response = response.body.response;
-        
-                        this.log(`${key} completed.`);
-    
+                    rawRequest(method, path).then((response) => {
                         this.requests[key].forEach((request) => {
                             request.resolve(response);
                         });
@@ -79,8 +91,7 @@ module.exports = class API {
 
         var cachedRequest = () => {
             return new Promise((resolve, reject) => {
-                var now = new Date();
-    
+                var now = new Date();    
                 var cache = this.cache[key];
     
                 if (timeout && cache && cache.data != undefined && (now.valueOf() - cache.timestamp.valueOf() < timeout)) {
@@ -88,7 +99,6 @@ module.exports = class API {
                 }
                 else {
                     queuedRequest(method, path).then((response) => {
-                        this.cache[key] = {timestamp:new Date(), data:response};
                         resolve(response);
                     })
                     .catch((error) => {
