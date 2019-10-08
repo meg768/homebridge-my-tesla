@@ -46,21 +46,24 @@ module.exports = class API {
         var key = `${method} ${path}`;
 
         var rawRequest = () => {
-            this.log(`${key}...`);
+            return new Promise((resolve, reject) => {
+                this.log(`${key}...`);
     
-            this.api.request(method, path).then((response) => {
-                this.log(`${key} completed...`);
-
-                reponse = response.body.response;
-
-                // Store in cache
-                this.cache[key] = {timestamp:new Date(), data:response};
-
-                reolve(response);
-            })
-            .catch((error) => {
-                reject(error);
-            })
+                this.api.request(method, path).then((response) => {
+                    this.log(`${key} completed...`);
+    
+                    reponse = response.body.response;
+    
+                    // Store in cache
+                    this.cache[key] = {timestamp:new Date(), data:response};
+    
+                    resolve(response);
+                })
+                .catch((error) => {
+                    reject(error);
+                })
+    
+            });
         };
 
         var queuedRequest = () => {
