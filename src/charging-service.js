@@ -12,7 +12,7 @@ module.exports = class extends Accessory {
         var service = new Service.Switch(name, "charging");
         this.addService(service);
 
-        this.on('update', (response) => {                
+        this.on('refresh', (response) => {                
             service.getCharacteristic(Characteristic.On).updateValue(response.isCharging());
         });
 
@@ -20,7 +20,7 @@ module.exports = class extends Accessory {
             if (this.api.token) {
                 this.log(`Getting vehicle data for charging...`);
 
-                this.api.getVehicleData((response) => {
+                this.api.getVehicleData().then((response) => {
                     this.log(`Got vehicle data for charging...`);
                     response = new VehicleData(response);
                     callback(null, response.isCharging());

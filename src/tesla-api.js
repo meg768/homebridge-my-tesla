@@ -25,6 +25,8 @@ module.exports = class API {
         this.clientID     = clientID;
         this.clientSecret = clientSecret;
         this.token        = undefined;
+        this.requests     = {};
+        this.cache        = {};
 
         this.log = () => {};
         this.debug = () => {};
@@ -37,25 +39,61 @@ module.exports = class API {
 
     }
 
+
     request(method, path) {
-
         return new Promise((resolve, reject) => {
-            
-            this.log('Seding request', method, path);
+            var key = `${method} ${path}`;
 
-            this.api.request(method, path).then((response) => {
+            if (this.requests[key] == undefined)
+                this.requests[key] = [];
 
-                this.log('Request completed', method, path);
+            this.requests[key].push({resolve:resolve, reject:reject});
+    
+            if (this.requests[key].length == 1) {
+                this.log(`${key}...`);
 
-                resolve(response.body.response);
-            })
-            .catch((error) => {
-                reject(error);
-            });
-       
+                this.api.request(method, path).then((response) => {
+                    var response = response.body.response;
+    
+                    this.log(`${key} completed.`);
+
+                    this.requests[key].forEach((request) => {
+                        request.resolve(response);
+                    });
+                })
+                .catch((error) => {
+                    this.requests[key].forEach((request) => {
+                        request.reject(error);
+                    });
+                })
+                .then(() => {
+                    this.requests[key] = [];
+                });
+            }
         });
     }
 
+    cachedRequest(method, path, timeout) {
+        return new Promise((resolve, reject) => {
+            var key = `${method}:${path}`;
+            var now = new Date();
+
+            var cache = this.cache[key];
+
+            if (timeout && cache && cache.data != undefined && (now.valueOf() - cache.timestamp.valueOf() < timeout)) {
+                resolve(cache.data);
+            }
+            else {
+                this.request(method, path).then((response) => {
+                    this.cache[key] = {timestamp:new Date(), data:response};
+                    resolve(response);
+                })
+                .catch((error) => {
+                    reject(error);
+                });
+            }
+        });
+    }
 
 
     login() {
@@ -145,7 +183,7 @@ module.exports = class API {
                 });            
             };
     
-            this.request('POST', `/api/1/vehicles/${vehicleID}/wake_up`, wakeupInterval).then((response) => {
+            this.cachedRequest('POST', `/api/1/vehicles/${vehicleID}/wake_up`, wakeupInterval).then((response) => {
                 if (response.state != 'online') {
                     var now = new Date();
 
