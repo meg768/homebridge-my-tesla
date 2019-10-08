@@ -24,8 +24,6 @@ module.exports = class API {
         this.password     = password;
         this.clientID     = clientID;
         this.clientSecret = clientSecret;
-        this.cache        = {};
-        this.requestQueue = {};
         this.token        = undefined;
 
         this.log = () => {};
@@ -58,60 +56,7 @@ module.exports = class API {
         });
     }
 
-    cachedRequest(method, path, timeout) {
 
-        return new Promise((resolve, reject) => {
-            var key = `${method}:${path}`;
-            var cache = this.cache[key];
-            var now = new Date();
-
-            if (timeout && cache && (now.valueOf() - cache.timestamp.valueOf() < timeout)) {
-                this.log(`Returning cached information for ${path}...`);
-                resolve(cache.data);
-            }
-            else {
-                this.request(method, path).then((result) => {
-                    this.cache[key] = {timestamp:new Date(), data:result};
-                    resolve(result);
-                })
-                .catch((error) => {
-                    reject(error);
-                })
-            }
-        });
-    }  
-
-/*
-    enqueue(promise) {
-
-        this.queue.push(promise);
-
-        if (this.queue.length == 1) {
-            this.api.wakeUp(vin).then(() => {
-                return this.api.getVehicleData(vin);         
-            })
-            .then((response) => {
-                var data = new VehicleData(response);
-
-                this.refreshQueue.forEach((callback) => {
-                    callback(data);
-                });
-
-                this.log('Getting car state completed. Updated %d callbacks.', this.refreshQueue.length);
-            })
-            .catch((error) => {
-                this.log(error);
-
-                this.refreshQueue.forEach((callback) => {
-                    callback(new VehicleData(null));
-                });
-            })
-            .then(() => {
-                this.refreshQueue = [];
-            })
-        }
-    }
-*/
 
     login() {
         if (this.vehicle)
@@ -200,7 +145,7 @@ module.exports = class API {
                 });            
             };
     
-            this.cachedRequest('POST', `/api/1/vehicles/${vehicleID}/wake_up`, wakeupInterval).then((response) => {
+            this.request('POST', `/api/1/vehicles/${vehicleID}/wake_up`, wakeupInterval).then((response) => {
                 if (response.state != 'online') {
                     var now = new Date();
 

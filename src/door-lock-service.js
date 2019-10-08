@@ -2,30 +2,32 @@
 var Service  = require('./homebridge.js').Service;
 var Characteristic  = require('./homebridge.js').Characteristic;
 var VehicleData = require('./vehicle-data.js');
+var Accessory = require('./accessory.js');
 
-module.exports = class extends Service.LockMechanism {
+module.exports = class extends Accessory {
 
     constructor(tesla, name) {
-        super(name, "door-lock");
+        super(tesla);
+
+        var service = new Service.LockMechanism(name, 'door-lock');
+        this.addService(service);
 
         this.on('refresh', (response) => {       
             tesla.log('Updating door status', response.isVehicleLocked());
-            this.getCharacteristic(Characteristic.LockTargetState).updateValue(response.isVehicleLocked());
-            this.getCharacteristic(Characteristic.LockCurrentState).updateValue(response.isVehicleLocked());
+            service.getCharacteristic(Characteristic.LockTargetState).updateValue(response.isVehicleLocked());
+            service.getCharacteristic(Characteristic.LockCurrentState).updateValue(response.isVehicleLocked());
         });
 
         var getLockedState = (callback) => {
-            if (tesla.token) {
-                tesla.api.log('Getting door locked state');
+            if (this.api.token) {
+                this.log('Getting door locked state');
 
-                tesla.api.getVehicleData((response) => {
-                    tesla.api.log('Got door locked state');
+                this.api.getVehicleData().then((response) => {
                     response = new VehicleData(response);
-                    tesla.api.log('Got door locked state', response);
                     callback(null, response.isVehicleLocked());
                 })
                 .catch((error) => {
-                    tesla.api.log('Could not get vehicle data');
+                    this.log('Could not get vehicle data.');
                     callback(null);
                     
                 });
@@ -37,25 +39,25 @@ module.exports = class extends Service.LockMechanism {
         };
     
         var setLockedState = (value, callback) => {
-            tesla.log('Turning door lock to state %s.', value ? 'on' : 'off');
+            this.log('Turning door lock to state %s.', value ? 'on' : 'off');
     
             Promise.resolve().then(() => {
-                return tesla.api.wakeUp();
+                return this.api.wakeUp();
             })
             .then(() => {
                 if (value)
-                    return tesla.api.doorLock();
+                    return this.api.doorLock();
                 else
-                    return tesla.api.doorUnlock();
+                    return this.api.doorUnlock();
             })
             .then(() => {
                 if (!value)
-                    return tesla.api.remoteStartDrive();
+                    return this.api.remoteStartDrive();
                 else
                     return Promise.resolve();
             })
             .then(() => {
-                this.setCharacteristic(Characteristic.LockCurrentState, value); 
+                service.setCharacteristic(Characteristic.LockCurrentState, value); 
                 callback(null, value);    
             })
     
@@ -64,9 +66,9 @@ module.exports = class extends Service.LockMechanism {
             })            
         };
     
-        this.getCharacteristic(Characteristic.LockCurrentState).on('get', getLockedState.bind(this));
-        this.getCharacteristic(Characteristic.LockTargetState).on('get', getLockedState.bind(this));
-        this.getCharacteristic(Characteristic.LockTargetState).on('set', setLockedState.bind(this));
+        service.getCharacteristic(Characteristic.LockCurrentState).on('get', getLockedState.bind(this));
+        service.getCharacteristic(Characteristic.LockTargetState).on('get', getLockedState.bind(this));
+        service.getCharacteristic(Characteristic.LockTargetState).on('set', setLockedState.bind(this));
     
     }
 }; 

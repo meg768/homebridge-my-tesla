@@ -12,20 +12,23 @@ module.exports = class extends Accessory {
         var service = new Service.Fan(name, "hvac");
         this.addService(service);
 
-        this.on('update', (response) => {              
+        this.on('refresh', (response) => {              
             this.log('Updating HVAC status to', response.isAirConditionerOn());  
             service.getCharacteristic(Characteristic.On).updateValue(response.isAirConditionerOn());
         });
 
-
         service.getCharacteristic(Characteristic.On).on('get', (callback) => {
+            this.log(`Getting HVAC state...`);
+            
             if (this.api.token) {
-                this.log(`Getting vehicle data...`);
-
-                this.api.getVehicleData((response) => {
-                    this.log(`Got vehicle data...`);
+                this.api.getVehicleData().then((response) => {
                     response = new VehicleData(response);
                     callback(null, response.isAirConditionerOn());
+                })
+                .catch((error) => {
+                    this.log(error);
+                    callback(null);
+    
                 });
     
             }
@@ -64,7 +67,6 @@ module.exports = class extends Accessory {
             })
 
         });
-
 
         
     };
