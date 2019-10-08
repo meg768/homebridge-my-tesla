@@ -50,9 +50,10 @@ module.exports = class API {
                 this.log(`${key}...`);
     
                 this.api.request(method, path).then((response) => {
+                    // Mask out the important stuff... 
+                    response = response.body.response;
+
                     this.log(`${key} completed...`);
-    
-                    reponse = response.body.response;
     
                     // Store in cache
                     this.cache[key] = {timestamp:new Date(), data:response};
