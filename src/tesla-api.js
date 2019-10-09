@@ -205,9 +205,12 @@ module.exports = class API {
             var wakeupInterval = 5 * 60000;
             var now = new Date();
     
+            this.log('Checking if waking up is needed...');
+
             if (isDate(this.lastResponse) && (now.valueOf() - this.lastResponse.valueOf() < wakeupInterval))
                 resolve();
             else {
+                this.log('Waking up...');
                 this.request('POST', `/api/1/vehicles/${vehicleID}/wake_up`).then((response) => {
 
                     var pause = (ms) => {
