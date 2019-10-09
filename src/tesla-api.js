@@ -121,7 +121,7 @@ module.exports = class API {
     }
 
 
-    request(method, path) {
+    rawRequest(method, path) {
 
         return new Promise((resolve, reject) => {
             var key = `${method} ${path}`;
@@ -156,7 +156,7 @@ module.exports = class API {
             this.requests[key].push({resolve:resolve, reject:reject});
     
             if (this.requests[key].length == 1) {
-                this.request(method, path).then((response) => {
+                this.rawRequest(method, path).then((response) => {
                     this.requests[key].forEach((request) => {
                         request.resolve(response);
                     });
@@ -258,48 +258,63 @@ module.exports = class API {
         });
     }
 
-    getVehicleData() {
-        return this.queuedRequest('GET', `/api/1/vehicles/${this.getVehicleID()}/vehicle_data`);
+    request(method, path) {
+        return new Promise((resolve, reject) => {
+            Promise.resolve().then(() => {
+                return this.wakeUp();
+            })
+            .then(() => {
+                return this.queuedRequest(method, path);
+            })
+            .then((response) => {
+                resolve(response);                
+            })
+            .catch((error) => {
+                reject(error);
+            })
+        });
+
     }
 
-    postCommand(command) {
-        return this.queuedRequest('POST', `/api/1/vehicles/${this.getVehicleID()}/command/${command}`);
+
+    getVehicleData() {
+        return this.request('GET', `/api/1/vehicles/${this.getVehicleID()}/vehicle_data`);
     }
 
     doorLock() {
-        return this.postCommand('door_lock');
+        return this.request('POST', `/api/1/vehicles/${this.getVehicleID()}/command/door_lock`);
     }
 
     doorUnlock() {
-        return this.postCommand('door_unlock');
+        return this.request('POST', `/api/1/vehicles/${this.getVehicleID()}/command/door_unlock`);
     }
 
     autoConditioningStart() {
-        return this.postCommand('auto_conditioning_start');
+        return this.request('POST', `/api/1/vehicles/${this.getVehicleID()}/command/auto_conditioning_start`);
     }
 
     autoConditioningStop() {
-        return this.postCommand('auto_conditioning_stop');
+        return this.request('POST', `/api/1/vehicles/${this.getVehicleID()}/command/auto_conditioning_stop`);
     }
 
     chargePortDoorOpen() {
-        return this.postCommand('charge_port_door_open');
+        return this.request('POST', `/api/1/vehicles/${this.getVehicleID()}/command/charge_port_door_open`);
     }
 
     chargePortDoorClose() {
-        return this.postCommand('charge_port_door_close');
+        return this.request('POST', `/api/1/vehicles/${this.getVehicleID()}/command/charge_port_door_close`);
     }
 
     chargeStart() {
-        return this.postCommand('charge_start');
+        return this.request('POST', `/api/1/vehicles/${this.getVehicleID()}/command/charge_start`);
     }
 
     chargeStop() {
-        return this.postCommand('charge_stop');
+        return this.request('POST', `/api/1/vehicles/${this.getVehicleID()}/command/charge_stop`);
     }
 
     remoteStartDrive() {
-        return this.postCommand(`remote_start_drive?password=${this.password}`);
+        return this.request('POST', `/api/1/vehicles/${this.getVehicleID()}/command/remote_start_drive?password=${this.password}`);
     }
 
 
