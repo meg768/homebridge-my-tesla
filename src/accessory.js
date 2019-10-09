@@ -18,7 +18,7 @@ module.exports = class Accessory extends Events {
         this.api = this.tesla.api;
         this.services = [];
 
-        this.addAccessoryInformation();
+        //this.addAccessoryInformation();
     }
 
     addService(service) {
