@@ -213,8 +213,6 @@ module.exports = class API {
             else {
                 this.queuedRequest('POST', `/api/1/vehicles/${vehicleID}/wake_up`).then((response) => {
 
-                    this.log('Waking up...');
-
                     var pause = (ms) => {
                         return new Promise((resolve, reject) => {
                             setTimeout(resolve, ms);
