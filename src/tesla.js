@@ -32,8 +32,8 @@ module.exports = class Tesla extends Events  {
         this.features.push(new DoorLockService(this, "Dörren"));
         this.features.push(new BatteryLevelService(this, "Batteri"));
         this.features.push(new AirConditionerService(this, "Fläkten"));
-        this.features.push(new InnerTemperatureSensor(this, "Inne"));
-        this.features.push(new OuterTemperatureSensor(this, "Ute"));
+        this.features.push(new InnerTemperatureSensor(this, "Temperatur"));
+        //this.features.push(new OuterTemperatureSensor(this, "Ute"));
         this.features.push(new ChargingService(this, "Laddning"));
         this.features.push(new FreezeSensor(this, "Frostvakt", "1"));
 
