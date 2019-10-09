@@ -20,9 +20,6 @@ module.exports = class extends Accessory {
 
             if (this.api.isOnline()) {
                 Promise.resolve().then(() => {
-                    return this.api.wakeUp();
-                })
-                .then(() => {
                     return this.api.getVehicleData();
                 })
                 .then((response) => {

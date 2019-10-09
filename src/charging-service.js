@@ -21,12 +21,16 @@ module.exports = class extends Accessory {
                 this.log(`Getting vehicle data for charging...`);
 
                 Promise.resolve().then(() => {
-                    return this.api.wakeUp();
+                    return this.api.getVehicleData();
                 })
-                this.api.getVehicleData().then((response) => {
+                .then((response) => {
                     this.log(`Got vehicle data for charging...`);
                     response = new VehicleData(response);
                     callback(null, response.isCharging());
+                })
+                .catch(() => {
+                    callback(null);
+
                 });
     
             }
@@ -38,9 +42,6 @@ module.exports = class extends Accessory {
 
             if (value) {
                 Promise.resolve().then(() => {
-                    return this.api.wakeUp();
-                })
-                .then(() => {
                     return this.api.chargePortDoorOpen();
                 })
                 .then(() => {
