@@ -17,7 +17,7 @@ module.exports = class extends Accessory {
         });
 
         service.getCharacteristic(Characteristic.On).on('get', (callback) => {
-            if (this.api.token) {
+            if (this.api.isOnline()) {
                 this.log(`Getting vehicle data for charging...`);
 
                 Promise.resolve().then(() => {

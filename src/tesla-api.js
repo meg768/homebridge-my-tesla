@@ -25,7 +25,6 @@ module.exports = class API {
         this.password     = password;
         this.clientID     = clientID;
         this.clientSecret = clientSecret;
-        this.token        = undefined;
         this.requests     = {};
         this.cache        = {};
         this.lastResponse = null;
@@ -47,6 +46,10 @@ module.exports = class API {
 
     getVehicleID() {
         return this.vehicle.id_s;
+    }
+
+    isOnline() {
+        return this.vehicle;
     }
 
     login() {
@@ -103,7 +106,6 @@ module.exports = class API {
                 }
 
                 this.api = api;
-                this.token = token;
                 this.vehicle = vehicle;
                 this.lastResponse = null;
 
@@ -194,8 +196,6 @@ module.exports = class API {
     };
 
 
-
-
     wakeUp(timestamp) {
         return new Promise((resolve, reject) => {
             var vehicleID = this.getVehicleID();
@@ -259,7 +259,7 @@ module.exports = class API {
     }
 
     getVehicleData() {
-        return this.queuedRequest('GET', `/api/1/vehicles/${this.getVehicleID()}/vehicle_data`, 1000);
+        return this.queuedRequest('GET', `/api/1/vehicles/${this.getVehicleID()}/vehicle_data`);
     }
 
     postCommand(command) {

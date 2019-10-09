@@ -19,7 +19,7 @@ module.exports = class extends Accessory {
         });
 
         var getLockedState = (callback) => {
-            if (this.api.token) {
+            if (this.api.isOnline()) {
                 this.log('Getting door locked state');
 
                 Promise.resolve().then(() => {

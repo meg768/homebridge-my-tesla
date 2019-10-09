@@ -20,7 +20,7 @@ module.exports = class extends Accessory {
         service.getCharacteristic(Characteristic.On).on('get', (callback) => {
             this.log(`Getting HVAC state...`);
             
-            if (this.api.token) {
+            if (this.api.isOnline()) {
                 Promise.resolve().then(() => {
                     return this.api.wakeUp();
                 })

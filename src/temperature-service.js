@@ -18,7 +18,7 @@ module.exports = class extends Accessory {
 
         service.getCharacteristic(Characteristic.CurrentTemperature).on('get', (callback) => {
 
-            if (this.api.token) {
+            if (this.api.isOnline()) {
                 Promise.resolve().then(() => {
                     return this.api.wakeUp();
                 })
