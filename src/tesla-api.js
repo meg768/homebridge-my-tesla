@@ -205,8 +205,9 @@ module.exports = class API {
             if (isDate(this.lastResponse) && (now.valueOf() - this.lastResponse.valueOf() < wakeupInterval))
                 resolve();
             else {
-                this.log('Waking up...');
                 this.queuedRequest('POST', `/api/1/vehicles/${vehicleID}/wake_up`).then((response) => {
+
+                    this.log('Waking up...');
 
                     var pause = (ms) => {
                         return new Promise((resolve, reject) => {
