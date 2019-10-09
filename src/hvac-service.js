@@ -21,24 +21,25 @@ module.exports = class extends Accessory {
             this.log(`Getting HVAC state...`);
             
             if (this.api.token) {
-                this.api.getVehicleData().then((response) => {
+                Promise.resolve().then(() => {
+                    return this.api.wakeUp();
+                })
+                .then(() => {
+                    return this.api.getVehicleData();
+                })
+                .then((response) => {
                     response = new VehicleData(response);
                     callback(null, response.isAirConditionerOn());
                 })
                 .catch((error) => {
-                    this.log(error);
+                    this.log('Could not get HVAC state.');
                     callback(null);
-    
                 });
     
             }
             else {
-                this.log(`Could not get vehicle data. Not logged in...`);
                 callback(null);
-
             }
-
-
         });
 
         service.getCharacteristic(Characteristic.On).on('set', (value, callback) => {

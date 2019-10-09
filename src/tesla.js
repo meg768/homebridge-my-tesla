@@ -57,10 +57,7 @@ module.exports = class Tesla extends Events  {
 
         this.log(`Refreshing ${vin}...`);
 
-        this.api.wakeUp().then(() => {
-            return this.api.getVehicleData();         
-        })
-        .then((response) => {
+        this.api.getVehicleData().then((response) => {
             this.log('Wakeup OK, updating features...');
             var data = new VehicleData(response);
 

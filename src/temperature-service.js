@@ -19,11 +19,20 @@ module.exports = class extends Accessory {
         service.getCharacteristic(Characteristic.CurrentTemperature).on('get', (callback) => {
 
             if (this.api.token) {
-                this.api.getVehicleData().then((response) => {
+                Promise.resolve().then(() => {
+                    return this.api.wakeUp();
+                })
+                .then(() => {
+                    return this.api.getVehicleData();
+                })
+                .then((response) => {
                     response = new VehicleData(response);
                     callback(null, this.getTemperature(response));
+                })
+                .catch((error) => {
+                    this.log(`Could not current temperature for type ${subtype}.`);
+                    callback(null);
                 });
-    
             }
             else
                 callback(null);
@@ -32,7 +41,7 @@ module.exports = class extends Accessory {
         
     }; 
 
-    getTemperature(response) {
+    getTemperature() {
         return -20;
     }
 }

@@ -22,12 +22,18 @@ module.exports = class extends Accessory {
             if (this.api.token) {
                 this.log('Getting door locked state');
 
-                this.api.getVehicleData().then((response) => {
+                Promise.resolve().then(() => {
+                    return this.api.wakeUp();
+                })
+                .then(() => {
+                    return this.api.getVehicleData();
+                })
+                .then((response) => {
                     response = new VehicleData(response);
                     callback(null, response.isVehicleLocked());
                 })
                 .catch((error) => {
-                    this.log('Could not get vehicle data.');
+                    this.log('Could not get vehicle data to determine locked state.');
                     callback(null);
                     
                 });

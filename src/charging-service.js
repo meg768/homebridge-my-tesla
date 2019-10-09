@@ -20,6 +20,9 @@ module.exports = class extends Accessory {
             if (this.api.token) {
                 this.log(`Getting vehicle data for charging...`);
 
+                Promise.resolve().then(() => {
+                    return this.api.wakeUp();
+                })
                 this.api.getVehicleData().then((response) => {
                     this.log(`Got vehicle data for charging...`);
                     response = new VehicleData(response);

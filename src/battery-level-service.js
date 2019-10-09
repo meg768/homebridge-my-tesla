@@ -19,9 +19,19 @@ module.exports = class extends Accessory {
         service.getCharacteristic(Characteristic.BatteryLevel).on('get', (callback) => {
     
             if (this.token) {
-                this.api.getVehicleData((response) => {
+                Promise.resolve().then(() => {
+                    return this.api.wakeUp();
+                })
+                .then(() => {
+                    return this.api.getVehicleData();    
+                })
+                .then((response) => {
                     response = new VehicleData(response);
                     callback(null, response.getBatteryLevel());                
+                })
+                .catch((error) => {
+                    this.log('Could not get battery level.');
+                    callback(null);
                 });
     
             }

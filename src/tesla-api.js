@@ -201,13 +201,15 @@ module.exports = class API {
             var vehicleID = this.getVehicleID();
             var wakeupInterval = 5 * 60000;
 
-            var pause = (ms) => {
-                return new Promise((resolve, reject) => {
-                    setTimeout(resolve, ms);
-                });            
-            };
     
             this.request('POST', `/api/1/vehicles/${vehicleID}/wake_up`, wakeupInterval).then((response) => {
+
+                var pause = (ms) => {
+                    return new Promise((resolve, reject) => {
+                        setTimeout(resolve, ms);
+                    });            
+                };
+    
                 if (response.state != 'online') {
                     var now = new Date();
 
