@@ -28,15 +28,12 @@ module.exports = class Tesla extends Events  {
         this.api = new API({log:this.log, debug:this.debug, vin:config.vin});
         this.platform = platform;
 
-
         this.features.push(new BatteryLevelService(this, "Batteri"));
         this.features.push(new AirConditionerService(this, "Fläkten"));
         this.features.push(new DoorLockService(this, "Dörren"));
         this.features.push(new InnerTemperatureSensor(this, "Inne"));
         this.features.push(new OuterTemperatureSensor(this, "Ute"));
         this.features.push(new ChargingService(this, "Laddning"));
-
-
 
         this.api.login().then((response) => {
             this.log('Login completed.');
@@ -57,17 +54,20 @@ module.exports = class Tesla extends Events  {
 
         this.log(`Refreshing ${vin}...`);
 
-        this.api.getVehicleData().then((response) => {
-            this.log('Wakeup OK, updating features...');
+        Promise.resolve().then(() => {
+            return this.api.wakeUp();
+        })
+        .then(() => {
+            return this.api.getVehicleData();
+        })
+        .then((response) => {
             var data = new VehicleData(response);
 
             this.features.forEach((feature) => {
-                this.log('Fireing Wakeup OK to feateure...');
                 feature.emit('refresh', data);
             });
 
-            this.log('Updated features...');
-
+            this.log('Refreshed features...');
         })
         .catch((error) => {
             this.log(error);
@@ -84,7 +84,7 @@ module.exports = class Tesla extends Events  {
             services = services.concat(feature.getServices());
         });
 
-        this.log(`${services.length} services found.`);
+        this.log(`A total of ${services.length} services found.`);
 
         return services;
     }

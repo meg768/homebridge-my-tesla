@@ -50,7 +50,7 @@ module.exports = class Accessory extends Events {
             service.setCharacteristic(Characteristic.SerialNumber, serialNumber);
 
 
-        this.addService(service);
+        //this.addService(service);
     }
 
     identify(callback) {
