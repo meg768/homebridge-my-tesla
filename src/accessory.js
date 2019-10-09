@@ -2,8 +2,7 @@
 
 var Service  = require('./homebridge.js').Service;
 var Characteristic = require('./homebridge.js').Characteristic;
-var Events   = require('events');
-var random =  require('yow/random');
+var Events = require('events');
 
 module.exports = class Accessory extends Events {
 
@@ -17,8 +16,6 @@ module.exports = class Accessory extends Events {
         this.log = this.platform.log;
         this.api = this.tesla.api;
         this.services = [];
-
-        //this.addAccessoryInformation();
     }
 
     addService(service) {
@@ -29,13 +26,10 @@ module.exports = class Accessory extends Events {
         return this.services;
     }
 
-    addAccessoryInformation() {
+    addAccessoryInformation(options) {
         var service = new Service.AccessoryInformation();
 
-        var manufacturer = this.getManufacturer();
-        var model = this.getModel();
-        var firmwareVersion = this.getFirmwareVersion();
-        var serialNumber = this.getSerialNumber();
+        var {manufacturer, model, firmwareVersion, serialNumber} = options;
 
         if (manufacturer)
             service.setCharacteristic(Characteristic.Manufacturer, manufacturer);
@@ -49,31 +43,11 @@ module.exports = class Accessory extends Events {
         if (serialNumber)
             service.setCharacteristic(Characteristic.SerialNumber, serialNumber);
 
-
-        //this.addService(service);
+        this.addService(service);
     }
 
     identify(callback) {
         callback();
     }
-
-    getManufacturer() {
-        return 'meg768';
-    }
-
-    getModel() {
-        return 'model';
-    }
-
-    getFirmwareVersion() {
-        return '1.0';
-    }
-
-    getSerialNumber() {
-        return '11-111-11';
-    }
-
-
-
 
 };
