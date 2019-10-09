@@ -105,7 +105,7 @@ module.exports = class API {
                 this.api = api;
                 this.token = token;
                 this.vehicle = vehicle;
-                this.lastResponse = new Date();
+                this.lastResponse = null;
 
                 resolve(this.vehicle);
 
