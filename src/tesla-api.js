@@ -125,7 +125,7 @@ module.exports = class API {
             return Promise.resolve(this.vehicle);
 
         var defaultOptions = {
-            debug: this.debug,
+            debug: false,
             timeout: 2 * 60000,
             headers: {
                 "x-tesla-user-agent": "TeslaApp/3.4.4-350/fad4a582e/android/8.1.0",
