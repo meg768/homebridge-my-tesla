@@ -199,7 +199,13 @@ module.exports = class API {
     wakeUp(timestamp) {
         return new Promise((resolve, reject) => {
             var vehicleID = this.getVehicleID();
+
+            // Call wakeUp() if not done within last 5 minutes
             var wakeupInterval = 5 * 60000;
+
+            // Keep calling wakeUp() for 2 minutes if no reply
+            var wakeupTimeout = 2 * 60000;
+
             var now = new Date();
     
             if (isDate(this.lastResponse) && (now.valueOf() - this.lastResponse.valueOf() < wakeupInterval))
@@ -227,7 +233,7 @@ module.exports = class API {
                             this.log('Still not awake. State is now %s', response.state);
                         }
     
-                        if (now.getTime() - timestamp.getTime() < 60000 * 2) {
+                        if (now.getTime() - timestamp.getTime() < wakeupTimeout) {
     
                             pause(5000).then(() => {
                                 this.log('wakeUp() failed, trying to wake up again...');
