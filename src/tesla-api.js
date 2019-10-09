@@ -41,6 +41,13 @@ module.exports = class API {
 
     }
 
+    getVehicle() {
+        return this.vehicle;
+    }
+
+    getVehicleID() {
+        return this.vehicle.id_s;
+    }
 
     login() {
         if (this.vehicle)
@@ -190,13 +197,7 @@ module.exports = class API {
     };
 
 
-    getVehicle() {
-        return this.vehicle;
-    }
 
-    getVehicleID() {
-        return this.vehicle.id_s;
-    }
 
     wakeUp(timestamp) {
         return new Promise((resolve, reject) => {
@@ -257,7 +258,7 @@ module.exports = class API {
     }
 
     getVehicleData() {
-        return this.cachedRequest('GET', `/api/1/vehicles/${this.getVehicleID()}/vehicle_data`, 1000);
+        return this.queuedRequest('GET', `/api/1/vehicles/${this.getVehicleID()}/vehicle_data`, 1000);
     }
 
     postCommand(command) {

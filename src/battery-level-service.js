@@ -18,7 +18,7 @@ module.exports = class extends Accessory {
 
         service.getCharacteristic(Characteristic.BatteryLevel).on('get', (callback) => {
     
-            if (this.token) {
+            if (this.api.token) {
                 Promise.resolve().then(() => {
                     return this.api.wakeUp();
                 })
