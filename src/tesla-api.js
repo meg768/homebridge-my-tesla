@@ -131,9 +131,6 @@ module.exports = class API {
 
                 this.log(`${key} completed...`);
 
-                // Save last response time
-                this.lastResponse = new Date();
-
                 // Store result in cache
                 this.cache[key] = {timestamp:new Date(), data:response};
 
@@ -211,7 +208,9 @@ module.exports = class API {
                 resolve();
             else {
                 this.log('Waking up...');
-                this.request('POST', `/api/1/vehicles/${vehicleID}/wake_up`).then((response) => {
+                this.api.request('POST', `/api/1/vehicles/${vehicleID}/wake_up`).then((response) => {
+
+                    response = response.body.response;
 
                     var pause = (ms) => {
                         return new Promise((resolve, reject) => {
@@ -238,6 +237,7 @@ module.exports = class API {
                                 return this.wakeUp(timestamp);
                             })
                             .then(() => {
+                                this.lastResponse = new Date();
                                 resolve();
                             })
                             .catch((error) => {
@@ -249,6 +249,7 @@ module.exports = class API {
                         }
                     }
                     else {
+                        this.lastResponse = new Date();
                         resolve();
                     }
                 })
