@@ -267,6 +267,9 @@ module.exports = class API {
                 return this.queuedRequest(method, path);
             })
             .then((response) => {
+                // Save last response time
+                this.lastResponse = new Date();
+
                 resolve(response);                
             })
             .catch((error) => {
