@@ -238,7 +238,7 @@ module.exports = class API {
                         })
                     }
                     else {
-                        throw new Error('The Tesla cannot be reached.');
+                        reject(new Error('The Tesla cannot be reached.'));
                     }
                 }
                 else {
