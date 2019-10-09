@@ -46,7 +46,6 @@ module.exports = class extends Accessory {
             this.log('Turning HVAC state to %s.', value ? 'on' : 'off');
 
             Promise.resolve().then(() => {
-                this.log('Waking up...');
                 return this.api.wakeUp();
             })
             .then(() => {
@@ -63,7 +62,6 @@ module.exports = class extends Accessory {
             })
 
             .catch((error) => {
-                this.log(error);
                 callback(null);
             })
 
