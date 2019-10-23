@@ -1,6 +1,6 @@
 "use strict";
 
-var isFunction = require('yow/is').isFunction;
+var isFunction = require('yow/isFunction');
 var Request = require('yow/request');
 
 

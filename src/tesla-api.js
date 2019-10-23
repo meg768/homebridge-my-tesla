@@ -1,7 +1,7 @@
 "use strict";
 
-var isFunction = require('yow/is').isFunction;
-var isDate = require('yow/is').isDate;
+var isFunction = require('yow/isFunction');
+var isDate = require('yow/isDate');
 var Request = require('yow/request');
 
 
