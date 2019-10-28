@@ -13,7 +13,6 @@
     "git-reset": "git reset --hard HEAD",
     "git-pull": "git pull",
     "git-commit": "git add -A && git commit -m '-' && git push",
-    "install-config": "node ./scripts/install-config.js",
     "goto-npm": "open https://npmjs.com/meg768/homebridge-my-tesla.git",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
