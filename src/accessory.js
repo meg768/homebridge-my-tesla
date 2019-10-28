@@ -16,6 +16,9 @@ module.exports = class Accessory extends Events {
         this.log = this.platform.log;
         this.api = this.tesla.api;
         this.services = [];
+
+        this.addAccessoryInformation({manufacturer:'Craft Foods', model:'HVAC', firmwareVersion:'1.0', serialNumber:'123-123'});
+
     }
 
     addService(service) {

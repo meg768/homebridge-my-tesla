@@ -11,7 +11,6 @@ module.exports = class extends Accessory {
 
         var service = new Service.LockMechanism(name, 'door-lock');
         this.addService(service);
-        this.addAccessoryInformation({manufacturer:undefined, model:'Door Lock', firmwareVersion:'1.0', serialNumber:undefined});
 
         this.on('refresh', (response) => {       
             tesla.log('Updating door status', response.isVehicleLocked());

@@ -11,7 +11,6 @@ module.exports = class extends Accessory {
 
         var service = new Service.Fan(name, "hvac");
         this.addService(service);
-        this.addAccessoryInformation({manufacturer:'Craft Foods', model:'HVAC', firmwareVersion:'1.0', serialNumber:'123-123'});
 
         this.on('refresh', (response) => {              
             this.log('Updating HVAC status to', response.isAirConditionerOn());  
