@@ -39,8 +39,8 @@ module.exports = class extends Accessory {
         
     }; 
 
-    getTemperature() {
-        return -20;
+    getTemperature(response) {
+        return response.getInsideTemperature();
     }
 }
 

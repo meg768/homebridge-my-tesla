@@ -6,12 +6,9 @@ var API = require('./tesla-api.js');
 var BatteryLevelService = require('./battery-level-service.js')
 var AirConditionerService = require('./hvac-service.js');
 var DoorLockService = require('./door-lock-service.js');
-var InnerTemperatureSensor = require('./inner-temperature-service.js');
-var OuterTemperatureSensor = require('./outer-temperature-service.js');
+var TemperatureSensor = require('./temperature-service.js');
 var ChargingService = require('./charging-service.js');
-var DefrostService = require('./defrost-service.js');
 var VehicleData = require('./vehicle-data.js');
-var FreezeSensor = require('./freeze-sensor.js');
 
 module.exports = class Tesla extends Events  {
 
@@ -32,10 +29,8 @@ module.exports = class Tesla extends Events  {
         this.features.push(new DoorLockService(this, "Dörren"));
         this.features.push(new BatteryLevelService(this, "Batteri"));
         this.features.push(new AirConditionerService(this, "Fläkten"));
-        this.features.push(new InnerTemperatureSensor(this, "Temperatur"));
-        //this.features.push(new OuterTemperatureSensor(this, "Ute"));
+        this.features.push(new TemperatureSensor(this, "Temperatur"));
         this.features.push(new ChargingService(this, "Laddning"));
-        this.features.push(new FreezeSensor(this, "Frostvakt", "1"));
 
         this.api.login().then((response) => {
             this.log('Login completed.');
