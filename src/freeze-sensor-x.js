@@ -10,6 +10,7 @@ module.exports = class extends Accessory {
         super(tesla);
 
         var service = new Service.ContactSensor(name, subtype);
+
         this.addService(service);
         this.addAccessoryInformation({manufacturer:'Craft Foods', model:'HVAC', firmwareVersion:'1.0', serialNumber:'123-123'});
 
@@ -39,13 +40,11 @@ module.exports = class extends Accessory {
         
     }; 
 
+
     getState(response) {
-        return this.getTemperature(response) < 3;
+        return response.getInsideTemperature() < 8;
     }
 
-    getTemperature(response) {
-        return response.getInsideTemperature();
-    }    
 
 }
 
