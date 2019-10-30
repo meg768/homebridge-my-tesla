@@ -6,12 +6,11 @@ var Accessory = require('./accessory.js');
 
 module.exports = class extends Accessory {
 
-    constructor(tesla, name, subtype) {
-        super(tesla);
+    constructor(options) {
+        super(options);
 
-        var service = new Service.TemperatureSensor(name, subtype);
+        var service = new Service.TemperatureSensor(this.name, 'inside-temperature');
         this.addService(service);
-        this.addAccessoryInformation({manufacturer:'Craft Foods', model:'HVAC', firmwareVersion:'1.0', serialNumber:'123-123'});
 
         this.on('refresh', (response) => {                
             service.getCharacteristic(Characteristic.CurrentTemperature).updateValue(this.getTemperature(response));
