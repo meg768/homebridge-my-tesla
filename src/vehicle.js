@@ -34,10 +34,29 @@ module.exports = class Tesla extends Events  {
         this.features.push(new ChargingService({vehicle:this, name:'Laddning'}));
         this.features.push(new FreezeSensor({vehicle:this, name:'Frostvakt'}));
 
-        this.api.login().then((response) => {
+        this.api.login().then(() => {
             this.log('Login completed.');
-            this.refresh();
+            return Promise.resolve();
+        })
+        .then(() => {
+            var loop = () => {
+                this.refresh().then(() => {
+                })
+                .catch((error) => {
+                    this.log(error);
+                })
+                .then(() => {
+                    setTimeout(loop.bind(this), 5 * 60 * 1000);
+                });
+            };
+    
+            loop();
+        })
+        .catch((error) => {
+            this.log(error);
         });
+
+
     }
 
 
@@ -49,30 +68,35 @@ module.exports = class Tesla extends Events  {
     }
 
     refresh() {
-        var vin = this.config.vin;
+        return new Promise((resolve, reject) => {
+            var vin = this.config.vin;
 
-        this.log(`Refreshing ${vin}...`);
+            this.log(`Refreshing ${vin}...`);
+    
+            Promise.resolve().then(() => {
+                return this.api.wakeUp();
+            })
+            .then(() => {
+                return this.api.getVehicleData();
+            })
+            .then((response) => {
+                var data = new VehicleData(response);
+    
+                this.features.forEach((feature) => {
+                    feature.emit('refresh', data);
+                });
+    
+                this.log('Refreshed features...');
 
-        Promise.resolve().then(() => {
-            return this.api.wakeUp();
-        })
-        .then(() => {
-            return this.api.getVehicleData();
-        })
-        .then((response) => {
-            var data = new VehicleData(response);
-
-            this.features.forEach((feature) => {
-                feature.emit('refresh', data);
+                resolve();
+            })
+            .catch((error) => {
+                reject(error);
             });
-
-            this.log('Refreshed features...');
-        })
-        .catch((error) => {
-            this.log(error);
+    
         });
     }
-    
+
     getServices() {
 
         this.log('getServices() called.');
