@@ -6,16 +6,16 @@ var Accessory = require('./accessory.js');
 
 module.exports = class extends Accessory {
 
-    constructor(tesla, name) {
-        super(tesla);
+    constructor(options) {
+        super(options);
 
-        var service = new Service.LockMechanism(name, 'door-lock');
+        var service = new Service.LockMechanism(this.name, 'door-lock');
         this.addService(service);
         this.addAccessoryInformation({manufacturer:'Craft Foods', model:'HVAC', firmwareVersion:'1.0', serialNumber:'123-123'});
 
 
         this.on('refresh', (response) => {       
-            tesla.log('Updating door status', response.isVehicleLocked());
+            this.log('Updating door status', response.isVehicleLocked());
             service.getCharacteristic(Characteristic.LockTargetState).updateValue(response.isVehicleLocked());
             service.getCharacteristic(Characteristic.LockCurrentState).updateValue(response.isVehicleLocked());
         });

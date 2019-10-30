@@ -6,9 +6,11 @@ var Events = require('events');
 
 module.exports = class Accessory extends Events {
 
-    constructor(vehicle) {
+    constructor(options) {
+        var {vehicle, name} = options;
 
         super();
+        this.name = name;
 
         this.vehicle = vehicle;
         this.platform = this.vehicle.platform;
