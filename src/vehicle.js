@@ -32,7 +32,7 @@ module.exports = class Tesla extends Events  {
         this.features.push(new AirConditionerService({vehicle:this, name:'Fläkten'}));
         this.features.push(new TemperatureSensor({vehicle:this, name:'Temperatur'}));
         this.features.push(new ChargingService({vehicle:this, name:'Laddning'}));
-        this.features.push(new AntiFreezeService({vehicle:this, name:'Frostvakt'}));
+        this.features.push(new AntiFreezeService({vehicle:this, name:'Frostfri'}));
 
         this.api.login().then(() => {
             this.log('Login completed.');
