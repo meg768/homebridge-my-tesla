@@ -36,7 +36,7 @@ Configure your **~/.homebridge/config.json** with the following platform.
         "platform": "Tesla",
         "name": "Tesla",
         "debug": false,
-        "teslas": [
+        "vehicles": [
             {"name": "Model 3", "vin": "5YJ3E7EB9KF240654"}
         ]
     }]
@@ -51,7 +51,7 @@ If you already have a configuration file just add this to the **platforms**
     "platform": "Tesla",
     "name": "Tesla",
     "debug": false,
-    "teslas": [
+    "vehicles": [
         {"name": "Model 3", "vin": "5YJ3E7EB9KF240654"}
     ]
 

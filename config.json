@@ -13,7 +13,7 @@
         "platform": "Tesla",
         "name": "Tesla",
         "debug": false,
-        "teslas": [
+        "vehicles": [
             {         
                 "name": "Model 3",       
                 "vin": "5YJ3E7EB9KF240654",

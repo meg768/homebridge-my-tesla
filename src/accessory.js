@@ -6,15 +6,15 @@ var Events = require('events');
 
 module.exports = class Accessory extends Events {
 
-    constructor(tesla) {
+    constructor(vehicle) {
 
         super();
 
-        this.tesla = tesla;
-        this.platform = this.tesla.platform;
+        this.vehicle = vehicle;
+        this.platform = this.vehicle.platform;
         this.debug = this.platform.debug;
         this.log = this.platform.log;
-        this.api = this.tesla.api;
+        this.api = this.vehicle.api;
         this.services = [];
 
 

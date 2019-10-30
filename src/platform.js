@@ -1,6 +1,6 @@
 "use strict";
 
-var Tesla = require('./tesla.js');
+var Vehicle = require('./vehicle.js');
 
 
 module.exports = class Platform {
@@ -12,7 +12,7 @@ module.exports = class Platform {
         this.config = config;
         this.log = log;
         this.homebridge = homebridge;
-        this.teslas = [];
+        this.vehicles = [];
         this.debug = config.debug ? log : () => {};
 
         // Load .env
@@ -22,8 +22,8 @@ module.exports = class Platform {
     		this.log('Environment variables PUSHOVER_USER and/or PUSHOVER_TOKEN not defined. Push notifications will not be able to be sent.');
     	}
 
-        this.config.teslas.forEach((config, index) => {
-            this.teslas.push(new Tesla(this, config));
+        this.config.vehicles.forEach((config, index) => {
+            this.vehicles.push(new Vehicle(this, config));
         });
         
 
@@ -64,7 +64,7 @@ module.exports = class Platform {
 
 
     accessories(callback) {
-        callback(this.teslas);
+        callback(this.vehicles);
 
     }
 }
