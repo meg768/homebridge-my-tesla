@@ -11,11 +11,26 @@ module.exports = class extends Accessory {
 
         var service = new Service.ContactSensor(this.name, 'freeze');
 
+        this.state = false;
         this.addService(service);
 
-        this.on('refresh', (response) => {                
-            service.getCharacteristic(Characteristic.ContactSensorState).updateValue(this.getState(response));
+        var setState = (state) => {
+            if (state != this.state) {
+                service.getCharacteristic(Characteristic.ContactSensorState).updateValue(this.state = state);
+            }    
+        };
+
+        var getState = (response) => {
+            if (!(response instanceof VehicleData))
+                response = new VehicleData(response);
+
+            return response.getInsideTemperature() < 8;
+        };
+
+        this.on('refresh', (response) => {
+            setState(getState(response));
         });
+
 
         service.getCharacteristic(Characteristic.ContactSensorState).on('get', (callback) => {
 
@@ -24,11 +39,11 @@ module.exports = class extends Accessory {
                     return this.api.getVehicleData();
                 })
                 .then((response) => {
-                    response = new VehicleData(response);
-                    callback(null, this.getState(response));
+                    this.state = getState(response);
+                    callback(null, this.state);
                 })
                 .catch((error) => {
-                    this.log(`Could not get freeze temperature for type ${subtype}.`);
+                    this.log(`Could not get freeze temperature...`);
                     callback(null);
                 });
             }
@@ -39,10 +54,6 @@ module.exports = class extends Accessory {
         
     }; 
 
-
-    getState(response) {
-        return response.getInsideTemperature() < 8;
-    }
 
 
 }
