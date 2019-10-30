@@ -6,12 +6,11 @@ var Accessory = require('./accessory.js');
 
 module.exports = class extends Accessory {
 
-    constructor(tesla, name) {
-        super(tesla);
+    constructor(options) {
+        super(options);
 
-        var service = new Service.BatteryService(name);
+        var service = new Service.BatteryService(this.name);
         this.addService(service);
-        this.addAccessoryInformation({manufacturer:'Craft Foods', model:'HVAC', firmwareVersion:'1.0', serialNumber:'123-123'});
 
         this.on('refresh', (response) => {                
             service.getCharacteristic(Characteristic.BatteryLevel).updateValue(response.getBatteryLevel());

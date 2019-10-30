@@ -6,13 +6,12 @@ var Accessory = require('./accessory.js');
 
 module.exports = class extends Accessory {
 
-    constructor(tesla, name, subtype) {
-        super(tesla);
+    constructor(options) {
+        super(options);
 
-        var service = new Service.ContactSensor(name, subtype);
+        var service = new Service.ContactSensor(this.name, 'freeze');
 
         this.addService(service);
-        this.addAccessoryInformation({manufacturer:'Craft Foods', model:'HVAC', firmwareVersion:'1.0', serialNumber:'123-123'});
 
         this.on('refresh', (response) => {                
             service.getCharacteristic(Characteristic.ContactSensorState).updateValue(this.getState(response));
