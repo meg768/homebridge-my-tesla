@@ -27,12 +27,12 @@ module.exports = class Tesla extends Events  {
         this.api = new API({log:this.log, debug:this.debug, vin:config.vin});
         this.platform = platform;
 
-        this.features.push(new DoorLockService({vehicle:this, name:'DörrenX'}));
-        this.features.push(new BatteryLevelService({vehicle:this, name:'BatteriX'}));
-        this.features.push(new AirConditionerService({vehicle:this, name:'FläktenX'}));
-        this.features.push(new TemperatureSensor({vehicle:this, name:'TemperaturX'}));
-        this.features.push(new ChargingService({vehicle:this, name:'LaddningX'}));
-        this.features.push(new FreezeSensor({vehicle:this, name:'FrostvaktX'}));
+        this.features.push(new DoorLockService({vehicle:this, name:'Dörren'}));
+        this.features.push(new BatteryLevelService({vehicle:this, name:'Batteri'}));
+        this.features.push(new AirConditionerService({vehicle:this, name:'Fläkten'}));
+        this.features.push(new TemperatureSensor({vehicle:this, name:'Temperatur'}));
+        this.features.push(new ChargingService({vehicle:this, name:'Laddning'}));
+        this.features.push(new FreezeSensor({vehicle:this, name:'Frostvakt'}));
 
         this.api.login().then((response) => {
             this.log('Login completed.');

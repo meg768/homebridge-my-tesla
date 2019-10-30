@@ -10,16 +10,14 @@ module.exports = class Accessory extends Events {
         var {vehicle, name} = options;
 
         super();
-        this.name = name;
 
+        this.name = name;
         this.vehicle = vehicle;
         this.platform = this.vehicle.platform;
         this.debug = this.platform.debug;
         this.log = this.platform.log;
         this.api = this.vehicle.api;
         this.services = [];
-
-
     }
 
     addService(service) {
