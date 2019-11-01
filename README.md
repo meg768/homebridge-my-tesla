@@ -2,7 +2,7 @@
 
 ** **Under construction...** **
 
-Homebridge plugin for Tesla ownersX. This plugin assumes you are familiar with Homebridge. 
+Homebridge plugin for Tesla owners. This plugin assumes you are familiar with Homebridge. 
 
 ## Installation
 
