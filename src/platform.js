@@ -16,7 +16,7 @@ module.exports = class Platform {
         log(config);
 
         this.config = config;
-        this.log = log;
+        this.log = login;
         this.homebridge = homebridge;
         this.accessories = [];
         this.debug = config.debug ? log : () => {};
