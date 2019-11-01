@@ -4,7 +4,6 @@ var Homebridge = require('./homebridge.js');
 var Accessory  = require('./homebridge.js').Accessory;
 var Service  = require('./homebridge.js').Service;
 var Characteristic  = require('./homebridge.js').Characteristic;
-var TeslaAPI = require('./tesla-api.js');
 
 class Switch extends Accessory {
 
