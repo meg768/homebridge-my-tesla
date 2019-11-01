@@ -20,7 +20,6 @@ class Switch extends Accessory {
         
         var service = this.getService(Service.Switch);
 
-        console.log('____', this.services);
         service.getCharacteristic(Characteristic.On).on('get', (callback) => {
             callback(null, this.state);
         });
@@ -41,7 +40,7 @@ module.exports = class Platform {
         this.homebridge = homebridge;
         this.accessoryArray = [];
         this.debug = config.debug ? log : () => {};
-        //this.api = new TeslaAPI({vin:'5YJ3E7EB9KF240654'});
+        this.api = new TeslaAPI({vin:'5YJ3E7EB9KF240654'});
 
 
         if (process.env.PUSHOVER_USER == undefined || process.env.PUSHOVER_TOKEN == undefined) {
@@ -49,12 +48,12 @@ module.exports = class Platform {
         }
 
         this.addAccessory(new Switch({platform:this, api:this.api}));
-    /*
+    
         this.api.login().then(() => {
             this.log('Login completed.');
             return Promise.resolve();
         })
-      */  
+        
 
 /*
         this.config.vehicles.forEach((config, index) => {
