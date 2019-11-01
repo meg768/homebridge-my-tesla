@@ -97,6 +97,10 @@ module.exports = class Tesla extends Events  {
         });
     }
 
+    accessories() {
+        console.log('accessories called');
+        
+    }
     getServices() {
 
         this.log('getServices() called.');
