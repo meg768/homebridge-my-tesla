@@ -16,9 +16,9 @@ module.exports = class Platform {
         log(config);
 
         this.config = config;
-        this.log = login;
+        this.log = log;
         this.homebridge = homebridge;
-        this.accessories = [];
+        this.features = [];
         this.debug = config.debug ? log : () => {};
 
         // Load .env
@@ -67,8 +67,12 @@ module.exports = class Platform {
     };
 
     addAccessory(accessory) {
-        this.accessories.push(accessory);
+        this.features.push(accessory);
 
+    }
+
+    accessories() {
+        return this.features;
     }
 
     generateUUID(id) {
