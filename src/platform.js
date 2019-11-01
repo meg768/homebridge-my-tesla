@@ -1,11 +1,34 @@
 "use strict";
 
 var Homebridge = require('./homebridge.js');
+var Accessory  = require('./homebridge.js').Accessory;
+var Service  = require('./homebridge.js').Service;
+var Characteristic  = require('./homebridge.js').Characteristic;
+var TeslaAPI = require('./tesla-api.js');
 
-class Switch extends Homebridge.Accessory {
+class Switch extends Accessory {
 
-    constructor() {
+    constructor(options) {
+        var {platform, api} = options;
         super('DisplayName', Homebridge.generateUUID('FOO'));
+        console.log(this);
+        this.state = 0;
+        this.api = api;
+        this.platform = platform;
+
+        this.addService(Service.Switch);
+
+        
+        var service = this.getService(Service.Switch);
+
+        service.getCharacteristic(Characteristic.On).on('get', (callback) => {
+            callback(null, this.state);
+        });
+
+        service.getCharacteristic(Characteristic.On).on('set', (value, callback) => {
+            callback(null, this.state = value);
+        });
+
     }
 
 }
@@ -18,17 +41,23 @@ module.exports = class Platform {
         this.config = config;
         this.log = log;
         this.homebridge = homebridge;
-        this.features = [];
+        this.accessoryArray = [];
         this.debug = config.debug ? log : () => {};
+        this.api = new TeslaAPI({vin:'5YJ3E7EB9KF240654'});
 
-        // Load .env
-        require('dotenv').config();
 
         if (process.env.PUSHOVER_USER == undefined || process.env.PUSHOVER_TOKEN == undefined) {
     		this.log('Environment variables PUSHOVER_USER and/or PUSHOVER_TOKEN not defined. Push notifications will not be able to be sent.');
         }
+
+        this.addAccessory(new Switch({platform:this, api:this.api}));
+    
+        this.api.login().then(() => {
+            this.log('Login completed.');
+            return Promise.resolve();
+        })
         
-        this.addAccessory(new Switch());
+
 /*
         this.config.vehicles.forEach((config, index) => {
             this.vehicles.push(new Vehicle(this, config));
@@ -67,12 +96,14 @@ module.exports = class Platform {
     };
 
     addAccessory(accessory) {
-        this.features.push(accessory);
+        console.log('Adding to accessory arrayt');
+        this.accessoryArray.push(accessory);
 
     }
 
     accessories() {
-        return this.features;
+        console.log('::::::::::::::::::::: accessories called', this.accessoryArray.length);
+        return this.accessoryArray;
     }
 
     generateUUID(id) {
