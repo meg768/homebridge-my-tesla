@@ -1,18 +1,13 @@
-// Load .env
-require('dotenv').config();
+"use strict";
+
+var Path = require('path');
+var Homebridge = require('./src/homebridge.js');
 
 
 module.exports = function(homebridge) {
 
-    var Homebridge = require('./src/homebridge.js');
-
-    Object.assign(Homebridge, {
-        Service        : homebridge.hap.Service,
-        Characteristic : homebridge.hap.Characteristic,
-//        Accessory      : homebridge.hap.Accessory,
-        Accessory      : homebridge.platformAccessory,
-        generateUUID   : homebridge.hap.uuid.generate
-    });
+    Homebridge.Service = homebridge.hap.Service;
+    Homebridge.Characteristic = homebridge.hap.Characteristic;
 
     homebridge.registerPlatform('homebridge-my-tesla', 'Tesla', require('./src/platform.js'));
 };

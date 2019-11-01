@@ -18,11 +18,9 @@ module.exports = class extends Accessory {
     
         this.on('refresh', (response) => {
             if (response.getInsideTemperature() < 8) {
-                this.debug('Started air conditioning.');
                 this.api.autoConditioningStart();
             }
             else {
-                this.debug('Stopped air conditioning.');
                 this.api.autoConditioningStop();
             }
         });
@@ -31,6 +29,8 @@ module.exports = class extends Accessory {
         var setState = (state) => {
             if (state != currentState) {
                 if (state) {
+                    this.log('Starting monitoring temperature.')
+
                     var loop = () => {
                         this.vehicle.refresh().then((response) => {
                         })
@@ -38,7 +38,6 @@ module.exports = class extends Accessory {
                             this.log(error);
                         })
                         .then(() => {
-                            this.log('Starting fetch timer.')
                             timer.setTimer(1 * 60 * 1000, loop.bind(this));
                         });
                     };        
@@ -46,7 +45,7 @@ module.exports = class extends Accessory {
                     loop();
                 }
                 else {
-                    this.log('Cancelling fetch timer.')
+                    this.log('Stopped monitoring temperature.')
                     timer.cancel();
                 }
 

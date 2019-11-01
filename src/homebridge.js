@@ -1,3 +1,4 @@
 
 
-module.exports = {};
+exports.Characteristic = null;
+exports.Service = null;
