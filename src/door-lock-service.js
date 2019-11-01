@@ -4,6 +4,7 @@ var Characteristic  = require('./homebridge.js').Characteristic;
 var VehicleData = require('./vehicle-data.js');
 var Accessory = require('./accessory.js');
 
+
 module.exports = class extends Accessory {
 
     constructor(options) {

@@ -1,5 +1,6 @@
 "use strict";
 
+var isString = require('yow/isString');
 var Service  = require('./homebridge.js').Service;
 var Characteristic = require('./homebridge.js').Characteristic;
 var Events = require('events');
@@ -8,6 +9,12 @@ module.exports = class Accessory extends Events {
 
     constructor(options) {
         var {vehicle, name} = options;
+
+        if (!vehicle) 
+            throw new Error('A vehicle must be specified.');
+
+        if (!isString(name)) 
+            throw new Error('An accessory name must be specified.');
 
         super();
 
@@ -22,6 +29,9 @@ module.exports = class Accessory extends Events {
 
     addService(service) {
         this.services.push(service);
+    }
+
+    addServices() {
     }
 
     getServices() {

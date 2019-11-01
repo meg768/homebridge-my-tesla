@@ -1,7 +1,6 @@
 
 var Service = require('./homebridge.js').Service;
 var Characteristic = require('./homebridge.js').Characteristic;
-var VehicleData = require('./vehicle-data.js');
 var Accessory = require('./accessory.js');
 
 module.exports = class extends Accessory {
@@ -9,63 +8,72 @@ module.exports = class extends Accessory {
     constructor(options) {
         super(options);
 
+        this.state = undefined;
+
         var service = new Service.Fan(this.name, "hvac");
+
+        this.enableCharacteristicOn(service);
         this.addService(service);
+    }
 
-        this.on('refresh', (response) => {              
-            this.log('Updating HVAC status to', response.isAirConditionerOn());  
-            service.getCharacteristic(Characteristic.On).updateValue(response.isAirConditionerOn());
-        });
+    getState() {
+        return this.state;
+    }
 
-        service.getCharacteristic(Characteristic.On).on('get', (callback) => {
-            this.log(`Getting HVAC state...`);
-            
-            if (this.api.isOnline()) {
-                Promise.resolve().then(() => {
-                    return this.api.getVehicleData();
-                })
-                .then((response) => {
-                    response = new VehicleData(response);
-                    callback(null, response.isAirConditionerOn());
-                })
-                .catch((error) => {
-                    this.log('Could not get HVAC state.');
-                    callback(null);
-                });
-    
-            }
-            else {
-                callback(null);
-            }
-        });
+    setState(state) {
+        state = state ? true : false;
 
-        service.getCharacteristic(Characteristic.On).on('set', (value, callback) => {
-            this.log('Turning HVAC state to %s.', value ? 'on' : 'off');
+        return new Promise((resolve, reject) => {
 
             Promise.resolve().then(() => {
-                return this.api.wakeUp();
+                if (state == this.state)
+                    return Promise.resolve();
+                else {
+                    this.log(`Turning HVAC state to ${state ? 'ON' : 'OFF'}.`);
+ 
+                    if (state)
+                        return this.api.autoConditioningStart();
+                    else
+                        return this.api.autoConditioningStop();
+
+                }
             })
             .then(() => {
-                this.log(`Setting HVAC state to ${value}...`);
-
-                if (value)
-                    return this.api.autoConditioningStart();
-                else
-                    return this.api.autoConditioningStop();
+                resolve(this.state = state);
             })
-            .then(() => {
-                this.log(`Finished setting HVAC state to ${value}...`);
-                callback(null, value);
-            })
-
             .catch((error) => {
+                reject(error);
+            })
+        });
+
+    }
+
+    enableCharacteristicOn(service) {
+
+        var ctx = service.getCharacteristic(Characteristic.On);
+
+        this.on('vehicleData', (vehicleData) => {
+            this.state = vehicleData && vehicleData.climate_state && vehicleData.climate_state.is_climate_on; 
+            ctx.updateValue(this.state);
+        });
+
+        ctx.on('get', (callback) => {
+            callback(null, this.getState());
+        });
+
+        ctx.on('set', (value, callback) => {
+            this.setState(value).then(() => {
+                callback(null, this.getState());
+            })
+            .catch((error) => {
+                this.log(error);
                 callback(null);
             })
 
         });
 
         
-    };
+    }
 
 
 }

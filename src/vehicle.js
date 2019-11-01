@@ -76,9 +76,6 @@ module.exports = class Tesla extends Events  {
             this.log(`Refreshing ${vin}...`);
     
             Promise.resolve().then(() => {
-                return this.api.wakeUp();
-            })
-            .then(() => {
                 return this.api.getVehicleData();
             })
             .then((response) => {
@@ -86,8 +83,9 @@ module.exports = class Tesla extends Events  {
     
                 this.features.forEach((feature) => {
                     feature.emit('refresh', data);
+                    feature.emit('vehicleData', response);
                 });
-    
+
                 this.log('Refreshed features...');
 
                 resolve(data);
