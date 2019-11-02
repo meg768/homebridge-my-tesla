@@ -102,11 +102,9 @@ module.exports = class extends Accessory {
     setLockedState(value, callback) {
         this.log('Turning door lock to state %s.', value ? 'on' : 'off');
 
-        
+        var service = this.getService(Service.LockMechanism);
+
         Promise.resolve().then(() => {
-            return this.api.wakeUp();
-        })
-        .then(() => {
             if (value)
                 return this.api.doorLock();
             else
@@ -119,11 +117,9 @@ module.exports = class extends Accessory {
                 return Promise.resolve();
         })
         .then(() => {
-            var service = this.getService(Service.LockMechanism);
             service.setCharacteristic(Characteristic.LockCurrentState, value); 
             callback(null, value);    
         })
-
         .catch((error) => {
             callback(null);
         })            

@@ -39,30 +39,16 @@ module.exports = class Tesla extends Events  {
 
 
         var DoorLockAccessory = require('./door-lock-accessory.js');
+        var ChargingAccessory = require('./charging-accessory.js');
 
-        var accessory = new DoorLockAccessory({vehicle:this, name:'Dörren'});
-        this.addAccessory(accessory);
-/*
-        var state = 0;
-        var accessory = new Accessory({name:'A'}); // , this.platform.generateUUID('B'));
-        var service = new Service.Switch('Knapp C', 'Knapp D');
-        console.log(accessory);
-        accessory.addService(service);
+        this.addAccessory(new DoorLockAccessory({vehicle:this, name:'Dörren'}));
+        this.addAccessory(new ChargingAccessory({vehicle:this, name:'Laddning'}));
 
-        this.platform.addAccessory(accessory);
-
-        accessory.getService(Service.Switch).getCharacteristic(Characteristic.On).on('get', (callback) => {
-            console.log('GETTING');
-            callback(null, state);
-        });
-        accessory.getService(Service.Switch).getCharacteristic(Characteristic.On).on('set', (value, callback) => {
-            console.log('SETTING');
-            state = value;
-            callback(null, value);
-        });
-*/
+        
         this.api.login().then(() => {
             this.log('Login completed.');
+
+    
             return Promise.resolve();
         })
         .then(() => {

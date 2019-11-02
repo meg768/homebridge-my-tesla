@@ -23,7 +23,10 @@ module.exports = class Platform {
     		this.log('Environment variables PUSHOVER_USER and/or PUSHOVER_TOKEN not defined. Push notifications will not be able to be sent.');
     	}
 
-        //this.homebridge.on('didFinishLaunching', () => setTimeout(() => this.initialize(), 16));
+        this.homebridge.on('didFinishLaunching', () => {
+            this.debug('Finished launching.');
+        });
+        
         this.initialize();
 
     }
