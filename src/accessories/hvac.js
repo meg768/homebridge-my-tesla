@@ -1,8 +1,8 @@
 
-var Service = require('./homebridge.js').Service;
-var Characteristic = require('./homebridge.js').Characteristic;
-var VehicleData = require('./vehicle-data.js');
-var Accessory = require('./accessory.js');
+var Service = require('../homebridge.js').Service;
+var Characteristic = require('../homebridge.js').Characteristic;
+var VehicleData = require('../vehicle-data.js');
+var Accessory = require('../accessory.js');
 
 module.exports = class extends Accessory {
 
@@ -12,7 +12,7 @@ module.exports = class extends Accessory {
         var service = new Service.Fan(this.name, "hvac");
         this.addService(service);
 
-        this.on('refresh', (response) => {              
+        this.on('vehicleData', (response) => {              
             this.log('Updating HVAC status to', response.isAirConditionerOn());  
             service.getCharacteristic(Characteristic.On).updateValue(response.isAirConditionerOn());
         });

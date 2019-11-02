@@ -1,15 +1,25 @@
 "use strict";
 
+var Service  = require('./homebridge.js').Service;
+var Characteristic  = require('./homebridge.js').Characteristic;
+//var Accessory = require('./homebridge.js').Accessory;
+var Accessory = require('./accessory.js');
+var PlatformAccessory = require('./homebridge.js').PlatformAccessory;
+var VehicleData = require('./vehicle-data.js');
+
 var Events = require('events');
 var API = require('./tesla-api.js');
-
+/*
 var BatteryLevelService = require('./battery-level-service.js')
 var AirConditionerService = require('./hvac-service.js');
 var DoorLockService = require('./door-lock-service.js');
 var TemperatureSensor = require('./temperature-service.js');
 var ChargingService = require('./charging-service.js');
-var VehicleData = require('./vehicle-data.js');
 var AntiFreezeService = require('./anti-freeze-service.js');
+*/
+var VehicleData = require('./vehicle-data.js');
+
+
 
 module.exports = class Tesla extends Events  {
 
@@ -22,21 +32,35 @@ module.exports = class Tesla extends Events  {
         this.pushover = platform.pushover;
         this.config = config;
         this.name = config.name;
+        this.accessories = [];
         this.uuid = platform.generateUUID(config.vin);
-        this.features = [];
         this.api = new API({log:this.log, debug:this.debug, vin:config.vin});
         this.platform = platform;
 
-        this.features.push(new DoorLockService({vehicle:this, name:'Dörren'}));
-        this.features.push(new BatteryLevelService({vehicle:this, name:'Batteri'}));
-        this.features.push(new AirConditionerService({vehicle:this, name:'Fläkten'}));
-        this.features.push(new TemperatureSensor({vehicle:this, name:'Temperatur'}));
-        this.features.push(new ChargingService({vehicle:this, name:'Laddning'}));
-        this.features.push(new AntiFreezeService({vehicle:this, name:'Frostfri'}));
 
+        var DoorLockAccessory = require('./accessories/door-lock.js');
+        var ChargingAccessory = require('./accessories/charging.js');
+        var BatteryLevelAccessory = require('./accessories/battery-level.js');
+        var AirConditioningAccessory = require('./accessories/hvac.js');
+        var TemperatureAccessory = require('./accessories/temperature.js');
+
+        this.addAccessory(new DoorLockAccessory({vehicle:this, name:'Dörren'}));
+        this.addAccessory(new ChargingAccessory({vehicle:this, name:'Laddning'}));
+        this.addAccessory(new BatteryLevelAccessory({vehicle:this, name:'Batteri'}));
+        this.addAccessory(new AirConditioningAccessory({vehicle:this, name:'Fläkten'}));
+        this.addAccessory(new TemperatureAccessory({vehicle:this, name:'Temperatur'}));
+
+        
         this.api.login().then(() => {
             this.log('Login completed.');
+
+    
             return Promise.resolve();
+        })
+        .then(() => {
+
+            return Promise.resolve();
+
         })
         .then(() => {
             return this.refresh();
@@ -61,6 +85,10 @@ module.exports = class Tesla extends Events  {
 
     }
 
+    addAccessory(accessory) {
+        this.accessories.push(accessory);
+        this.platform.addAccessory(accessory);
+    }
 
 
     delay(ms) {
@@ -83,11 +111,11 @@ module.exports = class Tesla extends Events  {
             })
             .then((response) => {
                 var data = new VehicleData(response);
-    
-                this.features.forEach((feature) => {
-                    feature.emit('refresh', data);
+
+                this.accessories.forEach((accessory) => {
+                    accessory.emit('vehicleData', data);
                 });
-    
+
                 this.log('Refreshed features...');
 
                 resolve(data);

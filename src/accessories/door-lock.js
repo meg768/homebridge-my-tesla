@@ -1,8 +1,6 @@
+var {Service, Characteristic} = require('../homebridge.js');
 
-var Service  = require('./homebridge.js').Service;
-var Characteristic  = require('./homebridge.js').Characteristic;
-var VehicleData = require('./vehicle-data.js');
-var Accessory = require('./accessory.js');
+var Accessory = require('../accessory.js');
 
 module.exports = class extends Accessory {
 
@@ -11,10 +9,9 @@ module.exports = class extends Accessory {
 
         var service = new Service.LockMechanism(this.name, 'door-lock');
         this.addService(service);
-        this.addAccessoryInformation({manufacturer:'Craft Foods', model:'HVAC', firmwareVersion:'1.0', serialNumber:'123-123'});
 
 
-        this.on('refresh', (response) => {       
+        this.on('vehicleData', (response) => {       
             this.log('Updating door status', response.isVehicleLocked());
             service.getCharacteristic(Characteristic.LockTargetState).updateValue(response.isVehicleLocked());
             service.getCharacteristic(Characteristic.LockCurrentState).updateValue(response.isVehicleLocked());
@@ -71,9 +68,61 @@ module.exports = class extends Accessory {
             })            
         };
     
-        service.getCharacteristic(Characteristic.LockCurrentState).on('get', getLockedState.bind(this));
-        service.getCharacteristic(Characteristic.LockTargetState).on('get', getLockedState.bind(this));
-        service.getCharacteristic(Characteristic.LockTargetState).on('set', setLockedState.bind(this));
+        service.getCharacteristic(Characteristic.LockCurrentState).on('get', this.getLockedState.bind(this));
+        service.getCharacteristic(Characteristic.LockTargetState).on('get', this.getLockedState.bind(this));
+        service.getCharacteristic(Characteristic.LockTargetState).on('set', this.setLockedState.bind(this));
     
     }
-}; 
+
+
+
+    getLockedState(callback) {
+        if (this.api.isOnline()) {
+            this.log('Getting door locked state');
+
+            Promise.resolve().then(() => {
+                return this.api.getVehicleData();
+            })
+            .then((response) => {
+                response = new VehicleData(response);
+                callback(null, response.isVehicleLocked());
+            })
+            .catch((error) => {
+                this.log('Could not get vehicle data to determine locked state.');
+                callback(null);
+                
+            });
+
+        }
+        else {
+            callback(null);
+        }
+    };
+
+    setLockedState(value, callback) {
+        this.log('Turning door lock to state %s.', value ? 'on' : 'off');
+
+        var service = this.getService(Service.LockMechanism);
+
+        Promise.resolve().then(() => {
+            if (value)
+                return this.api.doorLock();
+            else
+                return this.api.doorUnlock();
+        })
+        .then(() => {
+            if (!value)
+                return this.api.remoteStartDrive();
+            else
+                return Promise.resolve();
+        })
+        .then(() => {
+            service.setCharacteristic(Characteristic.LockCurrentState, value); 
+            callback(null, value);    
+        })
+        .catch((error) => {
+            callback(null);
+        })            
+    };
+    
+};
