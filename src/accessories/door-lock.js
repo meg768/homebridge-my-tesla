@@ -1,6 +1,7 @@
 var {Service, Characteristic} = require('../homebridge.js');
 
 var Accessory = require('../accessory.js');
+var VehicleData = require('../vehicle-data.js');
 
 module.exports = class extends Accessory {
 
@@ -29,7 +30,7 @@ module.exports = class extends Accessory {
                     callback(null, response.isVehicleLocked());
                 })
                 .catch((error) => {
-                    this.log('Could not get vehicle data to determine locked state.');
+                    this.log(error);
                     callback(null);
                     
                 });
@@ -88,7 +89,7 @@ module.exports = class extends Accessory {
                 callback(null, response.isVehicleLocked());
             })
             .catch((error) => {
-                this.log('Could not get vehicle data to determine locked state.');
+                this.log(error);
                 callback(null);
                 
             });
