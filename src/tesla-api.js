@@ -262,13 +262,13 @@ module.exports = class API {
         });
     }
 
-    request(method, path) {
+    request(method, path, timeout) {
         return new Promise((resolve, reject) => {
             Promise.resolve().then(() => {
                 return this.wakeUp();
             })
             .then(() => {
-                return this.queuedRequest(method, path);
+                return this.cachedRequest(method, path, timeout);
             })
             .then((response) => {
                 // Save last response time
