@@ -10,13 +10,13 @@ module.exports = class extends Accessory {
         var service = new Service.LockMechanism(this.name, 'door-lock');
         this.addService(service);
 
-/*
-        this.on('refresh', (response) => {       
+
+        this.on('vehicleData', (response) => {       
             this.log('Updating door status', response.isVehicleLocked());
             service.getCharacteristic(Characteristic.LockTargetState).updateValue(response.isVehicleLocked());
             service.getCharacteristic(Characteristic.LockCurrentState).updateValue(response.isVehicleLocked());
         });
-*/
+
         var getLockedState = (callback) => {
             if (this.api.isOnline()) {
                 this.log('Getting door locked state');
