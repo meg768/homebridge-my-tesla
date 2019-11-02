@@ -1,10 +1,6 @@
-"use strict";
-
 var isFunction = require('yow/isFunction');
 var isDate = require('yow/isDate');
 var Request = require('yow/request');
-
-
 
 module.exports = class API {
 
@@ -135,6 +131,7 @@ module.exports = class API {
 
                 // Store result in cache
                 this.cache[key] = {timestamp:new Date(), data:response};
+                this.lastResponse = new Date();
 
                 resolve(response);
             })
@@ -271,9 +268,6 @@ module.exports = class API {
                 return this.cachedRequest(method, path, timeout);
             })
             .then((response) => {
-                // Save last response time
-                this.lastResponse = new Date();
-
                 resolve(response);                
             })
             .catch((error) => {
