@@ -1,11 +1,7 @@
-"use strict";
-
 var homebridge = require('./homebridge.js').api;
-var PlatformAccessory = homebridge.platformAccessory;
 
 // Basic accessory - may be used for most projects
-
-class Accessory extends PlatformAccessory {
+class Accessory extends homebridge.platformAccessory {
 
     constructor(options) {
         var {name, uuid, category} = options;

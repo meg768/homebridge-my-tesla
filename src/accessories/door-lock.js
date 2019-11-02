@@ -1,6 +1,6 @@
-var {Service, Characteristic} = require('./homebridge.js');
+var {Service, Characteristic} = require('../homebridge.js');
 
-var Accessory = require('./accessory.js');
+var Accessory = require('../accessory.js');
 
 module.exports = class extends Accessory {
 
