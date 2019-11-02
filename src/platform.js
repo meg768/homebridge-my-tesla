@@ -7,8 +7,6 @@ module.exports = class Platform {
 
     constructor(log, config, homebridge) {
 
-        log(config);
-
         this.config = config;
         this.log = log;
         this.homebridge = homebridge;
@@ -27,35 +25,18 @@ module.exports = class Platform {
             this.debug('Finished launching.');
         });
         
-        this.initialize();
-
-    }
-
-    initialize() {
-        this.debug('Initializing platform...');
         this.config.vehicles.forEach((config, index) => {
             this.vehicles.push(new Vehicle(this, config));
         });
-    }
 
-    /*
-    configureAccessory(accessory) {
-        console.log('Configuring accessory');
-        //this.accessories[accessory.UUID] = accessory;
     }
-    */
 
     accessories(callback) {
-        console.log('accessories() called')
         callback(this.items);
     }
 
     addAccessory(accessory) {
-        console.log('Adding accessory');
         this.items.push(accessory);
-        //this.map[accessory.UUID] = accessory;
-        //this.homebridge.registerPlatformAccessories('homebridge-my-tesla', 'Tesla', [accessory]);
-
     }
 
     pushover(payload) {
