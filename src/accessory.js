@@ -15,13 +15,13 @@ module.exports = class Accessory extends PlatformAccessory {
             uuid = homebridge.hap.uuid.generate(name);
 
         if (category == undefined)
-            category = homebridge.hap.Accessory.OTHER;
+            category = homebridge.hap.Accessory.Categories.OTHER;
 
         console.log(`Created new Accessory with name ${name}, uuid ${uuid} and category ${category}`);
 
         super(name, uuid, category);
 
-        // Seems like we have to giv it a name...
+        // Seems like we have to give it a name...
         this.name = name;
     }
 
