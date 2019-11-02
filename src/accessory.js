@@ -3,7 +3,9 @@
 var homebridge = require('./homebridge.js').api;
 var PlatformAccessory = homebridge.platformAccessory;
 
-module.exports = class Accessory extends PlatformAccessory {
+// Basic accessory - may be used for most projects
+
+class Accessory extends PlatformAccessory {
 
     constructor(options) {
         var {name, uuid, category} = options;
@@ -31,3 +33,26 @@ module.exports = class Accessory extends PlatformAccessory {
         return this.services;
     }
 };
+
+
+
+class VehicleAccessory extends Accessory {
+
+    constructor(options) {
+        var {vehicle, ...options} = options;
+
+        if (vehicle == undefined)
+            throw new Error('A vehicle must be specified');
+
+        super(options);
+
+        this.vehicle = vehicle;
+        this.log = vehicle.log;
+        this.debug = vehicle.debug;
+        this.platform = vehicle.platform;
+        this.api = vehicle.api;
+    }
+
+};
+
+module.exports = VehicleAccessory;
