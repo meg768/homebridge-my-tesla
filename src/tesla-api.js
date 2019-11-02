@@ -9,7 +9,7 @@ module.exports = class API {
         var {vin, username = process.env.TESLA_USER, password = process.env.TESLA_PASSWORD, clientID = process.env.TESLA_CLIENT_ID, clientSecret = process.env.TESLA_CLIENT_SECRET} = options;
 
         if (!clientID || !clientSecret || !username || !password)
-            throw new Error('Need Tesla credentials.');
+            throw new Error('Need Tesla credentials. This may be done by specifying the environment variables TESLA_USER, TESLA_PASSWORD, TESLA_CLIENT_ID and TESLA_CLIENT_SECRET.');
 
         if (!vin) 
             throw new Error('Need the VIN number of your Tesla.');
