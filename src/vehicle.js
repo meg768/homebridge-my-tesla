@@ -32,6 +32,7 @@ module.exports = class Tesla extends Events  {
         this.pushover = platform.pushover;
         this.config = config;
         this.name = config.name;
+        this.accessories = [];
         this.uuid = platform.generateUUID(config.vin);
         this.api = new API({log:this.log, debug:this.debug, vin:config.vin});
         this.platform = platform;
@@ -40,7 +41,7 @@ module.exports = class Tesla extends Events  {
         var DoorLockAccessory = require('./door-lock-accessory.js');
 
         var accessory = new DoorLockAccessory({vehicle:this, name:'Dörren'});
-        this.platform.addAccessory(accessory);
+        this.addAccessory(accessory);
 /*
         var state = 0;
         var accessory = new Accessory({name:'A'}); // , this.platform.generateUUID('B'));
@@ -92,6 +93,10 @@ module.exports = class Tesla extends Events  {
 
     }
 
+    addAccessory(accessory) {
+        this.accessories.push(accessory);
+        this.platform.addAccessory(accessory);
+    }
 
 
     delay(ms) {
@@ -114,11 +119,11 @@ module.exports = class Tesla extends Events  {
             })
             .then((response) => {
                 var data = new VehicleData(response);
-    /*
-                this.features.forEach((feature) => {
-                    feature.emit('refresh', data);
+
+                this.accessories.forEach((accessory) => {
+                    accessory.emit('vehicleData', data);
                 });
-    */
+
                 this.log('Refreshed features...');
 
                 resolve(data);
