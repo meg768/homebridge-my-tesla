@@ -2,5 +2,4 @@
 
 exports.Characteristic = null;
 exports.Service = null;
-
-XX
+exports.Accessory = null;

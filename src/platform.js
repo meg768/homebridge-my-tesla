@@ -29,6 +29,7 @@ module.exports = class Platform {
 
     }
 
+
     pushover(payload) {
 
         var Pushover = require('pushover-notifications');
@@ -62,9 +63,10 @@ module.exports = class Platform {
         return this.homebridge.hap.uuid.generate(id.toString());
     }
 
-
+/*
     accessories(callback) {
         callback(this.vehicles);
 
     }
+*/
 }

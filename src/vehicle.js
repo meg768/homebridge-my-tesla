@@ -1,5 +1,10 @@
 "use strict";
 
+var Service  = require('./homebridge.js').Service;
+var Characteristic  = require('./homebridge.js').Characteristic;
+var Accessory = require('./homebridge.js').Accessory;
+var VehicleData = require('./vehicle-data.js');
+
 var Events = require('events');
 var API = require('./tesla-api.js');
 
@@ -23,20 +28,35 @@ module.exports = class Tesla extends Events  {
         this.config = config;
         this.name = config.name;
         this.uuid = platform.generateUUID(config.vin);
-        this.features = [];
+        this.accessories = [];
         this.api = new API({log:this.log, debug:this.debug, vin:config.vin});
         this.platform = platform;
 
+
+
+        /*
         this.features.push(new DoorLockService({vehicle:this, name:'Dörren'}));
         this.features.push(new BatteryLevelService({vehicle:this, name:'Batteri'}));
         this.features.push(new AirConditionerService({vehicle:this, name:'Fläkten'}));
         this.features.push(new TemperatureSensor({vehicle:this, name:'Temperatur'}));
         this.features.push(new ChargingService({vehicle:this, name:'Laddning'}));
         this.features.push(new AntiFreezeService({vehicle:this, name:'Frostfri'}));
-
+        */
         this.api.login().then(() => {
             this.log('Login completed.');
             return Promise.resolve();
+        })
+        .then(() => {
+            var accessory = new Accessory('name', 'id');
+            var service = new Service.Switch('Knapp', 'knapp-1');
+            accessory.addService(service);
+            this.accessories.push(accessory);
+            this.platform.addAccessory(accessory);
+
+            this.homebridge.registerPlatformAccessories('homebridge-my-tesla', 'Tesla', this.accessories);
+
+            return Promise.resolve();
+
         })
         .then(() => {
             return this.refresh();
