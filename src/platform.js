@@ -12,6 +12,7 @@ module.exports = class Platform {
         this.config = config;
         this.log = log;
         this.homebridge = homebridge;
+        this.items = [];
         this.vehicles = [];
         this.debug = config.debug ? log : () => {};
 
@@ -22,13 +23,37 @@ module.exports = class Platform {
     		this.log('Environment variables PUSHOVER_USER and/or PUSHOVER_TOKEN not defined. Push notifications will not be able to be sent.');
     	}
 
-        this.config.vehicles.forEach((config, index) => {
-            this.vehicles.push(new Vehicle(this, config));
-        });
-        
+        //this.homebridge.on('didFinishLaunching', () => setTimeout(() => this.initialize(), 16));
+        this.initialize();
 
     }
 
+    initialize() {
+        this.debug('Initializing platform...');
+        this.config.vehicles.forEach((config, index) => {
+            this.vehicles.push(new Vehicle(this, config));
+        });
+    }
+
+    /*
+    configureAccessory(accessory) {
+        console.log('Configuring accessory');
+        //this.accessories[accessory.UUID] = accessory;
+    }
+    */
+
+    accessories(callback) {
+        console.log('accessories() called')
+        callback(this.items);
+    }
+
+    addAccessory(accessory) {
+        console.log('Adding accessory');
+        this.items.push(accessory);
+        //this.map[accessory.UUID] = accessory;
+        //this.homebridge.registerPlatformAccessories('homebridge-my-tesla', 'Tesla', [accessory]);
+
+    }
 
     pushover(payload) {
 
@@ -63,10 +88,4 @@ module.exports = class Platform {
         return this.homebridge.hap.uuid.generate(id.toString());
     }
 
-/*
-    accessories(callback) {
-        callback(this.vehicles);
-
-    }
-*/
 }
