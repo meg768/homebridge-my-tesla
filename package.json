@@ -13,7 +13,7 @@
     "git-reset": "git reset --hard HEAD",
     "git-pull": "git pull",
     "git-commit": "git add -A && git commit -m '-' && git push",
-    "goto-npm": "open https://npmjs.com/meg768/homebridge-my-tesla.git",
+    "goto-npm": "open https://www.npmjs.com/package/homebridge-my-tesla",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
