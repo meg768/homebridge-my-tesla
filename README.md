@@ -20,7 +20,6 @@ Configure your **~/.homebridge/config.json** with the following platform.
 
 ```json
 
-
 {
     "bridge": {
         "name": "Tesla",
@@ -39,29 +38,36 @@ Configure your **~/.homebridge/config.json** with the following platform.
             {         
                 "name": "Model 3",       
                 "vin": "5YJ3E7EB9KF240654",
-                
-                "username": "xxxx",
-                "password": "xxxx",
-                "clientID": "xxxx",
-                "clientSecret": "xxxx",
+
+                "username": "xxx - Your username at tesla.com",
+                "password": "xxx - Your password at tesla.com",
+                "clientID": "xxx - Optional, specify if you have one",
+                "clientSecret": "xxx - Optional, specify if you have one",
 
                 "charging": {
-                    "name": "Charging"
+                    "comment": "Remove this entry if you do not want a button for the charging state.",
+                    "name": "Laddning"
                 },
                 "hvac": {
-                    "name": "Fan"
+                    "comment": "Remove this entry if you do not want a button for the air conditioning.",
+                    "name": "Fläkten"
                 },
                 "locks": {
-                    "name": "Doors"
+                    "comment": "Remove the this entry if you do not want a button for controlling the door locks.",
+                    "name": "Dörrar"
                 },
                 "temperature": {
-                    "name": "Temperature"
+                    "comment": "Remove the this entry if you do not want to monitor temperature.",
+                    "name": "Temperatur"
                 }
 
             }
         ]
     }]
+
+
 }
+
 ```
 
 Of course, you have to supply your own name and **VIN** number and login credentials.

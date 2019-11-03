@@ -1,15 +1,31 @@
 var isFunction = require('yow/isFunction');
 var isDate = require('yow/isDate');
+var isString = require('yow/isString');
 var Request = require('yow/request');
 
 module.exports = class API {
 
     constructor(options) {
 
-        var {vin, username = process.env.TESLA_USER, password = process.env.TESLA_PASSWORD, clientID = process.env.TESLA_CLIENT_ID, clientSecret = process.env.TESLA_CLIENT_SECRET} = options;
+        var {vin = process.env.TESLA_VIN, username = process.env.TESLA_USER, password = process.env.TESLA_PASSWORD, clientID = process.env.TESLA_CLIENT_ID, clientSecret = process.env.TESLA_CLIENT_SECRET} = options;
 
-        if (!clientID || !clientSecret || !username || !password)
-            throw new Error('Need Tesla credentials. This may be done by specifying the environment variables TESLA_USER, TESLA_PASSWORD, TESLA_CLIENT_ID and TESLA_CLIENT_SECRET.');
+        if (clientID == undefined || (isString(clientID) && clientID.length == 0))
+            clientID = '81527cff06843c8634fdc09e8ac0abefb46ac849f38fe1e431c2ef2106796384';
+        
+        if (clientSecret == undefined || (isString(clientSecret) && clientSecret.length == 0))
+            clientSecret = 'c7257eb71a564034f9419ee651c7d0e5f7aa6bfbd18bafb5c5c033b093bb2fa3';
+
+        if (!username)
+            throw new Error('Need Tesla credentials. A username must be specified');
+
+        if (!password)
+            throw new Error('Need Tesla credentials. A password must be specified');
+
+        if (!clientID)
+            throw new Error('Need Tesla credentials. A clientID must be specified');
+        
+            if (!clientSecret)
+            throw new Error('Need Tesla credentials. A clientSecret must be specified');
 
         if (!vin) 
             throw new Error('Need the VIN number of your Tesla.');

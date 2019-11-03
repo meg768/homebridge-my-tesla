@@ -56,9 +56,12 @@ module.exports = class Tesla extends Events  {
             this.addAccessory(new TemperatureAccessory({vehicle:this, config:this.config.temperature}));
 
         var configLoginOptions = {username:config.username, password:config.password, clientID:config.clientID, clientSecret:config.clientSecret};
-        var envLoginOptions = {username:process.env.TESLA_USER, password:process.env.TESLA_PASSWORD, clientID:process.env.TESLA_CLIENT_ID, clientSecret:process.env.TESLA_CLIENT_SECRET};
-        var loginOptions = {...configLoginOptions, ...envLoginOptions};
-        
+        var processLoginOptions = {username:process.env.TESLA_USER, password:process.env.TESLA_PASSWORD, clientID:process.env.TESLA_CLIENT_ID, clientSecret:process.env.TESLA_CLIENT_SECRET};
+        var loginOptions = {...configLoginOptions, ...processLoginOptions};
+
+
+        console.log(loginOptions);
+
         this.api.login(loginOptions).then(() => {
             this.log('Login completed.');
 
