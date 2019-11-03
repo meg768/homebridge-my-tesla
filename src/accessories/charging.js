@@ -9,75 +9,107 @@ module.exports = class extends Accessory {
     constructor(options) {
         super(options);
 
+        this.batteryLevel = undefined;
+        this.isCharging = undefined;
+
+        this.enableSwitch();
+        this.enableBatteryLevel();
+    }
+
+    onVehicleData(data) {
+
+    }
+
+    enableSwitch() {
         var service = new Service.Switch(this.name, "charging");
         this.addService(service);
 
-        this.on('vehicleData', (response) => {                
-            service.getCharacteristic(Characteristic.On).updateValue(response.isCharging());
+        this.on('vehicleData', (data) => {    
+            this.isCharging = data.isCharging();
+            this.debug(`Updated charging state to ${this.isCharging ? 'CHARGING' : 'NOT CHARGING'}...`);
+            service.getCharacteristic(Characteristic.On).updateValue(this.isCharging);
         });
 
         service.getCharacteristic(Characteristic.On).on('get', (callback) => {
-            if (this.api.isOnline()) {
-                this.log(`Getting vehicle data for charging...`);
-
-                Promise.resolve().then(() => {
-                    return this.api.getVehicleData();
-                })
-                .then((response) => {
-                    this.log(`Got vehicle data for charging...`);
-                    response = new VehicleData(response);
-                    callback(null, response.isCharging());
-                })
-                .catch(() => {
-                    callback(null);
-
-                });
-    
-            }
-            else
-                callback(null);
+            callback(null, this.isCharging);
         });
     
         service.getCharacteristic(Characteristic.On).on('set', (value, callback) => {
 
-            if (value) {
-                Promise.resolve().then(() => {
-                    return this.api.chargePortDoorOpen();
-                })
-                .then(() => {
-                    return this.api.chargeStart();
-                })
-                .then(() => {
-                    callback(null, value);
-                })
-                .catch((error) => {
-                    this.log(error);
-                })
+            var startCharging = () => {
+                return new Promise((resolve, reject) => {
+                    Promise.resolve().then(() => {
+                        return this.api.chargePortDoorOpen();
+                    })
+                    .then(() => {
+                        return this.api.chargeStart();
+                    })
+                    .then(() => {
+                        resolve(value);
+                    })
+                    .catch((error) => {
+                        reject(error);
+                    })
+                });
+            }
+        
+            var stopCharging = () => {
+                return new Promise((resolve, reject) => {
+                    Promise.resolve().then(() => {
+                        return this.api.chargeStop();    
+                    })
+                    .then(() => {
+                        return this.api.chargePortDoorOpen();
+                    })
+                    .then(() => {
+                        resolve(value);
+                    })
+                    .catch((error) => {
+                        reject(error);
+                    })
+                });        
+            }
+
+            if (value == this.isCharging) {
+                callback(null, this.isCharging);                
             }
             else {
                 Promise.resolve().then(() => {
-                    return this.api.wakeUp();
+                    return value ? startCharging() : stopCharging();
                 })
                 .then(() => {
-                    return this.api.chargeStop();    
-                })
-                .then(() => {
-                    return this.api.chargePortDoorOpen();
-                })
-                .then(() => {
-                    callback(null, value);
+                    callback(null, this.isCharging = value);
                 })
                 .catch((error) => {
                     this.log(error);
+                    callback(null);
                 })
-    
             }
-    
         });
     
-    
-    
-    
     }
-}; 
+
+    enableBatteryLevel() {
+        var service = new Service.BatteryService(this.name);
+        this.addService(service);
+
+        this.on('vehicleData', (data) => {
+            this.batteryLevel = data.getBatteryLevel();
+            this.debug(`Updated battery level to ${this.batteryLevel}%.`);
+
+            service.getCharacteristic(Characteristic.BatteryLevel).updateValue(this.batteryLevel);
+        });
+
+        service.getCharacteristic(Characteristic.BatteryLevel).on('get', (callback) => {
+            callback(null, this.batteryLevel);    
+        });
+
+        service.getCharacteristic(Characteristic.ChargingState).on('get', (callback) => {
+            callback(null, this.isCharging ? Characteristic.ChargingState.CHARGING : Characteristic.ChargingState.NOT_CHARGING);    
+        });
+
+    }
+
+
+}
 

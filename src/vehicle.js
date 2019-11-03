@@ -40,13 +40,11 @@ module.exports = class Tesla extends Events  {
 
         var DoorLockAccessory = require('./accessories/door-lock.js');
         var ChargingAccessory = require('./accessories/charging.js');
-        var BatteryLevelAccessory = require('./accessories/battery-level.js');
         var AirConditioningAccessory = require('./accessories/hvac.js');
         var TemperatureAccessory = require('./accessories/temperature.js');
 
         this.addAccessory(new DoorLockAccessory({vehicle:this, name:'Dörren'}));
         this.addAccessory(new ChargingAccessory({vehicle:this, name:'Laddning'}));
-        this.addAccessory(new BatteryLevelAccessory({vehicle:this, name:'Batteri'}));
         this.addAccessory(new AirConditioningAccessory({vehicle:this, name:'Fläkten'}));
         this.addAccessory(new TemperatureAccessory({vehicle:this, name:'Temperatur'}));
 
