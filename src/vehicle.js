@@ -43,13 +43,23 @@ module.exports = class Tesla extends Events  {
         var AirConditioningAccessory = require('./accessories/hvac.js');
         var TemperatureAccessory = require('./accessories/temperature.js');
 
-        this.addAccessory(new DoorLockAccessory({vehicle:this, name:'Dörren'}));
-        this.addAccessory(new ChargingAccessory({vehicle:this, name:'Laddning'}));
-        this.addAccessory(new AirConditioningAccessory({vehicle:this, name:'Fläkten'}));
-        this.addAccessory(new TemperatureAccessory({vehicle:this, name:'Temperatur'}));
+        if (this.config.locks)
+            this.addAccessory(new DoorLockAccessory({vehicle:this, config:this.config.locks}));
 
+        if (this.config.charging)
+            this.addAccessory(new ChargingAccessory({vehicle:this, config:this.config.charging}));
+
+        if (this.config.hvac)
+            this.addAccessory(new AirConditioningAccessory({vehicle:this, config:this.config.hvac}));
+
+        if (this.config.temperature)
+            this.addAccessory(new TemperatureAccessory({vehicle:this, config:this.config.temperature}));
+
+        var configLoginOptions = {username:config.username, password:config.password, clientID:config.clientID, clientSecret:config.clientSecret};
+        var envLoginOptions = {username:process.env.TESLA_USER, password:process.env.TESLA_PASSWORD, clientID:process.env.TESLA_CLIENT_ID, clientSecret:process.env.TESLA_CLIENT_SECRET};
+        var loginOptions = {...configLoginOptions, ...envLoginOptions};
         
-        this.api.login().then(() => {
+        this.api.login(loginOptions).then(() => {
             this.log('Login completed.');
 
     

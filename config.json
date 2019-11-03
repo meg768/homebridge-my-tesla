@@ -2,9 +2,9 @@
 {
     "bridge": {
         "name": "Tesla",
-        "username": "11:11:11:11:11:12",
+        "username": "11:11:11:11:11:16",
         "port": 51821,
-        "pin": "111-11-112"
+        "pin": "111-11-116"
     },
 
     "description": "Sample configuration file",
@@ -17,10 +17,23 @@
             {         
                 "name": "Model 3",       
                 "vin": "5YJ3E7EB9KF240654",
+                
+                "username": "xxxx",
+                "password": "xxxx",
+                "clientID": "xxxx",
+                "clientSecret": "xxxx",
 
-                "doors": {
-                    "name": "Dörrar",
-                    "enabled": true
+                "charging": {
+                    "name": "Laddning"
+                },
+                "hvac": {
+                    "name": "Fläkten"
+                },
+                "locks": {
+                    "name": "Dörrar"
+                },
+                "temperature": {
+                    "name": "Temperatur"
                 }
 
             }

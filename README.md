@@ -11,23 +11,22 @@ for more information.
 
 Then install this plugin.
 
-    $ sudo npm install homebridge-my-tesla -g
-
-If you are having permission problems during install, try this
-
     $ sudo npm install homebridge-my-tesla -g --unsafe-perm
+
 
 ## Configuration File
 
 Configure your **~/.homebridge/config.json** with the following platform.
 
 ```json
+
+
 {
     "bridge": {
         "name": "Tesla",
-        "username": "AD:27:3E:E4:CF:63",
-        "port": 51826,
-        "pin": "046-12-347"
+        "username": "11:11:11:11:11:16",
+        "port": 51821,
+        "pin": "111-11-116"
     },
 
     "description": "Sample configuration file",
@@ -37,28 +36,35 @@ Configure your **~/.homebridge/config.json** with the following platform.
         "name": "Tesla",
         "debug": false,
         "vehicles": [
-            {"name": "Model 3", "vin": "5YJ3E7EB9KF240654"}
+            {         
+                "name": "Model 3",       
+                "vin": "5YJ3E7EB9KF240654",
+                
+                "username": "xxxx",
+                "password": "xxxx",
+                "clientID": "xxxx",
+                "clientSecret": "xxxx",
+
+                "charging": {
+                    "name": "Charging"
+                },
+                "hvac": {
+                    "name": "Fan"
+                },
+                "locks": {
+                    "name": "Doors"
+                },
+                "temperature": {
+                    "name": "Temperature"
+                }
+
+            }
         ]
     }]
 }
 ```
 
-If you already have a configuration file just add this to the **platforms**
- section.
-
-```json
-{
-    "platform": "Tesla",
-    "name": "Tesla",
-    "debug": false,
-    "vehicles": [
-        {"name": "Model 3", "vin": "5YJ3E7EB9KF240654"}
-    ]
-
-}
-
-```
-Of course, you have to supply your own name and **VIN** number.
+Of course, you have to supply your own name and **VIN** number and login credentials.
 
 
 ## What This Plugin Does
@@ -66,13 +72,9 @@ Of course, you have to supply your own name and **VIN** number.
 This plugin adds a number of controls to Apple HomeKit. Currently
 it only adds controls to open the doors, control the HVAC and to display current temperature.
 
-As for now, it is only intended for Swedish users...
-
-![alt text](./images/bob.jpeg)
-
 ## Siri
 
-If you name things correctly you might get Siri to work by saying "Lås bilen", "Lås upp bilen", "Sätt på fläkten" or "Stäng av fläkten"...
+If you name things correctly you might get Siri to work by saying "Lock car", "Unlock car", "Turn on fan" or "Turn off fan"...
 
 ## Usage
 

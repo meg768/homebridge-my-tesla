@@ -24,16 +24,6 @@ api.login().then((token) => {
     console.log(data);
 })
 .then(() => {
-    console.log('Gettings vehicle data');
-    return api.getVehicleData();
-})
-.then((data) => {
-    console.log(data);
-})
-.then(() => {
-    return api.autoConditioningStop();
-})
-.then(() => {
     console.log('Done.');
 })
 .catch((error) => {

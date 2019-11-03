@@ -14,21 +14,33 @@ module.exports = class extends Accessory {
 
         this.enableSwitch();
         this.enableBatteryLevel();
+
+        this.on('vehicleData', (data) => {    
+            if (true) {
+                var service = this.getService(Service.Switch);
+
+                this.isCharging = data.isCharging();
+                this.debug(`Updated charging state to ${this.isCharging ? 'CHARGING' : 'NOT CHARGING'}...`);
+                
+                service.getCharacteristic(Characteristic.On).updateValue(this.isCharging);
+            }
+
+            if (true) {
+                var service = this.getService(Service.BatteryService);
+
+                this.batteryLevel = data.getBatteryLevel();
+                this.debug(`Updated battery level to ${this.batteryLevel}%.`);
+    
+                service.getCharacteristic(Characteristic.BatteryLevel).updateValue(this.batteryLevel);
+            }
+        });
+
     }
 
-    onVehicleData(data) {
-
-    }
 
     enableSwitch() {
         var service = new Service.Switch(this.name, "charging");
         this.addService(service);
-
-        this.on('vehicleData', (data) => {    
-            this.isCharging = data.isCharging();
-            this.debug(`Updated charging state to ${this.isCharging ? 'CHARGING' : 'NOT CHARGING'}...`);
-            service.getCharacteristic(Characteristic.On).updateValue(this.isCharging);
-        });
 
         service.getCharacteristic(Characteristic.On).on('get', (callback) => {
             callback(null, this.isCharging);
@@ -36,48 +48,28 @@ module.exports = class extends Accessory {
     
         service.getCharacteristic(Characteristic.On).on('set', (value, callback) => {
 
-            var startCharging = () => {
+            var setChargingState = (state) => {
                 return new Promise((resolve, reject) => {
                     Promise.resolve().then(() => {
-                        return this.api.chargePortDoorOpen();
+                        return state ? this.api.chargePortDoorOpen() : this.api.chargeStop();
                     })
                     .then(() => {
-                        return this.api.chargeStart();
+                        return state ? this.api.chargeStart() : this.api.chargePortDoorOpen();
                     })
                     .then(() => {
-                        resolve(value);
+                        resolve(state);
                     })
                     .catch((error) => {
                         reject(error);
                     })
                 });
             }
-        
-            var stopCharging = () => {
-                return new Promise((resolve, reject) => {
-                    Promise.resolve().then(() => {
-                        return this.api.chargeStop();    
-                    })
-                    .then(() => {
-                        return this.api.chargePortDoorOpen();
-                    })
-                    .then(() => {
-                        resolve(value);
-                    })
-                    .catch((error) => {
-                        reject(error);
-                    })
-                });        
-            }
 
             if (value == this.isCharging) {
                 callback(null, this.isCharging);                
             }
             else {
-                Promise.resolve().then(() => {
-                    return value ? startCharging() : stopCharging();
-                })
-                .then(() => {
+                setChargingState(value).then(() => {
                     callback(null, this.isCharging = value);
                 })
                 .catch((error) => {
@@ -92,13 +84,6 @@ module.exports = class extends Accessory {
     enableBatteryLevel() {
         var service = new Service.BatteryService(this.name);
         this.addService(service);
-
-        this.on('vehicleData', (data) => {
-            this.batteryLevel = data.getBatteryLevel();
-            this.debug(`Updated battery level to ${this.batteryLevel}%.`);
-
-            service.getCharacteristic(Characteristic.BatteryLevel).updateValue(this.batteryLevel);
-        });
 
         service.getCharacteristic(Characteristic.BatteryLevel).on('get', (callback) => {
             callback(null, this.batteryLevel);    
