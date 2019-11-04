@@ -18,8 +18,8 @@
                 "name": "Model 3",       
                 "vin": "5YJ3E7EB9KF240654",
 
-                "username": "xxx - Your username at tesla.com",
-                "password": "xxx - Your password at tesla.com",
+                "username": "Your username at tesla.com",
+                "password": "Your password at tesla.com",
 
                 "charging": {
                     "name": "Laddning",
@@ -40,7 +40,8 @@
                 "defrost": {
                     "name": "Frostfri",
                     "enabled": true,
-                    "temperatureRange": [17, 18]
+                    "temperatureCheckFrequency": 1,
+                    "temperatureRange": [0, 5]
                 }
 
             }

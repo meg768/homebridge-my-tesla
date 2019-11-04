@@ -39,33 +39,34 @@ Configure your **~/.homebridge/config.json** with the following platform.
                 "name": "Model 3",       
                 "vin": "5YJ3E7EB9KF240654",
 
-                "username": "xxx - Your username at tesla.com",
-                "password": "xxx - Your password at tesla.com",
-                "clientID": "xxx - Optional, specify if you have one",
-                "clientSecret": "xxx - Optional, specify if you have one",
+                "username": "Your username at tesla.com",
+                "password": "Your password at tesla.com",
 
                 "charging": {
-                    "comment": "Remove this entry if you do not want a button for the charging state.",
-                    "name": "Laddning"
+                    "name": "Laddning",
+                    "enabled": true
                 },
                 "hvac": {
-                    "comment": "Remove this entry if you do not want a button for the air conditioning.",
-                    "name": "Fläkten"
+                    "name": "Fläkten",
+                    "enabled": true
                 },
                 "locks": {
-                    "comment": "Remove the this entry if you do not want a button for controlling the door locks.",
-                    "name": "Dörrar"
+                    "name": "Dörrar",
+                    "enabled": true
                 },
                 "temperature": {
-                    "comment": "Remove the this entry if you do not want to monitor temperature.",
-                    "name": "Temperatur"
+                    "name": "Temperatur",
+                    "enabled": true
+                },
+                "defrost": {
+                    "name": "Frostfri",
+                    "enabled": true,
+                    "temperatureRange": [0, 5]
                 }
 
             }
         ]
     }]
-
-
 }
 
 ```

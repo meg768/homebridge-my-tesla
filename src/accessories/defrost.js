@@ -19,12 +19,15 @@ module.exports = class extends Accessory {
         if (this.config.temperatureRange[0] >= this.config.temperatureRange[1])
             throw new Error('The array temperatureRange must contain ascending values for defrost accessory.');
 
+        if (this.config.temperatureCheckFrequency == undefined)
+            throw new Error('A temperatureCheckFrequency must be specified.');
+
         this.minTemperature = this.config.temperatureRange[0];
         this.maxTemperature = this.config.temperatureRange[1];
         this.isActive = false;
         this.minTemperature = 16;
         this.maxTemperature = 17;
-        this.timerInterval = 1 * 60000;
+        this.timerInterval = this.config.temperatureCheckFrequency * 1000 * 60;
         this.timer = new Timer();
 
             
