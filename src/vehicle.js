@@ -79,8 +79,6 @@ module.exports = class Tesla extends Events  {
         return new Promise((resolve, reject) => {
             var vin = this.config.vin;
 
-            this.debug(`Fetching vehicle data for vehicle ${vin}...`);
-    
             Promise.resolve().then(() => {
                 return this.api.getVehicleData();
             })

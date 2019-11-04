@@ -58,8 +58,6 @@ module.exports = class extends Accessory {
 
     checkTemperature() {
         return new Promise((resolve, reject) => {
-            this.debug(`Fetching vehicle temperature for defrost...`);
-
             this.vehicle.getVehicleData().then((data) => {
 
                 var temperature = data.getInsideTemperature();
