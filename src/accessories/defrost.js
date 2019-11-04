@@ -30,11 +30,14 @@ module.exports = class extends Accessory {
 
         this.timerInterval = this.config.temperatureCheckFrequency * 1000 * 60;
         this.timer = new Timer();
-
             
         this.enableSwitch();
+    }
 
-
+    pause(ms) {
+        return new Promise((resolve, reject) => {
+            setTimeout(resolve, ms);
+        });
     }
 
     enableSwitch() {
@@ -81,6 +84,11 @@ module.exports = class extends Accessory {
                 this.log(error);
             })
             .then(() => {
+                // Seems we have to pause a bit so the air condition state is updated in getVehicleData()...
+                return this.pause(1000);
+            })
+            .then(() => {
+                // Make sure to refresh all other accessories...
                 return this.vehicle.getVehicleData();
             })
             .then(() => {
@@ -90,6 +98,7 @@ module.exports = class extends Accessory {
             })
         })
     }
+
 
     setAutoConditioningState(value) {
         return new Promise((resolve, reject) => {
