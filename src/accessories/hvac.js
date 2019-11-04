@@ -19,7 +19,7 @@ module.exports = class extends Accessory {
 
         this.on('vehicleData', (data) => {    
             this.isAirConditionerOn = data.isAirConditionerOn();
-            this.log(`Updated HVAC status to ${this.isAirConditionerOn ? 'ON' : 'OFF'}`);  
+            this.debug(`Updated HVAC status to ${this.isAirConditionerOn ? 'ON' : 'OFF'}`);  
             service.getCharacteristic(Characteristic.On).updateValue(this.isAirConditionerOn);
         });
 

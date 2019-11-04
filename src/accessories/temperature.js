@@ -9,37 +9,23 @@ module.exports = class extends Accessory {
     constructor(options) {
         super(options);
 
+        this.currentTemperature = undefined;
+
         var service = new Service.TemperatureSensor(this.name, 'inside-temperature');
         this.addService(service);
 
-        this.on('vehicleData', (response) => {                
-            service.getCharacteristic(Characteristic.CurrentTemperature).updateValue(this.getTemperature(response));
+        this.on('vehicleData', (data) => {
+            this.currentTemperature = data.getInsideTemperature();
+            this.debug(`Updated inside temperature to ${this.currentTemperature}.`);  
+
+            service.getCharacteristic(Characteristic.CurrentTemperature).updateValue(this.currentTemperature);
         });
 
         service.getCharacteristic(Characteristic.CurrentTemperature).on('get', (callback) => {
-
-            if (this.api.isOnline()) {
-                Promise.resolve().then(() => {
-                    return this.api.getVehicleData();
-                })
-                .then((response) => {
-                    response = new VehicleData(response);
-                    callback(null, this.getTemperature(response));
-                })
-                .catch((error) => {
-                    this.log(`Could not current temperature for type ${subtype}.`);
-                    callback(null);
-                });
-            }
-            else
-                callback(null);
+            callback(null, this.currentTemperature);
         });
 
         
     }; 
-
-    getTemperature(response) {
-        return response.getInsideTemperature();
-    }
 }
 

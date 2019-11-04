@@ -59,7 +59,6 @@ module.exports = class Tesla extends Events  {
         var processLoginOptions = {username:process.env.TESLA_USER, password:process.env.TESLA_PASSWORD, clientID:process.env.TESLA_CLIENT_ID, clientSecret:process.env.TESLA_CLIENT_SECRET};
         var loginOptions = {...configLoginOptions, ...processLoginOptions};
 
-
         console.log(loginOptions);
 
         this.api.login(loginOptions).then(() => {
