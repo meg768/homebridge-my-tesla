@@ -46,10 +46,10 @@ module.exports = class extends Accessory {
 
             this.vehicle.getVehicleData().then((data) => {
     
-                if (data.insideTemperature() <= this.minTemperature)
+                if (data.getInsideTemperature() <= this.minTemperature)
                     return this.setAutoConditioningState(true);
     
-                if (data.outsideTemperature() >= this.maxTemperature)
+                if (data.getOutsideTemperature() >= this.maxTemperature)
                     return this.setAutoConditioningState(false);
 
                 return Promise.resolve();
