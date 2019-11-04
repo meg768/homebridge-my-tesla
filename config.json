@@ -40,8 +40,8 @@
                 "defrost": {
                     "name": "Frostfri",
                     "enabled": true,
-                    "temperatureCheckFrequency": 1,
-                    "temperatureRange": [15, 16]
+                    "temperatureCheckFrequency": 5,
+                    "temperatureRange": [1, 10]
                 }
 
             }
