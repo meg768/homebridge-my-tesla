@@ -1,22 +1,9 @@
 "use strict";
 
-var Service  = require('./homebridge.js').Service;
-var Characteristic  = require('./homebridge.js').Characteristic;
-//var Accessory = require('./homebridge.js').Accessory;
-var Accessory = require('./accessory.js');
-var PlatformAccessory = require('./homebridge.js').PlatformAccessory;
 var VehicleData = require('./vehicle-data.js');
 
 var Events = require('events');
 var API = require('./tesla-api.js');
-/*
-var BatteryLevelService = require('./battery-level-service.js')
-var AirConditionerService = require('./hvac-service.js');
-var DoorLockService = require('./door-lock-service.js');
-var TemperatureSensor = require('./temperature-service.js');
-var ChargingService = require('./charging-service.js');
-var AntiFreezeService = require('./anti-freeze-service.js');
-*/
 var VehicleData = require('./vehicle-data.js');
 
 
@@ -42,6 +29,7 @@ module.exports = class Tesla extends Events  {
         var ChargingAccessory = require('./accessories/charging.js');
         var AirConditioningAccessory = require('./accessories/hvac.js');
         var TemperatureAccessory = require('./accessories/temperature.js');
+        var DefrostAccessory = require('./accessories/defrost.js');
 
         if (this.config.locks)
             this.addAccessory(new DoorLockAccessory({vehicle:this, config:this.config.locks}));
@@ -55,38 +43,21 @@ module.exports = class Tesla extends Events  {
         if (this.config.temperature)
             this.addAccessory(new TemperatureAccessory({vehicle:this, config:this.config.temperature}));
 
+        if (this.config.defrost)
+            this.addAccessory(new DefrostAccessory({vehicle:this, config:this.config.defrost}));
+
         var configLoginOptions = {username:config.username, password:config.password, clientID:config.clientID, clientSecret:config.clientSecret};
         var processLoginOptions = {username:process.env.TESLA_USER, password:process.env.TESLA_PASSWORD, clientID:process.env.TESLA_CLIENT_ID, clientSecret:process.env.TESLA_CLIENT_SECRET};
         var loginOptions = {...configLoginOptions, ...processLoginOptions};
 
-        console.log(loginOptions);
+        this.debug(loginOptions);
 
         this.api.login(loginOptions).then(() => {
             this.log('Login completed.');
-
-    
             return Promise.resolve();
-        })
-        .then(() => {
-
-            return Promise.resolve();
-
         })
         .then(() => {
             return this.refresh();
-
-            var loop = () => {
-                this.refresh().then(() => {
-                })
-                .catch((error) => {
-                    this.log(error);
-                })
-                .then(() => {
-                    setTimeout(loop.bind(this), 5 * 60 * 1000);
-                });
-            };
-    
-            loop();
         })
         .catch((error) => {
             this.log(error);
@@ -122,11 +93,13 @@ module.exports = class Tesla extends Events  {
             .then((response) => {
                 var data = new VehicleData(response);
 
+                this.debug('Refreshing accessories...');
+
                 this.accessories.forEach((accessory) => {
                     accessory.emit('vehicleData', data);
                 });
 
-                this.log('Refreshed features...');
+                this.debug('Done refreshing accessories.');
 
                 resolve(data);
             })
@@ -137,7 +110,7 @@ module.exports = class Tesla extends Events  {
         });
     }
 
-    getServices() {
+    getServicesX() {
 
         this.log('getServices() called.');
 

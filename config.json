@@ -38,6 +38,10 @@
                 "temperature": {
                     "comment": "Remove the this entry if you do not want to monitor temperature.",
                     "name": "Temperatur"
+                },
+                "defrost": {
+                    "comment": "Remove the this entry if you do not want a defrost button.",
+                    "name": "Avfrostning"
                 }
 
             }
