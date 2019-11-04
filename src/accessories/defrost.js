@@ -46,8 +46,8 @@ module.exports = class extends Accessory {
         });
     
         service.getCharacteristic(Characteristic.On).on('set', (value, callback) => {
-            this.setActiveState(value).then((state) => {
-                callback(null, state);
+            this.setActiveState(value).then(() => {
+                callback(null, this.isActive);
             })
             .catch((error) => {
                 this.log(error);
@@ -88,7 +88,22 @@ module.exports = class extends Accessory {
         })
     }
 
-
+    setAutoConditioningState(value) {
+        return new Promise((resolve, reject) => {
+            Promise.resolve().then(() => {
+                return value ? this.api.autoConditioningStart() : this.api.autoConditioningStop();
+            })
+            .then(() => {
+                return this.vehicle.getVehicleData();
+            })
+            .then(() => {
+                resolve();
+            })
+            .catch((error) => {
+                reject(error);                
+            })
+        })
+    }
 
     setTimerState(value) {
         return new Promise((resolve, reject) => {
@@ -113,24 +128,6 @@ module.exports = class extends Accessory {
             }
     
         });
-    }
-
-
-    setAutoConditioningState(value) {
-        return new Promise((resolve, reject) => {
-            Promise.resolve().then(() => {
-                return value ? this.api.autoConditioningStart() : this.api.autoConditioningStop();
-            })
-            .then(() => {
-                return this.vehicle.getVehicleData();
-            })
-            .then((data) => {
-                resolve();
-            })
-            .catch((error) => {
-                reject(error);                
-            })
-        })
     }
 
     setActiveState(value) {
