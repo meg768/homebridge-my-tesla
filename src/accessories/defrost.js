@@ -119,7 +119,17 @@ module.exports = class extends Accessory {
 
 
     setAutoConditioningState(value) {
-        return value ? this.api.autoConditioningStart() : this.api.autoConditioningStop();
+        return new Promise(() => {
+            Promise.resolve().then(() => {
+                return value ? this.api.autoConditioningStart() : this.api.autoConditioningStop();
+            })
+            .then(() => {
+                return this.vehicle.getVehicleData();
+            })
+            .catch((error) => {
+                reject(error);                
+            })
+        })
     }
 
     setActiveState(value) {
