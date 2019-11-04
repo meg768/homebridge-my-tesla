@@ -41,7 +41,7 @@
                     "name": "Frostfri",
                     "enabled": true,
                     "temperatureCheckFrequency": 1,
-                    "temperatureRange": [0, 5]
+                    "temperatureRange": [15, 16]
                 }
 
             }
