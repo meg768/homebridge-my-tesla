@@ -22,24 +22,25 @@
                 "password": "xxx - Your password at tesla.com",
 
                 "charging": {
-                    "comment": "Remove this entry if you do not want a button for the charging state.",
-                    "name": "Laddning"
+                    "name": "Laddning",
+                    "enabled": true
                 },
                 "hvac": {
-                    "comment": "Remove this entry if you do not want a button for the air conditioning.",
-                    "name": "Fläkten"
+                    "name": "Fläkten",
+                    "enabled": true
                 },
                 "locks": {
-                    "comment": "Remove the this entry if you do not want a button for controlling the door locks.",
-                    "name": "Dörrar"
+                    "name": "Dörrar",
+                    "enabled": true
                 },
                 "temperature": {
-                    "comment": "Remove the this entry if you do not want to monitor temperature.",
-                    "name": "Temperatur"
+                    "name": "Temperatur",
+                    "enabled": true
                 },
                 "defrost": {
-                    "comment": "Remove the this entry if you do not want a defrost button.",
-                    "name": "Avfrostning"
+                    "name": "Frostfri",
+                    "enabled": true,
+                    "temperatureRange": [16, 17]
                 }
 
             }

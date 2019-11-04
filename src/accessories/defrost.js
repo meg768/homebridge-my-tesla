@@ -3,18 +3,31 @@ var Service  = require('../homebridge.js').Service;
 var Characteristic  = require('../homebridge.js').Characteristic;
 var Accessory = require('../accessory.js');
 var Timer = require('yow/timer');
+var isArray = require('yow/isArray');
 
 module.exports = class extends Accessory {
 
     constructor(options) {
         super(options);
 
+        if (this.config.temperatureRange == undefined)
+            throw new Error('Must specify a temperatureRange for defrost accessory.');
+
+        if (!isArray(this.config.temperatureRange) || this.config.temperatureRange.length != 2)
+            throw new Error('Setting temperatureRange must be an array with two values for defrost accessory.');
+
+        if (this.config.temperatureRange[0] >= this.config.temperatureRange[1])
+            throw new Error('The array temperatureRange must contain ascending values for defrost accessory.');
+
+        this.minTemperature = this.config.temperatureRange[0];
+        this.maxTemperature = this.config.temperatureRange[1];
         this.isActive = false;
         this.minTemperature = 16;
         this.maxTemperature = 17;
         this.timerInterval = 1 * 60000;
         this.timer = new Timer();
 
+            
         this.enableSwitch();
 
     }
@@ -59,7 +72,7 @@ module.exports = class extends Accessory {
                     return this.setAutoConditioningState(false);
                 }
 
-                return Promise.resolve();
+                return Promise.resolve();   
             })
             .then(() => {
                 // Update all accessories with new vehicle data...

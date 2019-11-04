@@ -87,13 +87,9 @@ module.exports = class Tesla extends Events  {
             .then((response) => {
                 var data = new VehicleData(response);
 
-                this.debug('Refreshing accessories with vehicle data...');
-
                 this.accessories.forEach((accessory) => {
                     accessory.emit('vehicleData', data);
                 });
-
-                this.debug('Done refreshing accessories.');
 
                 resolve(data);
             })
