@@ -44,16 +44,18 @@ module.exports = class extends Accessory {
         return new Promise((resolve, reject) => {
             this.debug(`Fetching vehicle temperature for defrost...`);
 
-            this.vehicle.getVehicleData().then((data) => {
-    
-                if (data.getInsideTemperature() <= this.minTemperature) {
-                    this.debug(`Inside temperature is too low. Starting air conditioner.`);
-                    return this.setAutoConditioningState(true);
 
+            this.vehicle.getVehicleData().then((data) => {
+
+                var temperature = data.getInsideTemperature();
+
+                if (temperature <= this.minTemperature) {
+                    this.debug(`Inside temperature (${temperature}) is too low. Starting air conditioner.`);
+                    return this.setAutoConditioningState(true);
                 }
     
-                if (data.getOutsideTemperature() >= this.maxTemperature) {
-                    this.debug(`Inside temperature OK. Stopping air conditioner.`);
+                if (temperature >= this.maxTemperature) {
+                    this.debug(`Inside temperature (${temperature}) is too hight. Stopping air conditioner.`);
                     return this.setAutoConditioningState(false);
                 }
 
