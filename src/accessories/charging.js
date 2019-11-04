@@ -20,7 +20,7 @@ module.exports = class extends Accessory {
                 var service = this.getService(Service.Switch);
 
                 this.isCharging = data.isCharging();
-                this.debug(`Updated charging state to ${this.isCharging ? 'CHARGING' : 'NOT CHARGING'}...`);
+                this.debug(`Updated charging state to ${this.isCharging ? 'CHARGING' : 'NOT CHARGING'}.`);
                 
                 service.getCharacteristic(Characteristic.On).updateValue(this.isCharging);
             }
