@@ -61,15 +61,17 @@ module.exports = class extends Accessory {
 
                 return Promise.resolve();
             })
+            .then(() => {
+                // Update all accessories with new vehicle data...
+                return this.vehicle.getVehicleData();
+            })
             .catch((error) => {
                 this.log(error);
             })
             .then(() => {
-                // Update all accessories with new vehicle data...
-                this.vehicle.refresh();
-                
                 this.timer.setTimer(this.timerInterval, this.checkTemperature.bind(this));
                 resolve();
+
             })
         })
     }
