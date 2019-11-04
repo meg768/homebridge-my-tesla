@@ -120,7 +120,7 @@ module.exports = class extends Accessory {
         return new Promise((resolve, reject) => {
             Promise.resolve().then(() => {
                 if (value != this.isActive)
-                    return setAutoConditioningState(value);
+                    return this.setAutoConditioningState(value);
                 else
                     return Promise.resolve();
             })
