@@ -81,6 +81,9 @@ module.exports = class extends Accessory {
                 this.log(error);
             })
             .then(() => {
+                return this.vehicle.getVehicleData();
+            })
+            .then(() => {
                 this.timer.setTimer(this.timerInterval, this.checkTemperature.bind(this));
                 resolve();
 
@@ -92,9 +95,6 @@ module.exports = class extends Accessory {
         return new Promise((resolve, reject) => {
             Promise.resolve().then(() => {
                 return value ? this.api.autoConditioningStart() : this.api.autoConditioningStop();
-            })
-            .then(() => {
-                return this.vehicle.getVehicleData();
             })
             .then(() => {
                 resolve();
@@ -134,6 +134,9 @@ module.exports = class extends Accessory {
         return new Promise((resolve, reject) => {
             Promise.resolve().then(() => {
                 return this.setTimerState(value);
+            })
+            .then(() => {
+                return this.vehicle.getVehicleData();
             })
             .then(() => {
                 resolve(this.isActive = value);
