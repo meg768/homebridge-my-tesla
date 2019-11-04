@@ -1,11 +1,8 @@
 "use strict";
 
-var VehicleData = require('./vehicle-data.js');
-
 var Events = require('events');
 var API = require('./tesla-api.js');
 var VehicleData = require('./vehicle-data.js');
-
 
 
 module.exports = class Tesla extends Events  {
@@ -57,7 +54,7 @@ module.exports = class Tesla extends Events  {
             return Promise.resolve();
         })
         .then(() => {
-            return this.refresh();
+            return this.getVehicleData();
         })
         .catch((error) => {
             this.log(error);
@@ -78,22 +75,19 @@ module.exports = class Tesla extends Events  {
         });
     }
 
-    refresh() {
+    getVehicleData() {
         return new Promise((resolve, reject) => {
             var vin = this.config.vin;
 
-            this.log(`Refreshing ${vin}...`);
+            this.debug(`Fetching vehicle data for vehicle ${vin}...`);
     
             Promise.resolve().then(() => {
-                return this.api.wakeUp();
-            })
-            .then(() => {
                 return this.api.getVehicleData();
             })
             .then((response) => {
                 var data = new VehicleData(response);
 
-                this.debug('Refreshing accessories...');
+                this.debug('Refreshing accessories with vehicle data...');
 
                 this.accessories.forEach((accessory) => {
                     accessory.emit('vehicleData', data);
@@ -108,21 +102,6 @@ module.exports = class Tesla extends Events  {
             });
     
         });
-    }
-
-    getServicesX() {
-
-        this.log('getServices() called.');
-
-        var services = [];
-
-        this.features.forEach((feature) => {
-            services = services.concat(feature.getServices());
-        });
-
-        this.log(`A total of ${services.length} services found.`);
-
-        return services;
     }
 
 }

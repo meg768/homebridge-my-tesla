@@ -14,6 +14,10 @@ module.exports = class VehicleData {
         return this.response && this.response.climate_state && this.response.climate_state.is_climate_on;
     }
 
+    isClimateOn() {
+        return this.response && this.response.climate_state && this.response.climate_state.is_climate_on;
+    }
+
     getInsideTemperature(defaultValue = 20) {
         if (this.response && this.response.climate_state && this.response.climate_state.inside_temp)
             return this.response.climate_state.inside_temp;
