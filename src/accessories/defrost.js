@@ -77,10 +77,6 @@ module.exports = class extends Accessory {
 
                 return Promise.resolve();   
             })
-            .then(() => {
-                // Update all accessories with new vehicle data...
-                return this.vehicle.getVehicleData();
-            })
             .catch((error) => {
                 this.log(error);
             })
@@ -121,12 +117,15 @@ module.exports = class extends Accessory {
 
 
     setAutoConditioningState(value) {
-        return new Promise(() => {
+        return new Promise((resolve, reject) => {
             Promise.resolve().then(() => {
                 return value ? this.api.autoConditioningStart() : this.api.autoConditioningStop();
             })
             .then(() => {
                 return this.vehicle.getVehicleData();
+            })
+            .then((data) => {
+                resolve();
             })
             .catch((error) => {
                 reject(error);                
