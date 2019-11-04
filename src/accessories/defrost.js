@@ -27,11 +27,13 @@ module.exports = class extends Accessory {
         this.isActive = false;
         this.minTemperature = 16;
         this.maxTemperature = 17;
+
         this.timerInterval = this.config.temperatureCheckFrequency * 1000 * 60;
         this.timer = new Timer();
 
             
         this.enableSwitch();
+
 
     }
 
