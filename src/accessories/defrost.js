@@ -55,7 +55,7 @@ module.exports = class extends Accessory {
                 }
     
                 if (temperature >= this.maxTemperature) {
-                    this.debug(`Inside temperature (${temperature}) is too hight. Stopping air conditioner.`);
+                    this.debug(`Inside temperature (${temperature}) is too high. Stopping air conditioner.`);
                     return this.setAutoConditioningState(false);
                 }
 
@@ -65,6 +65,9 @@ module.exports = class extends Accessory {
                 this.log(error);
             })
             .then(() => {
+                // Update all accessories with new vehicle data...
+                this.vehicle.refresh();
+                
                 this.timer.setTimer(this.timerInterval, this.checkTemperature.bind(this));
                 resolve();
             })
