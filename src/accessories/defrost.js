@@ -10,7 +10,7 @@ module.exports = class extends Accessory {
         super(options);
 
         this.isActive = false;
-        this.minTemperature = 13;
+        this.minTemperature = 14;
         this.maxTemperature = 15;
         this.timerInterval = 1 * 60000;
         this.timer = new Timer();
@@ -46,11 +46,16 @@ module.exports = class extends Accessory {
 
             this.vehicle.getVehicleData().then((data) => {
     
-                if (data.getInsideTemperature() <= this.minTemperature)
+                if (data.getInsideTemperature() <= this.minTemperature) {
+                    this.debug(`Inside temperature is too low. Starting air conditioner.`);
                     return this.setAutoConditioningState(true);
+
+                }
     
-                if (data.getOutsideTemperature() >= this.maxTemperature)
+                if (data.getOutsideTemperature() >= this.maxTemperature) {
+                    this.debug(`Inside temperature OK. Stopping air conditioner.`);
                     return this.setAutoConditioningState(false);
+                }
 
                 return Promise.resolve();
             })
@@ -58,6 +63,7 @@ module.exports = class extends Accessory {
                 this.log(error);
             })
             .then(() => {
+                this.timer.setTimer(this.timerInterval, this.checkTemperature.bind(this));
                 resolve();
             })
         })
