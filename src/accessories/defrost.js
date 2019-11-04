@@ -61,14 +61,15 @@ module.exports = class extends Accessory {
             this.vehicle.getVehicleData().then((data) => {
 
                 var temperature = data.getInsideTemperature();
+                var wantedTemperature = `[${this.minTemperature} - ${this.maxTemperature}]`;
 
                 if (temperature <= this.minTemperature) {
-                    this.debug(`Inside temperature (${temperature}) is too low. Wanting ${this.minTemperature} degrees. Starting air conditioner.`);
+                    this.debug(`Inside temperature (${temperature}) is too low. Wanting a temperature between ${wantedTemperature}. Starting air conditioner.`);
                     return this.setAutoConditioningState(true);
                 }
     
                 if (temperature >= this.maxTemperature) {
-                    this.debug(`Inside temperature (${temperature}) is too high. Wanting max temperature of ${this.maxTemperature} degrees. Stopping air conditioner.`);
+                    this.debug(`Inside temperature (${temperature}) is too high. Wanting a temperature between ${wantedTemperature}. Stopping air conditioner.`);
                     return this.setAutoConditioningState(false);
                 }
 
