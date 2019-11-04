@@ -10,8 +10,8 @@ module.exports = class extends Accessory {
         super(options);
 
         this.isActive = false;
-        this.minTemperature = 14;
-        this.maxTemperature = 15;
+        this.minTemperature = 16;
+        this.maxTemperature = 17;
         this.timerInterval = 1 * 60000;
         this.timer = new Timer();
 
