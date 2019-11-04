@@ -57,7 +57,6 @@ module.exports = class extends Accessory {
         return new Promise((resolve, reject) => {
             this.debug(`Fetching vehicle temperature for defrost...`);
 
-
             this.vehicle.getVehicleData().then((data) => {
 
                 var temperature = data.getInsideTemperature();
@@ -105,7 +104,12 @@ module.exports = class extends Accessory {
                 })
             }
             else {
-                resolve();
+                this.setAutoConditioningState(false).then(() => {
+                    resolve();
+                })
+                .catch((error) => {
+                    reject(error);
+                })
             }
     
         });
@@ -119,10 +123,7 @@ module.exports = class extends Accessory {
     setActiveState(value) {
         return new Promise((resolve, reject) => {
             Promise.resolve().then(() => {
-                if (value != this.isActive)
-                    return this.setAutoConditioningState(value);
-                else
-                    return Promise.resolve();
+                return this.setTimerState(value);
             })
             .then(() => {
                 resolve(this.isActive = value);
