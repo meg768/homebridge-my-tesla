@@ -63,12 +63,12 @@ module.exports = class extends Accessory {
                 var temperature = data.getInsideTemperature();
 
                 if (temperature <= this.minTemperature) {
-                    this.debug(`Inside temperature (${temperature}) is too low. Starting air conditioner.`);
+                    this.debug(`Inside temperature (${temperature}) is too low. Wanting ${this.minTemperature} degrees. Starting air conditioner.`);
                     return this.setAutoConditioningState(true);
                 }
     
                 if (temperature >= this.maxTemperature) {
-                    this.debug(`Inside temperature (${temperature}) is too high. Stopping air conditioner.`);
+                    this.debug(`Inside temperature (${temperature}) is too high. Wanting max temperature of ${this.maxTemperature} degrees. Stopping air conditioner.`);
                     return this.setAutoConditioningState(false);
                 }
 

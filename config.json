@@ -40,7 +40,7 @@
                 "defrost": {
                     "name": "Frostfri",
                     "enabled": true,
-                    "temperatureRange": [16, 17]
+                    "temperatureRange": [17, 18]
                 }
 
             }
