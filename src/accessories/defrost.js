@@ -145,6 +145,10 @@ module.exports = class extends Accessory {
                 return this.setTimerState(value);
             })
             .then(() => {
+                // Seems we have to pause a bit so the air condition state is updated in getVehicleData()...
+                return this.pause(1000);
+            })
+            .then(() => {
                 return this.vehicle.getVehicleData();
             })
             .then(() => {
