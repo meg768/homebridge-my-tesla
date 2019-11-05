@@ -83,7 +83,7 @@ module.exports = class extends Accessory {
             Promise.resolve().then(() => {
                 return this.vehicle.getVehicleData();
             })
-            this.then((response) => {
+            .then((response) => {
                 var vehicleData = response;
                 var action = ACTION_NONE;
                 var insideTemperature = vehicleData.getInsideTemperature();
