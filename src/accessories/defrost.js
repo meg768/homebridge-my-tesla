@@ -12,8 +12,8 @@ module.exports = class extends Accessory {
         super(options);
 
         var defaultConfig = {
-            temperatureRange: [8, 10],
-            temperatureCheckFrequency: 1,
+            temperatureRange: [5, 10],
+            temperatureCheckFrequency: 5,
             minBatteryLevel: 60,
         };
 
