@@ -29,8 +29,6 @@ module.exports = class Platform {
             this.vehicles.push(new Vehicle(this, config));
         });
 
-        this.pushover('xyz');
-
     }
 
     accessories(callback) {

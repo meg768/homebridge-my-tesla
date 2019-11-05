@@ -30,8 +30,8 @@ module.exports = class extends Accessory {
         this.timer = new Timer();
 
         this.minTemperature = 5;
-        this.maxTemperature = 10;
-        this.timerInterval  = 15 * 1000 * 60;
+        this.maxTemperature = 8;
+        this.timerInterval  = 1 * 1000 * 60;
 
         this.enableSwitch();
     }
@@ -68,14 +68,15 @@ module.exports = class extends Accessory {
             this.vehicle.getVehicleData().then((data) => {
 
                 var temperature = data.getInsideTemperature();
+                var isClimateOn = data.isClimateOn();
                 var wantedTemperature = `[${this.minTemperature} - ${this.maxTemperature}]`;
 
-                if (temperature <= this.minTemperature) {
+                if (temperature <= this.minTemperature && !isClimateOn) {
                     this.debug(`Inside temperature (${temperature}) is too low. Wanting a temperature between ${wantedTemperature}. Starting air conditioner.`);
                     return this.setAutoConditioningState(true);
                 }
     
-                if (temperature >= this.maxTemperature) {
+                if (temperature >= this.maxTemperature && isClimateOn) {
                     this.debug(`Inside temperature (${temperature}) is too high. Wanting a temperature between ${wantedTemperature}. Stopping air conditioner.`);
                     return this.setAutoConditioningState(false);
                 }
