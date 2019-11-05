@@ -29,6 +29,7 @@ module.exports = class extends Accessory {
         this.timerInterval = this.config.temperatureCheckFrequency * 1000 * 60;
         this.timer = new Timer();
 
+        this.minBatteryLevel = 60;
         this.minTemperature = 10;
         this.maxTemperature = 13;
         this.timerInterval  = 1 * 1000 * 60;
@@ -69,10 +70,17 @@ module.exports = class extends Accessory {
 
                 var temperature = data.getInsideTemperature();
                 var isClimateOn = data.isClimateOn();
+                var batteryLevel = data.getBatteryLevel();
                 var wantedTemperature = `[${this.minTemperature} - ${this.maxTemperature}]`;
 
                 if (temperature <= this.minTemperature && !isClimateOn) {
                     this.debug(`Inside temperature (${temperature}) is too low. Wanting a temperature between ${wantedTemperature}. Starting air conditioner.`);
+
+                    if (batteryLevel < this.minBatteryLevel) {
+                        this.debug(`Battery level at ${batteryLevel}%. Must be at least ${this.minBatteryLevel}% to start air conditioner.`);
+                        return Promise.resolve();   
+                    }
+
                     return this.setAutoConditioningState(true);
                 }
     
