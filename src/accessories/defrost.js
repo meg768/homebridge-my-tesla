@@ -96,7 +96,7 @@ module.exports = class extends Accessory {
                     return this.setAutoConditioningState(false);
                 }
 
-                this.debug(`Inside temperature is in range ${wantedTemperature}.`);
+                this.debug(`Current temperature is ${temperature} wich is in wanted range ${wantedTemperature}.`);
                 return Promise.resolve();   
             })
             .catch((error) => {
