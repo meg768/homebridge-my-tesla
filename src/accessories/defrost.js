@@ -4,35 +4,42 @@ var Characteristic  = require('../homebridge.js').Characteristic;
 var Accessory = require('../accessory.js');
 var Timer = require('yow/timer');
 var isArray = require('yow/isArray');
+var isNumber = require('yow/isNumber');
 
 module.exports = class extends Accessory {
 
     constructor(options) {
         super(options);
 
-        if (this.config.temperatureRange == undefined)
+        var defaultConfig = {
+            temperatureRange: [10, 13],
+            temperatureCheckFrequency: 1,
+            minBatteryLevel: 60,
+        };
+
+        var config = {...defaultConfig, ...this.config};
+
+        if (config.temperatureRange == undefined)
             throw new Error('Must specify a temperatureRange for defrost accessory.');
 
-        if (!isArray(this.config.temperatureRange) || this.config.temperatureRange.length != 2)
+        if (!isArray(config.temperatureRange) || config.temperatureRange.length != 2)
             throw new Error('Setting temperatureRange must be an array with two values for defrost accessory.');
 
-        if (this.config.temperatureRange[0] >= this.config.temperatureRange[1])
+        if (!isNumber(config.temperatureRange[0]) || !isNumber(config.temperatureRange[1]))
+            throw new Error('The array temperatureRange must contain two numbers.');
+
+        if (config.temperatureRange[0] >= config.temperatureRange[1])
             throw new Error('The array temperatureRange must contain ascending values for defrost accessory.');
 
-        if (this.config.temperatureCheckFrequency == undefined)
-            throw new Error('A temperatureCheckFrequency must be specified.');
+        if (config.temperatureCheckFrequency == undefined)
+            throw new Error('A temperatureCheckFrequency must be specified the number of minutes between checks.');
 
-        this.minTemperature = this.config.temperatureRange[0];
-        this.maxTemperature = this.config.temperatureRange[1];
-        this.isActive = false;
-
-        this.timerInterval = this.config.temperatureCheckFrequency * 1000 * 60;
-        this.timer = new Timer();
-
-        this.minBatteryLevel = 60;
-        this.minTemperature = 10;
-        this.maxTemperature = 13;
-        this.timerInterval  = 1 * 1000 * 60;
+        this.isActive        = false;
+        this.minTemperature  = config.temperatureRange[0];
+        this.maxTemperature  = config.temperatureRange[1];
+        this.minBatteryLevel = config.minBatteryLevel;
+        this.timerInterval   = config.temperatureCheckFrequency * 1000 * 60;
+        this.timer           = new Timer();
 
         this.enableSwitch();
     }
@@ -76,7 +83,7 @@ module.exports = class extends Accessory {
                 if (temperature <= this.minTemperature && !isClimateOn) {
                     this.debug(`Inside temperature (${temperature}) is too low. Wanting a temperature between ${wantedTemperature}. Starting air conditioner.`);
 
-                    if (batteryLevel < this.minBatteryLevel) {
+                    if (batteryLevel <= this.minBatteryLevel) {
                         this.debug(`Battery level at ${batteryLevel}%. Must be at least ${this.minBatteryLevel}% to start air conditioner.`);
                         return Promise.resolve();   
                     }
@@ -89,6 +96,7 @@ module.exports = class extends Accessory {
                     return this.setAutoConditioningState(false);
                 }
 
+                this.debug(`Inside temperature is in range ${wantedTemperature}.`);
                 return Promise.resolve();   
             })
             .catch((error) => {
