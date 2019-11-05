@@ -73,31 +73,87 @@ module.exports = class extends Accessory {
 
     checkTemperature() {
         return new Promise((resolve, reject) => {
-            this.vehicle.getVehicleData().then((data) => {
 
-                var temperature = data.getInsideTemperature();
-                var isClimateOn = data.isClimateOn();
-                var batteryLevel = data.getBatteryLevel();
-                var wantedTemperature = `[${this.minTemperature} - ${this.maxTemperature}]`;
+            var ACTION_START_HVAC            = 1;
+            var ACTION_STOP_HVAC             = 2;
+            var ACTION_NONE                  = 3;
+            var ACTION_BATTERY_LEVEL_TOO_LOW = 5;
+            var ACTION_STABLE                = 8;
 
-                if (temperature <= this.minTemperature && !isClimateOn) {
-                    this.debug(`Inside temperature (${temperature}) is too low. Wanting a temperature between ${wantedTemperature}. Starting air conditioner.`);
+            Promise.resolve().then(() => {
+                return this.vehicle.getVehicleData();
+            })
+            this.then((response) => {
+                var vehicleData = response;
+                var action = ACTION_NONE;
+                var insideTemperature = vehicleData.getInsideTemperature();
+                var batteryLevel = vehicleData.getBatteryLevel(); 
+                var isClimateOn = vehicleData.isClimateOn();
 
-                    if (batteryLevel < this.minBatteryLevel) {
-                        this.debug(`Battery level at ${batteryLevel}%. Must be at least ${this.minBatteryLevel}% to start air conditioner.`);
-                        return Promise.resolve();   
+                if (insideTemperature < this.minTemperature) {
+                    action = ACTION_START_HVAC;
+
+                    if (batteryLevel < this.config.minBatteryLevel) {
+                        action = ACTION_BATTERY_LEVEL_TOO_LOW;
                     }
-
-                    return this.setAutoConditioningState(true);
                 }
-    
-                if (temperature >= this.maxTemperature && isClimateOn) {
-                    this.debug(`Inside temperature (${temperature}) is too high. Wanting a temperature between ${wantedTemperature}. Stopping air conditioner.`);
-                    return this.setAutoConditioningState(false);
+                else if (insideTemperature > this.maxTemperature) {
+                    action = ACTION_STOP_HVAC;
+                }
+                else {
+                    action = ACTION_STABLE;
                 }
 
-                this.debug(`Current temperature is ${temperature} wich is in wanted range ${wantedTemperature}.`);
-                return Promise.resolve();   
+                if (action == ACTION_START_HVAC && isClimateOn)
+                    action = ACTION_NONE;
+
+                if (action == ACTION_START_STOP && !isClimateOn)
+                    action = ACTION_NONE;
+
+                Promise.resolve({vehicleData:vehicleData, action:action});
+            })
+
+            .then((response) => {
+                var {vehicleData, action} = response;
+
+                var insideTemperature = vehicleData.getInsideTemperature();
+                var batteryLevel = vehicleData.getBatteryLevel(); 
+                var validTemperatureRange = `(${this.minTemperature} - ${this.maxTemperature})`;
+
+                switch(action) {
+                    case ACTION_NONE: {
+                        this.debug(`No action.`);
+                        break;
+                    }
+                    case ACTION_BATTERY_LEVEL_TOO_LOW: {
+                        this.debug(`Battery level is ${batteryLevel}%. Will not activate air conditioning since it is below ${this.minBatteryLevel}.`);
+                        break;
+                    }
+                    case ACTION_STABLE: {
+                        this.debug(`Current temperature is ${insideTemperature}, inside the limits of ${validTemperatureRange}.`);
+                        break;
+                    }
+                    case ACTION_START_HVAC: {
+                        this.debug(`Starting air conditioning.`);
+                        return this.api.autoConditioningStart().then(() => {
+                            return this.vehicle.getVehicleData();                          
+                        })
+                        .catch(() => {
+                            this.log(error);
+                        })
+                        break;
+                    }
+                    case ACTION_STOP_HVAC: {
+                        this.debug(`Stopping air conditioning.`);
+                        return this.api.autoConditioningStop().then(() => {
+                            return this.vehicle.getVehicleData();                          
+                        })
+                        .catch(() => {
+                            this.log(error);
+                        })
+                        break;
+                    }
+                }
             })
             .catch((error) => {
                 this.log(error);
@@ -105,10 +161,6 @@ module.exports = class extends Accessory {
             .then(() => {
                 // Seems we have to pause a bit so the air condition state is updated in getVehicleData()...
                 return this.pause(0);
-            })
-            .then(() => {
-                // Make sure to refresh all other accessories...
-                return this.vehicle.getVehicleData();
             })
             .then(() => {
                 this.timer.setTimer(this.timerInterval, this.checkTemperature.bind(this));
