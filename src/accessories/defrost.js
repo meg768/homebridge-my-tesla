@@ -85,7 +85,7 @@ module.exports = class extends Accessory {
             })
             .then(() => {
                 // Seems we have to pause a bit so the air condition state is updated in getVehicleData()...
-                return this.pause(1000);
+                return this.pause(0);
             })
             .then(() => {
                 // Make sure to refresh all other accessories...
@@ -104,6 +104,10 @@ module.exports = class extends Accessory {
         return new Promise((resolve, reject) => {
             Promise.resolve().then(() => {
                 return value ? this.api.autoConditioningStart() : this.api.autoConditioningStop();
+            })
+            .then(() => {
+                // Seems we have to pause a bit so the air condition state is updated in getVehicleData()...
+                return this.pause(1000);
             })
             .then(() => {
                 resolve();
@@ -146,7 +150,7 @@ module.exports = class extends Accessory {
             })
             .then(() => {
                 // Seems we have to pause a bit so the air condition state is updated in getVehicleData()...
-                return this.pause(1000);
+                return this.pause(0);
             })
             .then(() => {
                 return this.vehicle.getVehicleData();
