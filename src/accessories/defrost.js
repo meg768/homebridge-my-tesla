@@ -12,7 +12,7 @@ module.exports = class extends Accessory {
         super(options);
 
         var defaultConfig = {
-            temperatureRange: [5, 8],
+            temperatureRange: [8, 10],
             temperatureCheckFrequency: 1,
             minBatteryLevel: 60,
         };
@@ -87,7 +87,7 @@ module.exports = class extends Accessory {
                 var vehicleData = response;
                 var action = ACTION_NONE;
                 var insideTemperature = vehicleData.getInsideTemperature();
-                var batteryLevel = vehicleData.getBatteryLevel(); 
+                var batteryLevel = vehicleData.getBatteryLevel();
                 var isClimateOn = vehicleData.isClimateOn();
 
                 if (insideTemperature < this.minTemperature) {
