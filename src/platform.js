@@ -29,6 +29,8 @@ module.exports = class Platform {
             this.vehicles.push(new Vehicle(this, config));
         });
 
+        this.notify('')
+
     }
 
     accessories(callback) {
@@ -39,32 +41,38 @@ module.exports = class Platform {
         this.items.push(accessory);
     }
 
-    pushover(payload) {
+    notify() {
+        var util = require('util');
+        var message = util.format(...arguments);
 
-        var Pushover = require('pushover-notifications');
-    	var user     = process.env.PUSHOVER_USER;
-    	var token    = process.env.PUSHOVER_TOKEN;
+    	var user  = process.env.PUSHOVER_USER;
+    	var token = process.env.PUSHOVER_TOKEN;
 
     	if (user && token) {
 			try {
-                payload = Object.assign({priority:0}, payload);
+                var payload = {priority:0, message:message};
 
                 if (payload.message && payload.message.length > 0) {
-    				var push = new Pushover({user:user, token:token});
+                    var Pushover = require('pushover-notifications');
+                    var push = new Pushover({user:user, token:token});
 
-    				push.send(payload, function(error, result) {
-    					if (error) {
-    						this.log(error.stack);
-    					}
-    				});
+                    push.send(payload, function(error, result) {
+                        if (error) {
+                            this.log(error.stack);
+                        }
+                    });
 
                 }
+
 			}
 			catch(error) {
 				this.log('Failed to send Pushover notification.', error.message);
     		};
+        }
+        else {
+            this.log('Pushover credentials not specified.');
 
-    	}
+        }
 
     };
 
