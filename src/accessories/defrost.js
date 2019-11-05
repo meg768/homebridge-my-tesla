@@ -133,20 +133,18 @@ module.exports = class extends Accessory {
                         this.debug(`Current temperature is ${insideTemperature}, inside the limits of ${validTemperatureRange}.`);
                         break;
                     }
-                    case ACTION_START_HVAC: {
-                        this.debug(`Starting air conditioning.`);
-                        return this.api.autoConditioningStart().then(() => {
-                            return this.vehicle.getVehicleData();                          
-                        })
-                        .catch(() => {
-                            this.log(error);
-                        })
-                        break;
-                    }
+                    case ACTION_START_HVAC:
                     case ACTION_STOP_HVAC: {
-                        this.debug(`Stopping air conditioning.`);
-                        return this.api.autoConditioningStop().then(() => {
-                            return this.vehicle.getVehicleData();                          
+
+                        if (action == ACTION_START_HVAC) {
+                            this.debug(`Starting air conditioner.`);
+                        }
+                        if (action == ACTION_STOP_HVAC) {
+                            this.debug(`Stopping air conditioner.`);
+                        }
+
+                        this.setAutoConditioningState(ACTION_START_HVAC ? true : false).then(() => {
+                            return this.vehicle.getVehicleData();
                         })
                         .catch(() => {
                             this.log(error);
