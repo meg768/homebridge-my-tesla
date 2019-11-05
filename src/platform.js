@@ -29,7 +29,7 @@ module.exports = class Platform {
             this.vehicles.push(new Vehicle(this, config));
         });
 
-        this.notify('')
+        this.pushover('xyz');
 
     }
 
@@ -41,7 +41,7 @@ module.exports = class Platform {
         this.items.push(accessory);
     }
 
-    notify() {
+    pushover() {
         var util = require('util');
         var message = util.format(...arguments);
 
