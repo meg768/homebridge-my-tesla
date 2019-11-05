@@ -142,7 +142,7 @@ module.exports = class extends Accessory {
                         if (action == ACTION_STOP_HVAC) {
                             this.debug(`Stopping air conditioner.`);
                         }
-cc
+
                         this.setAutoConditioningState(action == ACTION_START_HVAC ? true : false).then(() => {
                             return this.vehicle.getVehicleData();
                         })
