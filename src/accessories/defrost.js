@@ -17,7 +17,7 @@ module.exports = class extends Accessory {
             minBatteryLevel: 60,
         };
 
-        var config = {...defaultConfig, ...thisc.config};
+        var config = {...defaultConfig, ...this.config};
 
         if (config.temperatureRange == undefined)
             throw new Error('Must specify a temperatureRange for defrost accessory.');
