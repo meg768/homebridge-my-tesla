@@ -110,7 +110,7 @@ module.exports = class extends Accessory {
                 if (action == ACTION_STOP_HVAC && !isClimateOn)
                     action = ACTION_NONE;
 
-                Promise.resolve({vehicleData:vehicleData, action:action});
+                return ({vehicleData:vehicleData, action:action});
             })
 
             .then((response) => {
