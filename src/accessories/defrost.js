@@ -83,7 +83,7 @@ module.exports = class extends Accessory {
                 if (temperature <= this.minTemperature && !isClimateOn) {
                     this.debug(`Inside temperature (${temperature}) is too low. Wanting a temperature between ${wantedTemperature}. Starting air conditioner.`);
 
-                    if (batteryLevel <= this.minBatteryLevel) {
+                    if (batteryLevel < this.minBatteryLevel) {
                         this.debug(`Battery level at ${batteryLevel}%. Must be at least ${this.minBatteryLevel}% to start air conditioner.`);
                         return Promise.resolve();   
                     }
