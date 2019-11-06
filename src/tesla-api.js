@@ -259,20 +259,10 @@ module.exports = class API {
     
                     this.debug(`State is now "${response.state}", trying to wake up...`);
     
-                    return wakeUp(timestamp);
-                })
-                .then(() => {
-                    // If wakeUp() has been called once or more, delay a bit to make sure next my Tesla is ready for access..
-
-                    var pauseTime = 5000;
-
-                    if (timestamp == undefined) {
-                        this.debug(`wakeUp() called once or more. Pausing ${pauseTime} ms just to be sure...`);
-                        return pause(pauseTime);
-                    }
-                    else {
-                        return pause(0);
-                    }
+                    return wakeUp(timestamp).then(() => {
+                        this.debug('wakeUp() succeeded. Just delaying a bit after a hard sleep...');
+                        return pause(5000);
+                    });
                 })
                 .then(() => {
                     resolve();
