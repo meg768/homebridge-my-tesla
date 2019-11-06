@@ -235,7 +235,7 @@ module.exports = class API {
                 return this.queuedRequest('POST', `/api/1/vehicles/${this.getVehicleID()}/wake_up`);
             })
             .then((response) => {
-                if (response.state == 'online')
+                if (response.state == 'onlineX')
                     return Promise.resolve(response);
 
                 this.debug('Pausing for 5000 ms...');
