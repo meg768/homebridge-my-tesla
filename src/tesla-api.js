@@ -230,8 +230,6 @@ module.exports = class API {
             if (isDate(this.lastResponse) && (now.valueOf() - this.lastResponse.valueOf() < wakeupInterval))
                 resolve();
             else {
-
-                
                 this.queuedRequest('POST', `/api/1/vehicles/${vehicleID}/wake_up`).then((response) => {
 
                     if (response.state == 'online')
