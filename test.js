@@ -10,12 +10,15 @@ var API = require('./src/tesla-api.js');
 var api = new API({vin:vin, debug:console.log, log:console.log});
 
 Promise.resolve().then(() => {
+    console.log('Calling login()');
     return api.login();
 })
 .then(() => {
+    console.log('Calling wakeup()');
     return api.wakeUp();
 })
 .then((response) => {
+    console.log('Calling getVehicleData()');
     return api.getVehicleData();
 })
 .then(() => {
