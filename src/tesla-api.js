@@ -242,7 +242,7 @@ module.exports = class API {
                 if (response.state == STATE_ONLINE)
                     return Promise.resolve(response);
 
-                this.debug('Pausing for 5000 ms...');
+                this.debug(`Current state is "${response.state}", pausing for 5000 ms...`);
 
                 return pause(5000).then(() => {
                     return Promise.resolve(response);
