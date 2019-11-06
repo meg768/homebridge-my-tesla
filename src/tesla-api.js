@@ -257,7 +257,7 @@ module.exports = class API {
                     if (now.getTime() - timestamp.getTime() > wakeupTimeout)
                         throw new Error('The Tesla cannot be reached within timeout period.');
 
-                    return this.wakeUp(timestamp).pause(5000);
+                    return this.wakeUp(timestamp);
                 }
                 else
                     return Promise.resolve();
