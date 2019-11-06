@@ -146,7 +146,7 @@ module.exports = class API {
                 this.log(`${key} completed...`);
 
                 // Store result in cache
-                this.cache[key] = this.lastResponse = {timestamp:new Date(), data:response};
+                this.cache[key] = this.lastResponse = new Date();
 
                 resolve(response);
             })
@@ -226,10 +226,10 @@ module.exports = class API {
         var now = new Date();
 
         // Check if called with in reasonable time
-        if (this.lastResponse && isDate(this.lastResponse.timestamp) && (now.valueOf() - this.lastResponse.timestamp.valueOf() < wakeupInterval)) {
+        if (this.lastResponse && isDate(this.lastResponse) && (now.valueOf() - this.lastResponse.valueOf() < wakeupInterval)) {
             this.debug('Returning cached result from wakeUp().');
             this.debug(this.lastResponse);
-            return Promise.resolve(this.lastResponse.data);
+            return Promise.resolve(this.lastResponse);
         }
 
         return new Promise((resolve, reject) => {
@@ -262,8 +262,8 @@ module.exports = class API {
 
                 return this.wakeUp(timestamp);
             })
-            .then((response) => {
-                resolve(this.lastResponse = {data:response, timestamp:new Date()});
+            .then(() => {
+                resolve(this.lastResponse = new Date());
             })
             .catch((error) => {
                 reject(error);
