@@ -209,7 +209,7 @@ module.exports = class API {
 
 
     wakeUp() {
-        var STATE_ONLINE = 'onlineX';
+        var STATE_ONLINE = 'online';
 
         // Call wakeUp() if not done within last x minutes
         var wakeupInterval = 5 * 60000;
@@ -260,6 +260,10 @@ module.exports = class API {
                         throw new Error('The Tesla cannot be reached within timeout period.');
     
                     return wakeUp(timestamp);
+                })
+                .then(() => {
+                    // If wakeUp() has been called once or more, delay a bit to make sure next my Tesla is ready for access..
+                    return pause(lastCalled == undefined ? 0 : 5000);
                 })
                 .then(() => {
                     resolve(this.lastResponse = new Date());
