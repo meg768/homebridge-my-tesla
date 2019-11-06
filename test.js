@@ -12,16 +12,11 @@ var api = new API({vin:vin, debug:console.log, log:console.log});
 Promise.resolve().then(() => {
     return api.login();
 })
-.then((response) => {
-    console.log('login()', response);
+.then(() => {
     return api.wakeUp();
 })
 .then((response) => {
-    console.log('wakeUp()', response);
     return api.getVehicleData();
-})
-.then((response) => {
-    console.log('getVehicleData()', response);
 })
 .then(() => {
     console.log('Done.');
