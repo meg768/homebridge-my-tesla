@@ -227,14 +227,14 @@ module.exports = class API {
 
         return new Promise((resolve, reject) => {
             var now = new Date();
-
+/*
             // Check if called with in reasonable time
             if (this.lastResponse && isDate(this.lastResponse) && (now.valueOf() - this.lastResponse.valueOf() < wakeupInterval)) {
                 this.debug('Returning cached result from wakeUp().');
                 this.debug(this.lastResponse);
                 return resolve(this.lastResponse);
             }
-
+*/
             Promise.resolve().then(() => {
                 return this.queuedRequest('POST', `/api/1/vehicles/${this.getVehicleID()}/wake_up`);
             })
