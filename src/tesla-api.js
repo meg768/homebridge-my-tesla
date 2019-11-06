@@ -227,6 +227,7 @@ module.exports = class API {
 
         // Check if called with in reasonable time
         if (this.lastResponse && isDate(this.lastResponse.timestamp) && (now.valueOf() - this.lastResponse.timestamp.valueOf() < wakeupInterval)) {
+            this.debug('Returning cached result from wakeUp().');
             return Promise.resolve(this.lastResponse.data);
         }
 
