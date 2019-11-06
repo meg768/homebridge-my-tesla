@@ -259,7 +259,7 @@ module.exports = class API {
     
                     this.debug(`State is now "${response.state}", trying to wake up...`);
     
-                    return wakeUp(timestamp).then(() => {
+                    return wakeUp(now).then(() => {
                         this.debug('wakeUp() succeeded. Just delaying a bit after a hard sleep...');
                         return pause(5000);
                     });
