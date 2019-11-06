@@ -232,6 +232,19 @@ module.exports = class API {
             else {
                 this.queuedRequest('POST', `/api/1/vehicles/${vehicleID}/wake_up`).then((response) => {
 
+                    pause(0).then(() => {
+                        throw new Error('AJA');
+                        this.debug('wakeUp() failed, trying to wake up again...');
+                        return this.wakeUp(timestamp);
+                    })
+                    .then((response) => {
+                        return Promise.resolve(response);
+                    })
+                    .catch((error) => {
+                        this.debug('Catched throw error');
+                        throw new Error(error);
+                    });
+/*
                     if (response.state == 'online')
                         return Promise.resolve(response);
 
@@ -258,7 +271,7 @@ module.exports = class API {
                     .catch((error) => {
                         throw new Error(error);
                     });
-
+*/
                 })
                 .then((response) => {
                     this.lastResponse = new Date();
