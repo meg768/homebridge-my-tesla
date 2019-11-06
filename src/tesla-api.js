@@ -269,8 +269,6 @@ module.exports = class API {
                 reject(error);
             })
 
-    
-            }     
         });
     }
 
