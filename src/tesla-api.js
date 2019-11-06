@@ -275,7 +275,7 @@ module.exports = class API {
                     }
                 })
                 .then(() => {
-                    resolve(this.lastResponse = new Date());
+                    resolve();
                 })
                 .catch((error) => {
                     reject(error);
