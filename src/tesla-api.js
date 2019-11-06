@@ -249,6 +249,7 @@ module.exports = class API {
                 });
             })
             .then((response) => {
+                this.debug(response);
                 var now = new Date();
                 var timestamp = lastCalled == undefined ? now : lastCalled;
 
