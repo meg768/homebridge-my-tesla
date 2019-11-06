@@ -277,12 +277,11 @@ module.exports = class API {
         };
 
         return new Promise((resolve, reject) => {
-            wakeup().then((response) => {
-                this.lastResponse = new Date();
-                resolve(response);
+            wakeup().then(() => {
+                resolve(this.lastResponse = new Date());
             })
             .catch(() => {
-                reject(error);´
+                reject(error);
             });
         })
 
