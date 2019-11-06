@@ -263,7 +263,16 @@ module.exports = class API {
                 })
                 .then(() => {
                     // If wakeUp() has been called once or more, delay a bit to make sure next my Tesla is ready for access..
-                    return pause(timestamp == undefined ? 0 : 5000);
+
+                    var pauseTime = 5000;
+
+                    if (timestamp == undefined) {
+                        this.debug(`wakeUp() called once or more. Pausing ${pauseTime} ms just to be sure...`);
+                        return pause(pauseTime);
+                    }
+                    else {
+                        return pause(0);
+                    }
                 })
                 .then(() => {
                     resolve(this.lastResponse = new Date());
