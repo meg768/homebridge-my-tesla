@@ -39,6 +39,7 @@ module.exports = class API {
         this.clientSecret = clientSecret;
         this.requests     = {};
         this.lastResponse = null;
+        this.lastWakeup   = null;
 
         this.log = () => {};
         this.debug = () => {};
@@ -198,11 +199,15 @@ module.exports = class API {
 
         // Check if called with in reasonable time
         if (this.lastResponse && isDate(this.lastResponse) && (now.valueOf() - this.lastResponse.valueOf() < wakeupInterval)) {
-            this.debug('wakeUp() called within reasonable time. Assuming Tesla is awake...');
-            return Promise.resolve();
+            this.debug('wakeUp() called within reasonable time since other api calls. Assuming Tesla is awake...');
+            return Promise.resolve(this.lastWakeup = new Date());
         }
-
-        this.lastResponse = null;
+        
+        // Check if called with in reasonable time
+        if (this.lastWakeup && isDate(this.lastWakeup) && (now.valueOf() - this.lastWakeup.valueOf() < wakeupInterval)) {
+            this.debug('wakeUp() called within reasonable time since last wake-up. Assuming Tesla is awake...');
+            return Promise.resolve(this.lastWakeup = new Date());
+        }
 
         var pause = (ms) => {
             return new Promise((resolve, reject) => {
@@ -257,7 +262,7 @@ module.exports = class API {
 
         return new Promise((resolve, reject) => {
             wakeUp().then(() => {
-                resolve(this.lastResponse = new Date());
+                resolve(this.lastWakeup = new Date());
             })
             .catch(() => {
                 reject(error);
