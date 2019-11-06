@@ -217,6 +217,8 @@ module.exports = class API {
         // Keep calling wakeUp() for x minutes if no reply
         var wakeupTimeout = 2 * 60000;
 
+        var now = new Date();
+        
         // Check if called with in reasonable time
         if (this.lastResponse && isDate(this.lastResponse) && (now.valueOf() - this.lastResponse.valueOf() < wakeupInterval)) {
             this.debug('wakeUp() called within reasonable time. Assuming Tesla is awake...');
