@@ -210,59 +210,44 @@ module.exports = class API {
 
 
     wakeUp(timestamp) {
+        // Call wakeUp() if not done within last x minutes
+        var wakeupInterval = 5 * 60000;
+
+        // Keep calling wakeUp() for x minutes if no reply
+        var wakeupTimeout = 2 * 60000;
+
         var pause = (ms) => {
             return new Promise((resolve, reject) => {
                 setTimeout(resolve, ms);
             });            
         };
 
+        var now = new Date();
+
+        // Check if called with in reasonable time
+        if (isDate(this.lastResponse) && (now.valueOf() - this.lastResponse.valueOf() < wakeupInterval)) {
+            return Promise.resolve(this.lastResponse);
+        }
+
         return new Promise((resolve, reject) => {
-            var vehicleID = this.getVehicleID();
 
-            // Call wakeUp() if not done within last 5 minutes
-            var wakeupInterval = 5 * 60000;
+            Promise.resolve().then(() => {
+                return this.queuedRequest('POST', `/api/1/vehicles/${this.getVehicleID()}/wake_up`);
+            })
+            .then((response) => {
+                if (response.state == 'online')
+                    return Promise.resolve(response);
 
-            // Keep calling wakeUp() for 2 minutes if no reply
-            var wakeupTimeout = 2 * 60000;
-
-            var now = new Date();
-    
-            if (isDate(this.lastResponse) && (now.valueOf() - this.lastResponse.valueOf() < wakeupInterval))
-                resolve();
-            else {
-                this.queuedRequest('POST', `/api/1/vehicles/${vehicleID}/wake_up`).then((response) => {
-
-                    try {
-                        pause(0).then(() => {
-                            this.debug('Throwing new error');
-                            throw new Error('AJA');
-                            this.debug('wakeUp() failed, trying to wake up again...');
-                            return this.wakeUp(timestamp);
-                        })
-                        .then((response) => {
-                            return Promise.resolve(response);
-                        })
-                        .catch((error) => {
-                            this.debug('Catched throw error, throwing new error');
-                            throw error;
-                        })
-                        .catch((error) => {
-                            this.debug('NEXT CATCH');
-                            throw error;
-                        });
-    
-                    }
-                    catch(error) {
-                        this.debug('OUch!!');
-                    }
-/*
-                    if (response.state == 'online')
-                        return Promise.resolve(response);
-
-                    var now = new Date();
-
+                return pause(1000).then(() => {
+                    return Promise.resolve(response);
+                });
+            })
+            .then((response) => {
+                var now = new Date();
+                
+                if (response.state != 'online') {
                     if (timestamp == undefined) {
-                        timestamp = new Date();
+                        timestamp = now;
                         this.debug(`State is ${response.state}, waking up...`, );
                     }
                     else {
@@ -272,28 +257,18 @@ module.exports = class API {
                     if (now.getTime() - timestamp.getTime() > wakeupTimeout)
                         throw new Error('The Tesla cannot be reached within timeout period.');
 
-                    pause(5000).then(() => {
-                        this.debug('wakeUp() failed, trying to wake up again...');
-                        return this.wakeUp(timestamp);
-                    })
-                    .then((response) => {
-                        return Promise.resolve(response);
-                    })
-                    .catch((error) => {
-                        throw new Error(error);
-                    });
-*/
-                })
-                .then((response) => {
-                    this.debug('got response');
-                    this.lastResponse = new Date();
-                    resolve(response);
+                    return this.wakeUp(timestamp).pause(5000);
+                }
+                else
+                    return Promise.resolve();
+            })
+            .then(() => {
+                resolve(this.lastResponse = new Date());
+            })
+            .catch((error) => {
+                reject(error);
+            })
 
-                })
-                .catch((error) => {
-                    this.debug('got just an error');
-                    reject(error);
-                })
     
             }     
         });
