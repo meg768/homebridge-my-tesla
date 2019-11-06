@@ -13,10 +13,6 @@ Promise.resolve().then(() => {
     console.log('Calling login()');
     return api.login();
 })
-.then(() => {
-    console.log('Calling wakeup()');
-    return api.wakeUp();
-})
 .then((response) => {
     console.log('Calling getVehicleData()');
     return api.getVehicleData();
