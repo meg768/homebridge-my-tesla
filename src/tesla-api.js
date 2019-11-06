@@ -205,7 +205,7 @@ module.exports = class API {
 
 
     wakeUp() {
-        var STATE_ONLINE = 'online';
+        var STATE_ONLINE = 'onlineX';
 
         // Call wakeUp() if not done within last x minutes
         var wakeupInterval = 5 * 60000;
