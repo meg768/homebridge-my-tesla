@@ -210,6 +210,8 @@ module.exports = class API {
 
 
     wakeUp(lastCalled) {
+        var STATE_ONLINE = 'onlineX';
+
         // Call wakeUp() if not done within last x minutes
         var wakeupInterval = 5 * 60000;
 
@@ -235,7 +237,7 @@ module.exports = class API {
                 return this.queuedRequest('POST', `/api/1/vehicles/${this.getVehicleID()}/wake_up`);
             })
             .then((response) => {
-                if (response.state == 'onlineX')
+                if (response.state == STATE_ONLINE)
                     return Promise.resolve(response);
 
                 this.debug('Pausing for 5000 ms...');
@@ -248,7 +250,7 @@ module.exports = class API {
                 var now = new Date();
                 var timestamp = lastCalled == undefined ? now : lastCalled;
 
-                if (response.state == 'online')
+                if (response.state == STATE_ONLINE)
                     return Promise.resolve();
 
                 this.debug(`State is now ${response.state}, waking up...`);
