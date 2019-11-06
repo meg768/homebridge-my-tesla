@@ -209,7 +209,7 @@ module.exports = class API {
     };
 
 
-    wakeUp(timestamp) {
+    wakeUp(lastCalled) {
         // Call wakeUp() if not done within last x minutes
         var wakeupInterval = 5 * 60000;
 
@@ -238,29 +238,25 @@ module.exports = class API {
                 if (response.state == 'online')
                     return Promise.resolve(response);
 
-                return pause(1000).then(() => {
+                this.debug('Pausing for 5000 ms...');
+
+                return pause(5000).then(() => {
                     return Promise.resolve(response);
                 });
             })
             .then((response) => {
                 var now = new Date();
-                
-                if (response.state != 'online') {
-                    if (timestamp == undefined) {
-                        timestamp = now;
-                        this.debug(`State is ${response.state}, waking up...`, );
-                    }
-                    else {
-                        this.debug(`State is now ${response.state}, waking up again...`);
-                    }
+                var timestamp = lastCalled == undefined ? now : lastCalled;
 
-                    if (now.getTime() - timestamp.getTime() > wakeupTimeout)
-                        throw new Error('The Tesla cannot be reached within timeout period.');
-
-                    return this.wakeUp(timestamp);
-                }
-                else
+                if (response.state == 'online')
                     return Promise.resolve();
+
+                this.debug(`State is now ${response.state}, waking up...`);
+
+                if (now.getTime() - timestamp.getTime() > wakeupTimeout)
+                    throw new Error('The Tesla cannot be reached within timeout period.');
+
+                return this.wakeUp(timestamp);
             })
             .then(() => {
                 resolve(this.lastResponse = new Date());
