@@ -39,7 +39,6 @@ module.exports = class API {
         this.clientSecret = clientSecret;
         this.requests     = {};
         this.lastResponse = null;
-        this.lastWakeup   = null;
 
         this.log = () => {};
         this.debug = () => {};
@@ -143,9 +142,9 @@ module.exports = class API {
                 // Mask out the important stuff... 
                 response = response.body.response;
 
-                this.log(`${key} completed...`);
-
                 this.lastResponse = new Date();
+
+                this.log(`${key} completed...`);
 
                 resolve(response);
             })
@@ -168,6 +167,7 @@ module.exports = class API {
     
             if (this.requests[key].length == 1) {
                 this.rawRequest(method, path).then((response) => {
+
                     this.requests[key].forEach((request) => {
                         request.resolve(response);
                     });
@@ -185,6 +185,24 @@ module.exports = class API {
     };
 
 
+    request(method, path) {
+        return new Promise((resolve, reject) => {
+            Promise.resolve().then(() => {
+                return this.wakeUp();
+            })
+            .then(() => {
+                return this.queuedRequest(method, path);
+            })
+            .then((response) => {
+                resolve(response);                
+            })
+            .catch((error) => {
+                reject(error);
+            })
+        });
+
+    }
+
 
     wakeUp() {
         var STATE_ONLINE = 'online';
@@ -199,14 +217,8 @@ module.exports = class API {
 
         // Check if called with in reasonable time
         if (this.lastResponse && isDate(this.lastResponse) && (now.valueOf() - this.lastResponse.valueOf() < wakeupInterval)) {
-            this.debug('wakeUp() called within reasonable time since other api calls. Assuming Tesla is awake...');
-            return Promise.resolve(this.lastWakeup = new Date());
-        }
-        
-        // Check if called with in reasonable time
-        if (this.lastWakeup && isDate(this.lastWakeup) && (now.valueOf() - this.lastWakeup.valueOf() < wakeupInterval)) {
-            this.debug('wakeUp() called within reasonable time since last wake-up. Assuming Tesla is awake...');
-            return Promise.resolve(this.lastWakeup = new Date());
+            this.debug('wakeUp() called within reasonable time since last reply. Assuming Tesla is awake...');
+            return Promise.resolve(this.lastResponse);
         }
 
         var pause = (ms) => {
@@ -226,7 +238,10 @@ module.exports = class API {
 
                     if (response.state == STATE_ONLINE)
                         return Promise.resolve(response);
-    
+
+                    // Tesla is not online. Reset lastResponse value.
+                    this.lastResponse = null;
+
                     this.debug(`Current state is "${response.state}". Must be "${STATE_ONLINE}" to continue. Pausing for ${pauseTime} ms and will try again...`);
     
                     return pause(pauseTime).then(() => {
@@ -262,31 +277,13 @@ module.exports = class API {
 
         return new Promise((resolve, reject) => {
             wakeUp().then(() => {
-                resolve(this.lastWakeup = new Date());
+                resolve(this.lastResponse = new Date());
             })
             .catch(() => {
                 reject(error);
             });
         })
 
-
-    }
-
-    request(method, path, timeout) {
-        return new Promise((resolve, reject) => {
-            Promise.resolve().then(() => {
-                return this.wakeUp();
-            })
-            .then(() => {
-                return this.queuedRequest(method, path, timeout);
-            })
-            .then((response) => {
-                resolve(response);                
-            })
-            .catch((error) => {
-                reject(error);
-            })
-        });
 
     }
 
