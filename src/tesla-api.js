@@ -236,13 +236,14 @@ module.exports = class API {
                     return this.queuedRequest('POST', `/api/1/vehicles/${this.getVehicleID()}/wake_up`);
                 })
                 .then((response) => {
+                    var pauseTime = 5000;
 
                     if (response.state == STATE_ONLINE)
                         return Promise.resolve(response);
     
-                    this.debug(`Current state is "${response.state}", pausing for 5000 ms...`);
+                    this.debug(`Current state is "${response.state}". Must be "${STATE_ONLINE}" to continue. Pausing for ${pauseTime} ms and will try again...`);
     
-                    return pause(5000).then(() => {
+                    return pause(pauseTime).then(() => {
                         return Promise.resolve(response);
                     });
                 })
