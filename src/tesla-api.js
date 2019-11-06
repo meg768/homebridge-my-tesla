@@ -237,6 +237,7 @@ module.exports = class API {
                 return this.queuedRequest('POST', `/api/1/vehicles/${this.getVehicleID()}/wake_up`);
             })
             .then((response) => {
+                response.state = 'FOO';
                 if (response.state == STATE_ONLINE)
                     return Promise.resolve(response);
 
