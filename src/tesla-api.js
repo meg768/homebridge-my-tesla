@@ -256,7 +256,7 @@ module.exports = class API {
         };
 
         return new Promise((resolve, reject) => {
-            wakeup().then(() => {
+            wakeUp().then(() => {
                 resolve(this.lastResponse = new Date());
             })
             .catch(() => {
