@@ -210,6 +210,12 @@ module.exports = class API {
 
 
     wakeUp(timestamp) {
+        var pause = (ms) => {
+            return new Promise((resolve, reject) => {
+                setTimeout(resolve, ms);
+            });            
+        };
+
         return new Promise((resolve, reject) => {
             var vehicleID = this.getVehicleID();
 
@@ -224,53 +230,42 @@ module.exports = class API {
             if (isDate(this.lastResponse) && (now.valueOf() - this.lastResponse.valueOf() < wakeupInterval))
                 resolve();
             else {
+
+                
                 this.queuedRequest('POST', `/api/1/vehicles/${vehicleID}/wake_up`).then((response) => {
 
-                    console.log('--------------wake_up:');
-                    console.log(response);
-                    console.log('--------------');
+                    if (response.state == 'online')
+                        return Promise.resolve(response);
 
-                    var pause = (ms) => {
-                        return new Promise((resolve, reject) => {
-                            setTimeout(resolve, ms);
-                        });            
-                    };
+                    var now = new Date();
 
-        
-                    if (response.state != 'online') {
-                        var now = new Date();
-    
-                        if (timestamp == undefined) {
-                            timestamp = new Date();
-    
-                            this.log('State is %s, waking up...', response.state);
-                        }
-                        else {
-                            this.log('Still not awake. State is now %s', response.state);
-                        }
-    
-                        if (now.getTime() - timestamp.getTime() < wakeupTimeout) {
-    
-                            pause(5000).then(() => {
-                                this.log('wakeUp() failed, trying to wake up again...');
-                                return this.wakeUp(timestamp);
-                            })
-                            .then(() => {
-                                this.lastResponse = new Date();
-                                resolve();
-                            })
-                            .catch((error) => {
-                                reject(error);
-                            })
-                        }
-                        else {
-                            reject(new Error('The Tesla cannot be reached.'));
-                        }
+                    if (timestamp == undefined) {
+                        timestamp = new Date();
+                        this.debug(`State is ${response.state}, waking up...`, );
                     }
                     else {
-                        this.lastResponse = new Date();
-                        resolve();
+                        this.debug(`State is now ${response.state}, waking up again...`);
                     }
+
+                    if (now.getTime() - timestamp.getTime() > wakeupTimeout)
+                        throw new Error('The Tesla cannot be reached within timeout period.');
+
+                    pause(5000).then(() => {
+                        this.debug('wakeUp() failed, trying to wake up again...');
+                        return this.wakeUp(timestamp);
+                    })
+                    .then((response) => {
+                        return Promise.resolve(response);
+                    })
+                    .catch((error) => {
+                        throw new Error(error);
+                    });
+
+                })
+                .then((response) => {
+                    this.lastResponse = new Date();
+                    resolve(response);
+
                 })
                 .catch((error) => {
                     reject(error);

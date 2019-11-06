@@ -9,19 +9,19 @@ var vin = "5YJ3E7EB9KF240654";
 var API = require('./src/tesla-api.js');
 var api = new API({vin:vin, debug:console.log, log:console.log});
 
-api.login().then((token) => {
-    console.log('Token', token);
+Promise.resolve().then(() => {
+    return api.login();
 })
-.then(() => {
-    console.log('Waking up');
+.then((response) => {
+    console.log('login()', response);
     return api.wakeUp();
 })
-.then(() => {
-    console.log('Gettings vehicle data');
+.then((response) => {
+    console.log('wakeUp()', response);
     return api.getVehicleData();
 })
-.then((data) => {
-    console.log(data);
+.then((response) => {
+    console.log('getVehicleData()', response);
 })
 .then(() => {
     console.log('Done.');
