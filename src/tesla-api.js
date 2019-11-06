@@ -245,6 +245,10 @@ module.exports = class API {
                         .catch((error) => {
                             this.debug('Catched throw error, throwing new error');
                             throw error;
+                        })
+                        .catch((error) => {
+                            this.debug('NEXT CATCH');
+                            throw error;
                         });
     
                     }
