@@ -266,7 +266,7 @@ module.exports = class API {
                     return pause(timestamp == undefined ? 0 : 5000);
                 })
                 .then(() => {
-                    resolve();
+                    resolve(this.lastResponse = new Date());
                 })
                 .catch((error) => {
                     reject(error);
