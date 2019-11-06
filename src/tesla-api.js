@@ -208,7 +208,7 @@ module.exports = class API {
     };
 
 
-    wakeUp(lastCalled) {
+    wakeUp() {
         var STATE_ONLINE = 'onlineX';
 
         // Call wakeUp() if not done within last x minutes
@@ -217,6 +217,15 @@ module.exports = class API {
         // Keep calling wakeUp() for x minutes if no reply
         var wakeupTimeout = 2 * 60000;
 
+            /*
+                // Check if called with in reasonable time
+                if (this.lastResponse && isDate(this.lastResponse) && (now.valueOf() - this.lastResponse.valueOf() < wakeupInterval)) {
+                    this.debug('Returning cached result from wakeUp().');
+                    this.debug(this.lastResponse);
+                    return resolve(this.lastResponse);
+                }
+    */
+
         var pause = (ms) => {
             return new Promise((resolve, reject) => {
                 setTimeout(resolve, ms);
@@ -224,53 +233,50 @@ module.exports = class API {
         };
 
 
-
-        return new Promise((resolve, reject) => {
-            var now = new Date();
-/*
-            // Check if called with in reasonable time
-            if (this.lastResponse && isDate(this.lastResponse) && (now.valueOf() - this.lastResponse.valueOf() < wakeupInterval)) {
-                this.debug('Returning cached result from wakeUp().');
-                this.debug(this.lastResponse);
-                return resolve(this.lastResponse);
-            }
-*/
-            Promise.resolve().then(() => {
-                return this.queuedRequest('POST', `/api/1/vehicles/${this.getVehicleID()}/wake_up`);
-            })
-            .then((response) => {
-                response.state = 'FOO';
-                if (response.state == STATE_ONLINE)
-                    return Promise.resolve(response);
-
-                this.debug(`Current state is "${response.state}", pausing for 5000 ms...`);
-
-                return pause(5000).then(() => {
-                    return Promise.resolve(response);
-                });
-            })
-            .then((response) => {
+        var wakeUp = (lastCalled) => {
+            return new Promise((resolve, reject) => {
                 var now = new Date();
-                var timestamp = lastCalled == undefined ? now : lastCalled;
+                Promise.resolve().then(() => {
+                    return this.queuedRequest('POST', `/api/1/vehicles/${this.getVehicleID()}/wake_up`);
+                })
+                .then((response) => {
+                    response.state = 'FOO';
+                    if (response.state == STATE_ONLINE)
+                        return Promise.resolve(response);
+    
+                    this.debug(`Current state is "${response.state}", pausing for 5000 ms...`);
+    
+                    return pause(5000).then(() => {
+                        return Promise.resolve(response);
+                    });
+                })
+                .then((response) => {
+                    var now = new Date();
+                    var timestamp = lastCalled == undefined ? now : lastCalled;
+    
+                    if (response.state == STATE_ONLINE)
+                        return Promise.resolve();
+    
+                    this.debug(`State is now "${response.state}", trying to wake up...`);
+    
+                    if (now.getTime() - timestamp.getTime() > wakeupTimeout)
+                        throw new Error('The Tesla cannot be reached within timeout period.');
+    
+                    return wakeUp(timestamp);
+                })
+                .then(() => {
+                    resolve(this.lastResponse = new Date());
+                })
+                .catch((error) => {
+                    reject(error);
+                })
+    
+            });
+        };
 
-                if (response.state == STATE_ONLINE)
-                    return Promise.resolve();
+        return wakeUp();
 
-                this.debug(`State is now ${response.state}, waking up...`);
 
-                if (now.getTime() - timestamp.getTime() > wakeupTimeout)
-                    throw new Error('The Tesla cannot be reached within timeout period.');
-
-                return this.wakeUp(timestamp);
-            })
-            .then(() => {
-                resolve(this.lastResponse = new Date());
-            })
-            .catch((error) => {
-                reject(error);
-            })
-
-        });
     }
 
     request(method, path, timeout) {
