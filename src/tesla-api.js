@@ -38,7 +38,6 @@ module.exports = class API {
         this.clientID     = clientID;
         this.clientSecret = clientSecret;
         this.requests     = {};
-        this.cache        = {};
         this.lastResponse = null;
 
         this.log = () => {};
@@ -145,8 +144,7 @@ module.exports = class API {
 
                 this.log(`${key} completed...`);
 
-                // Store result in cache
-                this.cache[key] = this.lastResponse = new Date();
+                this.lastResponse = new Date();
 
                 resolve(response);
             })
@@ -185,27 +183,6 @@ module.exports = class API {
         });
     };
 
-    cachedRequest(method, path, timeout) {
-
-        return new Promise((resolve, reject) => {
-            var key = `${method} ${path}`;
-            var now = new Date();    
-            var cache = this.cache[key];
-
-            if (timeout && cache && cache.data != undefined && (now.valueOf() - cache.timestamp.valueOf() < timeout)) {
-                resolve(cache.data);
-            }
-            else {
-                this.queuedRequest(method, path).then((response) => {
-                    resolve(response);
-                })
-                .catch((error) => {
-                    reject(error);
-                });
-            }
-        });
-
-    };
 
 
     wakeUp() {
@@ -224,6 +201,8 @@ module.exports = class API {
             this.debug('wakeUp() called within reasonable time. Assuming Tesla is awake...');
             return Promise.resolve();
         }
+
+        this.lastResponse = null;
 
         var pause = (ms) => {
             return new Promise((resolve, reject) => {
@@ -277,7 +256,7 @@ module.exports = class API {
         };
 
         return new Promise((resolve, reject) => {
-            wakeUp().then(() => {
+            wakeup().then(() => {
                 resolve(this.lastResponse = new Date());
             })
             .catch(() => {
@@ -294,7 +273,7 @@ module.exports = class API {
                 return this.wakeUp();
             })
             .then(() => {
-                return this.cachedRequest(method, path, timeout);
+                return this.queuedRequest(method, path, timeout);
             })
             .then((response) => {
                 resolve(response);                
