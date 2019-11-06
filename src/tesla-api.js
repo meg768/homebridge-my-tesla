@@ -218,7 +218,7 @@ module.exports = class API {
         var wakeupTimeout = 2 * 60000;
 
         var now = new Date();
-        
+
         // Check if called with in reasonable time
         if (this.lastResponse && isDate(this.lastResponse) && (now.valueOf() - this.lastResponse.valueOf() < wakeupInterval)) {
             this.debug('wakeUp() called within reasonable time. Assuming Tesla is awake...');
@@ -231,7 +231,7 @@ module.exports = class API {
             });            
         };
 
-        var wakeUp = (lastCalled) => {
+        var wakeUp = (timestamp) => {
             return new Promise((resolve, reject) => {
 
                 Promise.resolve().then(() => {
@@ -251,21 +251,20 @@ module.exports = class API {
                 })
                 .then((response) => {
                     var now = new Date();
-                    var timestamp = lastCalled == undefined ? now : lastCalled;
     
                     if (response.state == STATE_ONLINE)
                         return Promise.resolve();
     
-                    this.debug(`State is now "${response.state}", trying to wake up...`);
-    
-                    if (now.getTime() - timestamp.getTime() > wakeupTimeout)
+                    if (timestamp && now.getTime() - timestamp.getTime() > wakeupTimeout)
                         throw new Error('The Tesla cannot be reached within timeout period.');
+    
+                    this.debug(`State is now "${response.state}", trying to wake up...`);
     
                     return wakeUp(timestamp);
                 })
                 .then(() => {
                     // If wakeUp() has been called once or more, delay a bit to make sure next my Tesla is ready for access..
-                    return pause(lastCalled == undefined ? 0 : 5000);
+                    return pause(timestamp == undefined ? 0 : 5000);
                 })
                 .then(() => {
                     resolve(this.lastResponse = new Date());
