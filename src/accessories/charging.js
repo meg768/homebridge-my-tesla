@@ -29,8 +29,11 @@ module.exports = class extends Accessory {
         this.debug(`Charging state is "${vehicleData.getChargingState()}".`);
 
         // Turn off switch if not actually loading
-        if (!vehicleData.isConnectedToCharger())
+        if (!vehicleData.isConnectedToCharger()) {
+            this.debug(`Charger not plugged in. Deactivating.`);
             this.isActive = false;
+
+        }
 
         this.debug(`Updated charging state to ${this.isActive ? 'ON' : 'OFF'}.`);        
         service.getCharacteristic(Characteristic.On).updateValue(this.isActive);
