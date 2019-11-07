@@ -12,7 +12,7 @@ module.exports = class extends Accessory {
         super(options);
 
         this.isActive        = false;
-        this.timerInterval   = 5 * 1000 * 60;
+        this.timerInterval   = 2 * 1000 * 60;
         this.minBatteryLevel = 95;
         this.timer           = new Timer();
 
