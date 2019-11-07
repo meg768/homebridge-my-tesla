@@ -260,8 +260,13 @@ module.exports = class API {
                     this.debug(`State is now "${response.state}", trying to wake up...`);
     
                     return wakeUp(now).then(() => {
-                        this.debug('wakeUp() succeeded. Just delaying a bit after a hard sleep...');
-                        return pause(5000);
+                        if (timestamp == undefined) {
+                            // Only pause on first wakeUp() call
+                            this.debug('wakeUp() succeeded. Delaying a bit after a hard sleep...');
+                            return pause(5000);    
+                        }
+                        else
+                            return pause(0);
                     });
                 })
                 .then(() => {
