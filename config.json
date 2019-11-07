@@ -21,6 +21,10 @@
                 "username": "Your username at tesla.com",
                 "password": "Your password at tesla.com",
 
+                "ping": {
+                    "name": "Ping",
+                    "enabled": true
+                },
                 "charging": {
                     "name": "Laddning",
                     "enabled": true

@@ -44,7 +44,8 @@ module.exports = class Tesla extends Events  {
         if (this.config.defrost && this.config.defrost.enabled)
             this.addAccessory(new DefrostAccessory({vehicle:this, config:this.config.defrost}));
 
-        this.addAccessory(new PingAccessory({vehicle:this, config:{}}));
+        if (this.config.ping && this.config.ping.enabled)
+            this.addAccessory(new PingAccessory({vehicle:this, config:this.config.ping}));
         
         var configLoginOptions = {username:config.username, password:config.password, clientID:config.clientID, clientSecret:config.clientSecret};
         var processLoginOptions = {username:process.env.TESLA_USER, password:process.env.TESLA_PASSWORD, clientID:process.env.TESLA_CLIENT_ID, clientSecret:process.env.TESLA_CLIENT_SECRET};
