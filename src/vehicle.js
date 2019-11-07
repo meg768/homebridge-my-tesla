@@ -27,6 +27,7 @@ module.exports = class Tesla extends Events  {
         var AirConditioningAccessory = require('./accessories/hvac.js');
         var TemperatureAccessory = require('./accessories/temperature.js');
         var DefrostAccessory = require('./accessories/defrost.js');
+        var PingAccessory = require('./accessories/ping.js');
 
         if (this.config.locks && this.config.locks.enabled)
             this.addAccessory(new DoorLockAccessory({vehicle:this, config:this.config.locks}));
@@ -43,6 +44,8 @@ module.exports = class Tesla extends Events  {
         if (this.config.defrost && this.config.defrost.enabled)
             this.addAccessory(new DefrostAccessory({vehicle:this, config:this.config.defrost}));
 
+        this.addAccessory(new PingAccessory({vehicle:this, config:{}}));
+        
         var configLoginOptions = {username:config.username, password:config.password, clientID:config.clientID, clientSecret:config.clientSecret};
         var processLoginOptions = {username:process.env.TESLA_USER, password:process.env.TESLA_PASSWORD, clientID:process.env.TESLA_CLIENT_ID, clientSecret:process.env.TESLA_CLIENT_SECRET};
         var loginOptions = {...configLoginOptions, ...processLoginOptions};
