@@ -26,8 +26,6 @@ module.exports = class extends Accessory {
     updateSwitch(vehicleData) {
         var service = this.getService(Service.Switch);
 
-        this.debug(`Charging state is "${vehicleData.getChargingState()}".`);
-
         // Turn off switch if not actually loading
         if (!vehicleData.isConnectedToCharger()) {
             this.debug(`Charger not plugged in. Deactivating.`);
