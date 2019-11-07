@@ -12,7 +12,7 @@ module.exports = class extends Accessory {
         super(options);
 
         this.isActive        = false;
-        this.timerInterval   = 1 * 1000 * 60;
+        this.timerInterval   = 5 * 1000 * 60;
         this.minBatteryLevel = 40;
         this.timer           = new Timer();
 
@@ -95,8 +95,10 @@ module.exports = class extends Accessory {
                 return Promise.resolve();
             })
             .then(() => {
-                if (value)
-                    this.timer.setTimer(this.timerInterval, this.ping.bind(this));            
+                if (value) {
+                    this.ping();
+                    this.timer.setTimer(this.timerInterval, this.ping.bind(this));
+                }
             })
             .then(() => {
                 resolve();
