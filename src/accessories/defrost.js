@@ -83,8 +83,6 @@ module.exports = class extends Accessory {
             var ACTION_START_HVAC            = 1;
             var ACTION_STOP_HVAC             = 2;
             var ACTION_NONE                  = 4;
-            var ACTION_BATTERY_LEVEL_TOO_LOW = 5;
-            var ACTION_STABLE                = 6;
             var ACTION_STOP_TIMER            = 7;
 
             Promise.resolve().then(() => {
