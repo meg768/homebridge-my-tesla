@@ -92,7 +92,7 @@ module.exports = class extends Accessory {
             this.timer.cancel();
 
             Promise.resolve().then(() => {
-                return value ? this.ping() : Promise.resolve();
+                return Promise.resolve();
             })
             .then(() => {
                 if (value)
