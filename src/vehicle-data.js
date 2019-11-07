@@ -39,33 +39,27 @@ module.exports = class VehicleData {
         return defaultValue;        
     }
 
-    isCharging(defaultValue = false) {
-        var charging = defaultValue;
+    getChargingState() {
+        // returns "Disconnected", "Stopped", "Complete" or "Charging"
+        return this.response && this.response.charge_state ? this.response.charge_state.charging_state : '';
+    }
 
-        if (this.response && this.response.charge_state) {
-            switch (this.response.charge_state.charging_state) {
-                case 'Disconnected': {
-                    charging = false;
-                    break;
-                }
-                case 'Stopped': {
-                    charging = false;
-                    break;
-                }
-                case 'Complete': {
-                    charging = false;
-                    break;
-                }
-                default: {
-                    charging = true;
-                    break;
-                }
-            }
-        }
 
-        return charging;
-    };
+    isCharging() {
+        return this.getChargingState() == 'Charging';
+    }
 
+    isChargingStopped() {
+        return this.getChargingState() == 'Stopped';
+    }
+
+    isChargingComplete() {
+        return this.getChargingState() == 'Complete';
+    }
+
+    isChargingDisconnected() {
+        return this.getChargingState() == 'Disconnected';
+    }
 
 
 }

@@ -13,7 +13,7 @@ module.exports = class extends Accessory {
 
         var defaultConfig = {
             temperatureRange: [5, 10],
-            temperatureCheckFrequency: 5,
+            temperatureCheckFrequency: 3,
             minBatteryLevel: 60,
         };
 
@@ -70,6 +70,10 @@ module.exports = class extends Accessory {
         });
     }
 
+    updateSwitchState() {
+        this.getService(Service.Switch).getCharacteristic(Characteristic.On).updateValue(this.isActive);
+    }
+
 
     checkTemperature() {
         return new Promise((resolve, reject) => {
@@ -77,20 +81,29 @@ module.exports = class extends Accessory {
             var ACTION_START_HVAC            = 1;
             var ACTION_STOP_HVAC             = 2;
             var ACTION_NONE                  = 3;
-            var ACTION_BATTERY_LEVEL_TOO_LOW = 5;
-            var ACTION_STABLE                = 8;
+            var ACTION_BATTERY_LEVEL_TOO_LOW = 4;
+            var ACTION_STABLE                = 5;
+            var ACTION_STOP_TIMER            = 6;
 
             Promise.resolve().then(() => {
                 return this.vehicle.getVehicleData();
             })
             .then((response) => {
-                var vehicleData = response;
-                var action = ACTION_NONE;
+                return {action:ACTION_NONE, vehicleData:response};
+            })
+            .then((response) => {
+                var {vehicleData, action} = response;
+
                 var insideTemperature = vehicleData.getInsideTemperature();
                 var batteryLevel = vehicleData.getBatteryLevel();
                 var isClimateOn = vehicleData.isClimateOn();
+                var isPluggedIn = vehicleData.isCharging() || vehicleData.isChargingComplete() || vehicleData.isChargingStopped();
 
-                if (insideTemperature < this.minTemperature) {
+                if (!isPluggedIn) {
+                    this.debug(`The car is not connected to a charger. Turning off defrosting. Current state is "${vehicleData.getChargingState()}".`);
+                    action = ACTION_STOP_TIMER;
+                }
+                else if (insideTemperature < this.minTemperature) {
                     action = ACTION_START_HVAC;
 
                     if (batteryLevel < this.config.minBatteryLevel) {
@@ -118,7 +131,6 @@ module.exports = class extends Accessory {
 
                 var insideTemperature = vehicleData.getInsideTemperature();
                 var batteryLevel = vehicleData.getBatteryLevel(); 
-                var validTemperatureRange = `(${this.minTemperature} - ${this.maxTemperature})`;
 
                 switch(action) {
                     case ACTION_NONE: {
@@ -130,7 +142,7 @@ module.exports = class extends Accessory {
                         break;
                     }
                     case ACTION_STABLE: {
-                        this.debug(`Current temperature is ${insideTemperature}, inside the limits of ${validTemperatureRange}.`);
+                        this.debug(`Current temperature is ${insideTemperature} and inside the limits of (${this.minTemperature} - ${this.maxTemperature}).`);
                         break;
                     }
                     case ACTION_START_HVAC:
@@ -152,16 +164,33 @@ module.exports = class extends Accessory {
                         break;
                     }
                 }
+
+                return response;
             })
             .catch((error) => {
                 this.log(error);
             })
-            .then(() => {
-                // Seems we have to pause a bit so the air condition state is updated in getVehicleData()...
-                return this.pause(0);
-            })
-            .then(() => {
-                this.timer.setTimer(this.timerInterval, this.checkTemperature.bind(this));
+            .then((response) => {
+                var {action} = response;
+
+                switch(action) {
+                    case ACTION_STOP_TIMER: {
+                        this.setActiveState(false).then(() => {
+                            this.updateSwitchState();
+                            return this.vehicle.getVehicleData();
+                        })
+                        .catch(() => {
+                            this.log(error);
+                        });
+    
+                        break;
+                    }
+                    default: {
+                        this.timer.setTimer(this.timerInterval, this.checkTemperature.bind(this));
+                        break;
+                    }
+    
+                }
                 resolve();
 
             })
@@ -192,13 +221,8 @@ module.exports = class extends Accessory {
             this.timer.cancel();
 
             if (value) {
-                this.checkTemperature().then(() => {
-                    this.timer.setTimer(this.timerInterval, this.checkTemperature.bind(this));
-                    resolve();
-                })
-                .catch((error) => {
-                    reject(error);
-                })
+                this.timer.setTimer(this.timerInterval, this.checkTemperature.bind(this));
+                resolve();
             }
             else {
                 this.setAutoConditioningState(false).then(() => {
@@ -214,22 +238,21 @@ module.exports = class extends Accessory {
 
     setActiveState(value) {
         return new Promise((resolve, reject) => {
+            value = value ? true : false;
+
             Promise.resolve().then(() => {
-                return this.setTimerState(value);
+                if (this.isActive != value)
+                    return this.setTimerState(value);
+                else
+                    return Promise.resolve();
             })
             .then(() => {
-                // Seems we have to pause a bit so the air condition state is updated in getVehicleData()...
-                return this.pause(0);
-            })
-            .then(() => {
-                return this.vehicle.getVehicleData();
-            })
-            .then(() => {
-                resolve(this.isActive = value);
+                this.isActive = value;
+                resolve();
             })
             .catch((error) => {
                 reject(error);
-            })
+            });
     
         })
     }
