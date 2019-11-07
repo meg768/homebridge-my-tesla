@@ -44,6 +44,9 @@ module.exports = class VehicleData {
         return this.response && this.response.charge_state ? this.response.charge_state.charging_state : '';
     }
 
+    isConnectedToCharger() {
+        return this.isCharging() || this.isChargingComplete() || this.isChargingStopped();        
+    }
 
     isCharging() {
         return this.getChargingState() == 'Charging';
