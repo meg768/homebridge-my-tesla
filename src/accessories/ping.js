@@ -17,6 +17,11 @@ module.exports = class extends Accessory {
         this.timer           = new Timer();
 
         this.enableSwitch();
+
+        this.on('vehicleData', (vehicleData) => {    
+            this.updateSwitch(vehicleData);
+        });
+
     }
 
     pause(ms) {
@@ -45,8 +50,22 @@ module.exports = class extends Accessory {
         });
     }
 
-    updateSwitch() {
-        this.getService(Service.Switch).getCharacteristic(Characteristic.On).updateValue(this.isActive);
+    updateSwitch(vehicleData) {
+
+        Promise.resolve().then(() => {
+            if (vehicleData.getBatteryLevel() < this.minBatteryLevel) {
+                this.debug(`Battery level too low for ping to be enabled. Turning off.`);
+                return this.setActiveState(false);
+            }
+            else
+                return Promise.resolve();
+    
+        })
+        .then(() => {
+            this.debug(`Updated ping state to ${this.isActive ? 'ON' : 'OFF'}.`);        
+            this.getService(Service.Switch).getCharacteristic(Characteristic.On).updateValue(this.isActive);
+
+        })
     }
 
     ping() {
@@ -57,19 +76,9 @@ module.exports = class extends Accessory {
             Promise.resolve().then(() => {
                 return this.vehicle.getVehicleData();
             })
-            .then((vehicleData) => {
-                if (vehicleData.getBatteryLevel() < this.minBatteryLevel) {
-                    this.debug(`Battery level too low for ping to be anbled. Turning off.`);
-                    return this.setActiveState(false);                    
-                }
-                else {
-                    return Promise.resolve();
-                }
-            })
             .then(() => {
-                this.updateSwitch();
                 resolve();
-            })
+            });
         })
     }
 
@@ -95,21 +104,24 @@ module.exports = class extends Accessory {
 
         return new Promise((resolve, reject) => {
 
-            this.debug(`Setting ping state to "${value}".`);
-
-            Promise.resolve().then(() => {
-                if (this.isActive != value)
-                    return this.setTimerState(value);
-                else
-                    return Promise.resolve();
-            })
-            .then(() => {
-                this.isActive = value;
+            if (this.isActive == value) {
                 resolve();
-            })
-            .catch((error) => {
-                reject(error);
-            });
+            }
+            else {
+                this.debug(`Setting ping state to "${value}".`);
+
+                Promise.resolve().then(() => {
+                    return this.setTimerState(value);
+                })
+                .then(() => {
+                    this.isActive = value;
+                    resolve();
+                })
+                .catch((error) => {
+                    reject(error);
+                });
+    
+            }
     
         })
     }
