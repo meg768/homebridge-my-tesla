@@ -217,7 +217,6 @@ module.exports = class API {
 
         // Check if called with in reasonable time
         if (this.lastResponse && isDate(this.lastResponse) && (now.valueOf() - this.lastResponse.valueOf() < wakeupInterval)) {
-            this.debug('wakeUp() called within reasonable time since last reply so assuming Tesla is awake...');
             return Promise.resolve(this.lastResponse);
         }
 
