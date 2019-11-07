@@ -212,6 +212,7 @@ module.exports = class extends Accessory {
 
 
             if (value) {
+                this.checkTemperature();
                 this.timer.setTimer(this.timerInterval, this.checkTemperature.bind(this));
                 resolve();
             }
