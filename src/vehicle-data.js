@@ -41,7 +41,7 @@ module.exports = class VehicleData {
 
     getChargingState() {
         // returns "Disconnected", "Stopped", "Complete" or "Charging"
-        return this.response && this.response.charge_state ? this.response.charge_state.charging_state : '';
+        return (this.response && this.response.charge_state) ? this.response.charge_state.charging_state : '';
     }
 
     isConnectedToCharger() {
