@@ -13,6 +13,7 @@ module.exports = class extends Accessory {
 
         this.isActive        = false;
         this.timerInterval   = 5 * 1000 * 60;
+        this.minBatteryLevel = 95;
         this.timer           = new Timer();
 
         this.enableSwitch();
@@ -44,6 +45,9 @@ module.exports = class extends Accessory {
         });
     }
 
+    updateSwitch() {
+        this.getService(Service.Switch).getCharacteristic(Characteristic.On).updateValue(this.isActive);
+    }
 
     ping() {
         return new Promise((resolve, reject) => {
@@ -53,7 +57,17 @@ module.exports = class extends Accessory {
             Promise.resolve().then(() => {
                 return this.vehicle.getVehicleData();
             })
+            .then((vehicleData) => {
+                if (vehicleData.getBatteryLevel() < this.minBatteryLevel) {
+                    this.debug(`Battery level too low for ping to be anbled. Turning off.`);
+                    return this.setActiveState(false);                    
+                }
+                else {
+                    return Promise.resolve();
+                }
+            })
             .then(() => {
+                this.updateSwitch();
                 resolve();
             })
         })
