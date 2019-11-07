@@ -62,7 +62,7 @@ module.exports = class extends Accessory {
     
         })
         .then(() => {
-            this.debug(`Updated ping state to ${this.isActive ? 'ON' : 'OFF'}.`);        
+            this.debug(`Updated ping to state ${this.isActive ? 'ON' : 'OFF'}.`);        
             this.getService(Service.Switch).getCharacteristic(Characteristic.On).updateValue(this.isActive);
 
         })
