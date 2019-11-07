@@ -14,7 +14,7 @@ module.exports = class extends Accessory {
         var defaultConfig = {
             temperatureRange: [5, 10],
             temperatureCheckFrequency: 5,
-            minBatteryLevel: 60,
+            requiredBatteryLevel: 60,
         };
 
         var config = {...defaultConfig, ...this.config};
@@ -37,7 +37,7 @@ module.exports = class extends Accessory {
         this.isActive        = false;
         this.minTemperature  = config.temperatureRange[0];
         this.maxTemperature  = config.temperatureRange[1];
-        this.minBatteryLevel = config.minBatteryLevel;
+        this.requiredBatteryLevel = config.requiredBatteryLevel;
         this.timerInterval   = config.temperatureCheckFrequency * 1000 * 60;
         this.timer           = new Timer();
 
@@ -108,8 +108,8 @@ module.exports = class extends Accessory {
                 else if (insideTemperature < this.minTemperature) {
                     if (!isClimateOn) {
 
-                        if (batteryLevel < this.config.minBatteryLevel) {
-                            this.log(`Battery level is ${batteryLevel}%. Will not activate air conditioning since it is below ${this.minBatteryLevel}%.`);
+                        if (batteryLevel < this.config.requiredBatteryLevel) {
+                            this.log(`Battery level is ${batteryLevel}%. Will not activate air conditioning since it is below ${this.requiredBatteryLevel}%.`);
                         }
                         else {
                             this.debug(`Starting air conditioner.`);
