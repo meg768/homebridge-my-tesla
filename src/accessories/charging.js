@@ -26,7 +26,10 @@ module.exports = class extends Accessory {
     updateSwitch(vehicleData) {
         var service = this.getService(Service.Switch);
 
-        this.isActive = !vehicleData.isChargingDisconnected(); 
+        if (vehicleData.isChargingStopped() || vehicleData.isChargingDisconnected())
+            this.isActive = false;
+        else 
+            this.isActive = true;
 
         this.debug(`Updated charging state to ${this.isActive ? 'ON' : 'OFF'} (vehicle charging state is "${vehicleData.getChargingState()}").`);        
         service.getCharacteristic(Characteristic.On).updateValue(this.isActive);
