@@ -78,12 +78,14 @@ module.exports = class extends Accessory {
     checkTemperature() {
         return new Promise((resolve, reject) => {
 
+            this.debug(`Checking temperatures for defrost feature...`);
+
             var ACTION_START_HVAC            = 1;
             var ACTION_STOP_HVAC             = 2;
-            var ACTION_NONE                  = 3;
-            var ACTION_BATTERY_LEVEL_TOO_LOW = 4;
-            var ACTION_STABLE                = 5;
-            var ACTION_STOP_TIMER            = 6;
+            var ACTION_NONE                  = 4;
+            var ACTION_BATTERY_LEVEL_TOO_LOW = 5;
+            var ACTION_STABLE                = 6;
+            var ACTION_STOP_TIMER            = 7;
 
             Promise.resolve().then(() => {
                 return this.vehicle.getVehicleData();
@@ -100,28 +102,30 @@ module.exports = class extends Accessory {
                 var isPluggedIn = vehicleData.isCharging() || vehicleData.isChargingComplete() || vehicleData.isChargingStopped();
 
                 if (!isPluggedIn) {
-                    this.debug(`The car is not connected to a charger. Turning off defrosting. Current state is "${vehicleData.getChargingState()}".`);
+                    this.debug(`The car is not connected to a charger. Turning off defrosting since current charge state is "${vehicleData.getChargingState()}".`);
                     action = ACTION_STOP_TIMER;
                 }
                 else if (insideTemperature < this.minTemperature) {
-                    action = ACTION_START_HVAC;
+                    if (!isClimateOn) {
 
-                    if (batteryLevel < this.config.minBatteryLevel) {
-                        action = ACTION_BATTERY_LEVEL_TOO_LOW;
+                        if (batteryLevel < this.config.minBatteryLevel) {
+                            this.debug(`Battery level is ${batteryLevel}%. Will not activate air conditioning since it is below ${this.minBatteryLevel}%.`);
+                        }
+                        else {
+                            this.debug(`Starting air conditioner.`);
+                            action = ACTION_START_HVAC;
+                        }    
                     }
                 }
                 else if (insideTemperature > this.maxTemperature) {
-                    action = ACTION_STOP_HVAC;
+                    if (isClimateOn) {
+                        this.debug(`Stopping air conditioner.`);
+                        action = ACTION_STOP_HVAC;
+                    }
                 }
                 else {
-                    action = ACTION_STABLE;
+                    this.debug(`Current temperature is ${insideTemperature} and inside the limits of (${this.minTemperature} - ${this.maxTemperature}).`);
                 }
-
-                if (action == ACTION_START_HVAC && isClimateOn)
-                    action = ACTION_NONE;
-
-                if (action == ACTION_STOP_HVAC && !isClimateOn)
-                    action = ACTION_NONE;
 
                 return ({vehicleData:vehicleData, action:action});
             })
@@ -129,31 +133,9 @@ module.exports = class extends Accessory {
             .then((response) => {
                 var {vehicleData, action} = response;
 
-                var insideTemperature = vehicleData.getInsideTemperature();
-                var batteryLevel = vehicleData.getBatteryLevel(); 
-
                 switch(action) {
-                    case ACTION_NONE: {
-                        this.debug(`No action.`);
-                        break;
-                    }
-                    case ACTION_BATTERY_LEVEL_TOO_LOW: {
-                        this.debug(`Battery level is ${batteryLevel}%. Will not activate air conditioning since it is below ${this.minBatteryLevel}.`);
-                        break;
-                    }
-                    case ACTION_STABLE: {
-                        this.debug(`Current temperature is ${insideTemperature} and inside the limits of (${this.minTemperature} - ${this.maxTemperature}).`);
-                        break;
-                    }
                     case ACTION_START_HVAC:
                     case ACTION_STOP_HVAC: {
-
-                        if (action == ACTION_START_HVAC) {
-                            this.debug(`Starting air conditioner.`);
-                        }
-                        if (action == ACTION_STOP_HVAC) {
-                            this.debug(`Stopping air conditioner.`);
-                        }
 
                         this.setAutoConditioningState(action == ACTION_START_HVAC ? true : false).then(() => {
                             return this.vehicle.getVehicleData();
@@ -167,9 +149,11 @@ module.exports = class extends Accessory {
 
                 return response;
             })
+
             .catch((error) => {
                 this.log(error);
             })
+
             .then((response) => {
                 var {action} = response;
 
@@ -199,6 +183,8 @@ module.exports = class extends Accessory {
 
 
     setAutoConditioningState(value) {
+        value = value ? true : false;
+
         return new Promise((resolve, reject) => {
             Promise.resolve().then(() => {
                 return value ? this.api.autoConditioningStart() : this.api.autoConditioningStop();
@@ -217,8 +203,12 @@ module.exports = class extends Accessory {
     }
 
     setTimerState(value) {
+        value = value ? true : false;
+
         return new Promise((resolve, reject) => {
+            this.debug(`Setting timer state to "${value}".`);
             this.timer.cancel();
+
 
             if (value) {
                 this.timer.setTimer(this.timerInterval, this.checkTemperature.bind(this));
@@ -237,8 +227,11 @@ module.exports = class extends Accessory {
     }
 
     setActiveState(value) {
+        value = value ? true : false;
+
         return new Promise((resolve, reject) => {
-            value = value ? true : false;
+
+            this.debug(`Setting defrost state to "${value}".`);
 
             Promise.resolve().then(() => {
                 if (this.isActive != value)
