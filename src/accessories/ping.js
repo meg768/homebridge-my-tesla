@@ -91,11 +91,20 @@ module.exports = class extends Accessory {
             this.debug(`Setting ping timer state to "${value}".`);
             this.timer.cancel();
 
-            if (value)
-                this.timer.setTimer(this.timerInterval, this.ping.bind(this));            
-            
-            resolve();
-    
+            Promise.resolve().then(() => {
+                return value ? this.ping() : Promise.resolve();
+            })
+            .then(() => {
+                if (value)
+                    this.timer.setTimer(this.timerInterval, this.ping.bind(this));            
+            })
+            .then(() => {
+                resolve();
+
+            })
+            .catch((error) => {
+                this.log(error);
+            })
         });
     }
 
