@@ -18,11 +18,12 @@
                 "name": "Model 3",       
                 "vin": "5YJ3E7EB9KF240654",
 
-                "username": "Your username at tesla.com",
-                "password": "Your password at tesla.com",
+                "username": "Replace with your username at tesla.com",
+                "password": "Replace with your password at tesla.com",
 
                 "ping": {
                     "name": "Ping",
+                    "interval": 5,
                     "enabled": true
                 },
                 "charging": {

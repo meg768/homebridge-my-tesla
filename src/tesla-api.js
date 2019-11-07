@@ -208,7 +208,7 @@ module.exports = class API {
         var STATE_ONLINE = 'online';
 
         // Call wakeUp() if not done within last x minutes
-        var wakeupInterval = 5 * 60000;
+        var wakeupInterval = 7 * 60000;
 
         // Keep calling wakeUp() for x minutes if no reply
         var wakeupTimeout = 2 * 60000;
@@ -217,7 +217,7 @@ module.exports = class API {
 
         // Check if called with in reasonable time
         if (this.lastResponse && isDate(this.lastResponse) && (now.valueOf() - this.lastResponse.valueOf() < wakeupInterval)) {
-            this.debug('wakeUp() called within reasonable time since last reply. Assuming Tesla is awake...');
+            this.debug('wakeUp() called within reasonable time since last reply so assuming Tesla is awake...');
             return Promise.resolve(this.lastResponse);
         }
 
@@ -234,7 +234,7 @@ module.exports = class API {
                     return this.queuedRequest('POST', `/api/1/vehicles/${this.getVehicleID()}/wake_up`);
                 })
                 .then((response) => {
-                    var pauseTime = 5000;
+                    var pauseTime = 500;
 
                     if (response.state == STATE_ONLINE)
                         return Promise.resolve(response);
@@ -263,7 +263,7 @@ module.exports = class API {
                         if (timestamp == undefined) {
                             // Only pause on first wakeUp() call
                             this.debug('wakeUp() succeeded. Delaying a bit after a hard sleep...');
-                            return pause(5000);    
+                            return pause(4000);    
                         }
                         else
                             return pause(0);
