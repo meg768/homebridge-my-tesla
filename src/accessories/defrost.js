@@ -102,14 +102,14 @@ module.exports = class extends Accessory {
                 var isPluggedIn = vehicleData.isCharging() || vehicleData.isChargingComplete() || vehicleData.isChargingStopped();
 
                 if (!isPluggedIn) {
-                    this.debug(`The car is not connected to a charger. Turning off defrosting since current charge state is "${vehicleData.getChargingState()}".`);
+                    this.log(`The car is not connected to a charger. Turning off defrosting since current charge state is "${vehicleData.getChargingState()}".`);
                     action = ACTION_STOP_TIMER;
                 }
                 else if (insideTemperature < this.minTemperature) {
                     if (!isClimateOn) {
 
                         if (batteryLevel < this.config.minBatteryLevel) {
-                            this.debug(`Battery level is ${batteryLevel}%. Will not activate air conditioning since it is below ${this.minBatteryLevel}%.`);
+                            this.log(`Battery level is ${batteryLevel}%. Will not activate air conditioning since it is below ${this.minBatteryLevel}%.`);
                         }
                         else {
                             this.debug(`Starting air conditioner.`);
@@ -138,6 +138,7 @@ module.exports = class extends Accessory {
                     case ACTION_STOP_HVAC: {
 
                         this.setAutoConditioningState(action == ACTION_START_HVAC ? true : false).then(() => {
+                            // Call getVehicleData() so other stuff gets updated
                             return this.vehicle.getVehicleData();
                         })
                         .catch(() => {
@@ -147,7 +148,7 @@ module.exports = class extends Accessory {
                     }
                 }
 
-                return response;
+                return ({vehicleData:vehicleData, action:action});
             })
 
             .catch((error) => {
@@ -206,7 +207,7 @@ module.exports = class extends Accessory {
         value = value ? true : false;
 
         return new Promise((resolve, reject) => {
-            this.debug(`Setting timer state to "${value}".`);
+            this.debug(`Setting defrost timer state to "${value}".`);
             this.timer.cancel();
 
 

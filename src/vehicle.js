@@ -84,7 +84,6 @@ module.exports = class Tesla extends Events  {
             })
             .then((response) => {
 
-                this.debug(`Charging state is "${response.charge_state.charging_state}"`);                
                 var data = new VehicleData(response);
 
                 this.accessories.forEach((accessory) => {
