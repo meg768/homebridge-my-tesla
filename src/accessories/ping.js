@@ -12,8 +12,8 @@ module.exports = class extends Accessory {
         super(options);
 
         this.isActive        = false;
-        this.timerInterval   = 1 * 1000 * 60;
-        this.minBatteryLevel = 95;
+        this.timerInterval   = 5 * 1000 * 60;
+        this.minBatteryLevel = 40;
         this.timer           = new Timer();
 
         this.enableSwitch();
