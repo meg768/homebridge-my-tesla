@@ -77,7 +77,7 @@ module.exports = class extends Accessory {
                 return this.vehicle.getVehicleData();
             })
             .then((vehicleData) => {
-                this.debug(JSON.stringify(vehicleData, null, '  '));
+                //this.debug(JSON.stringify(vehicleData, null, '  '));
                 resolve();
             });
         })
