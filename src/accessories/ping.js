@@ -90,6 +90,7 @@ module.exports = class extends Accessory {
                 return this.vehicle.getVehicleData();
             }
             */
+           this.debug('Ping!');
            return this.vehicle.getVehicleData();
         
         })
