@@ -25,7 +25,7 @@ module.exports = class extends Accessory {
         this.timer                  = new Timer();
         this.responseCheckFrequency = config.responseCheckFrequency;
         this.lastPing               = null;
-        this.pingInterval           = 1 * 60000;
+        this.pingInterval           = 5 * 60000;
 
         this.enableSwitch();
 
