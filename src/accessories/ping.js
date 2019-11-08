@@ -93,7 +93,7 @@ module.exports = class extends Accessory {
                 console.log(error);
             })
             .then(() => {
-                this.timer.setTimer(60000, this.ping.bind(this));
+                this.timer.setTimer(10000, this.ping.bind(this));
             })
     
         }
