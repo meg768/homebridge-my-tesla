@@ -2,6 +2,8 @@
 
 var Homebridge = require('./src/homebridge.js');
 
+NEW VERSIO
+
 module.exports = function(homebridge) {
 
     Homebridge.Service = homebridge.hap.Service;
