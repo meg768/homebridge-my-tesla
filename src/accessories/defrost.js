@@ -133,7 +133,7 @@ module.exports = class extends Accessory {
                         // Call getVehicleData() so other stuff gets updated
                         return this.vehicle.getVehicleData();
                     })
-                    .catch(() => {
+                    .catch((error) => {
                         this.log(error);
                     })
                     break;
