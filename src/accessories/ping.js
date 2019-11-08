@@ -79,7 +79,7 @@ module.exports = class extends Accessory {
         var now = new Date();
         var lastResponse = this.vehicle.lastResponse;
 
-        if (lastResponse && (now.valueOf() - lastResponse.valueOf() < this.responseTimeout)) {
+        if (lastResponse && (now.valueOf() - lastResponse.valueOf() > this.responseTimeout)) {
             // Do nothing
             this.debug('Nothing to ping.');
         }
