@@ -179,7 +179,7 @@ module.exports = class extends Accessory {
 
         return new Promise((resolve, reject) => {
             Promise.resolve().then(() => {
-                return value ? this.autoConditioningStart() : this.autoConditioningStop();
+                return value ? this.vehicle.autoConditioningStart() : this.vehicle.autoConditioningStop();
             })
             .then(() => {
                 // Seems we have to pause a bit so the air condition state is updated in getVehicleData()...
