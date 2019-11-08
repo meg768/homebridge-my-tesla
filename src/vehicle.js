@@ -45,7 +45,7 @@ module.exports = class Vehicle extends TeslaAPI  {
         this.debug(loginOptions);
 
         this.login(loginOptions).then(() => {
-            this.log('Login completed.');
+            this.debug('Login completed.');
             return Promise.resolve();
         })
         .then(() => {
