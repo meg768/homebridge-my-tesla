@@ -69,8 +69,6 @@ module.exports = class extends Accessory {
     }
 
     ping() {
-        this.timer.cancel();
-
         this.debug(`Ping!`);
 
         Promise.resolve().then(() => {
@@ -86,7 +84,6 @@ module.exports = class extends Accessory {
             this.timer.setTimer(this.timerInterval, this.ping.bind(this));
         })
     }
-
 
 
     setTimerState(value) {
