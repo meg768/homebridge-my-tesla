@@ -71,108 +71,106 @@ module.exports = class extends Accessory {
 
 
     checkTemperature() {
-        return new Promise((resolve, reject) => {
 
-            this.debug(`Checking temperatures for defrost feature...`);
+        this.debug(`Checking temperatures for defrost feature...`);
 
-            var ACTION_START_HVAC            = 1;
-            var ACTION_STOP_HVAC             = 2;
-            var ACTION_NONE                  = 4;
-            var ACTION_STOP_TIMER            = 7;
+        var ACTION_START_HVAC            = 1;
+        var ACTION_STOP_HVAC             = 2;
+        var ACTION_NONE                  = 4;
+        var ACTION_STOP_TIMER            = 7;
 
-            Promise.resolve().then(() => {
-                return this.vehicle.getVehicleData();
-            })
-            .then((response) => {
-                return {action:ACTION_NONE, vehicleData:response};
-            })
-            .then((response) => {
-                var {vehicleData, action} = response;
-
-                var insideTemperature = vehicleData.getInsideTemperature();
-                var batteryLevel = vehicleData.getBatteryLevel();
-                var isClimateOn = vehicleData.isClimateOn();
-                var isPluggedIn = vehicleData.isCharging() || vehicleData.isChargingComplete() || vehicleData.isChargingStopped();
-
-                if (!isPluggedIn) {
-                    this.log(`The car is not connected to a charger. Turning off defrosting since current charge state is "${vehicleData.getChargingState()}".`);
-                    action = ACTION_STOP_TIMER;
-                }
-                else if (insideTemperature < this.minTemperature) {
-                    if (!isClimateOn) {
-
-                        if (batteryLevel < this.config.requiredBatteryLevel) {
-                            this.log(`Battery level is ${batteryLevel}%. Will not activate air conditioning since it is below ${this.requiredBatteryLevel}%.`);
-                        }
-                        else {
-                            this.debug(`Starting air conditioner.`);
-                            action = ACTION_START_HVAC;
-                        }    
-                    }
-                }
-                else if (insideTemperature > this.maxTemperature) {
-                    if (isClimateOn) {
-                        this.debug(`Stopping air conditioner.`);
-                        action = ACTION_STOP_HVAC;
-                    }
-                }
-                else {
-                    this.debug(`Current temperature is ${insideTemperature} and inside the limits of (${this.minTemperature} - ${this.maxTemperature}).`);
-                }
-
-                return ({vehicleData:vehicleData, action:action});
-            })
-
-            .then((response) => {
-                var {vehicleData, action} = response;
-
-                switch(action) {
-                    case ACTION_START_HVAC:
-                    case ACTION_STOP_HVAC: {
-
-                        this.setAutoConditioningState(action == ACTION_START_HVAC ? true : false).then(() => {
-                            // Call getVehicleData() so other stuff gets updated
-                            return this.vehicle.getVehicleData();
-                        })
-                        .catch(() => {
-                            this.log(error);
-                        })
-                        break;
-                    }
-                }
-
-                return ({vehicleData:vehicleData, action:action});
-            })
-
-            .catch((error) => {
-                this.log(error);
-            })
-
-            .then((response) => {
-                var {action} = response;
-
-                switch(action) {
-                    case ACTION_STOP_TIMER: {
-                        this.setActiveState(false).then(() => {
-                            this.updateSwitchState();
-                            return this.vehicle.getVehicleData();
-                        })
-                        .catch(() => {
-                            this.log(error);
-                        });
-    
-                        break;
-                    }
-                    default: {
-                        this.timer.setTimer(this.timerInterval, this.checkTemperature.bind(this));
-                        break;
-                    }
-    
-                }
-                resolve();
-
-            })
+        Promise.resolve().then(() => {
+            return this.vehicle.getVehicleData();
         })
+        .then((response) => {
+            return {action:ACTION_NONE, vehicleData:response};
+        })
+        .then((response) => {
+            var {vehicleData, action} = response;
+
+            var insideTemperature = vehicleData.getInsideTemperature();
+            var batteryLevel = vehicleData.getBatteryLevel();
+            var isClimateOn = vehicleData.isClimateOn();
+            var isPluggedIn = vehicleData.isCharging() || vehicleData.isChargingComplete() || vehicleData.isChargingStopped();
+
+            if (!isPluggedIn) {
+                this.log(`The car is not connected to a charger. Turning off defrosting since current charge state is "${vehicleData.getChargingState()}".`);
+                action = ACTION_STOP_TIMER;
+            }
+            else if (insideTemperature < this.minTemperature) {
+                if (!isClimateOn) {
+
+                    if (batteryLevel < this.config.requiredBatteryLevel) {
+                        this.log(`Battery level is ${batteryLevel}%. Will not activate air conditioning since it is below ${this.requiredBatteryLevel}%.`);
+                    }
+                    else {
+                        this.debug(`Starting air conditioner.`);
+                        action = ACTION_START_HVAC;
+                    }    
+                }
+            }
+            else if (insideTemperature > this.maxTemperature) {
+                if (isClimateOn) {
+                    this.debug(`Stopping air conditioner.`);
+                    action = ACTION_STOP_HVAC;
+                }
+            }
+            else {
+                this.debug(`Current temperature is ${insideTemperature} and inside the limits of (${this.minTemperature} - ${this.maxTemperature}).`);
+            }
+
+            return ({vehicleData:vehicleData, action:action});
+        })
+
+        .then((response) => {
+            var {vehicleData, action} = response;
+
+            switch(action) {
+                case ACTION_START_HVAC:
+                case ACTION_STOP_HVAC: {
+
+                    this.setAutoConditioningState(action == ACTION_START_HVAC ? true : false).then(() => {
+                        // Call getVehicleData() so other stuff gets updated
+                        return this.vehicle.getVehicleData();
+                    })
+                    .catch(() => {
+                        this.log(error);
+                    })
+                    break;
+                }
+            }
+
+            return ({vehicleData:vehicleData, action:action});
+        })
+
+        .then((response) => {
+            var {action} = response;
+
+            switch(action) {
+                case ACTION_STOP_TIMER: {
+                    this.setActiveState(false).then(() => {
+                        this.updateSwitchState();
+                        return this.vehicle.getVehicleData();
+                    })
+                    .catch(() => {
+                        this.log(error);
+                    });
+
+                    break;
+                }
+                default: {
+                    this.timer.setTimer(this.timerInterval, this.checkTemperature.bind(this));
+                    break;
+                }
+
+            }
+
+        })
+
+        .catch((error) => {
+            this.log(error);
+        })
+
     }
 
 
@@ -203,10 +201,8 @@ module.exports = class extends Accessory {
             this.debug(`Setting defrost timer state to "${value}".`);
             this.timer.cancel();
 
-
             if (value) {
                 this.checkTemperature();
-                this.timer.setTimer(this.timerInterval, this.checkTemperature.bind(this));
                 resolve();
             }
             else {
