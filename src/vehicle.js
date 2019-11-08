@@ -1,26 +1,17 @@
-"use strict";
+var TeslaAPI = require('./tesla-api.js');
 
-var Events = require('events');
-var API = require('./tesla-api.js');
-var VehicleData = require('./vehicle-data.js');
-
-
-module.exports = class Tesla extends Events  {
+module.exports = class Vehicle extends TeslaAPI  {
 
     constructor(platform, config) {
 
-        super();
+        super({log:platform.log, debug:platform.debug, vin:config.vin});
 
-        this.log = platform.log;
-        this.debug = platform.debug;
         this.pushover = platform.pushover;
         this.config = config;
         this.name = config.name;
         this.accessories = [];
         this.uuid = platform.generateUUID(config.vin);
-        this.api = new API({log:this.log, debug:this.debug, vin:config.vin});
         this.platform = platform;
-
 
         var DoorLockAccessory = require('./accessories/door-lock.js');
         var ChargingAccessory = require('./accessories/charging.js');
@@ -53,7 +44,7 @@ module.exports = class Tesla extends Events  {
 
         this.debug(loginOptions);
 
-        this.api.login(loginOptions).then(() => {
+        this.login(loginOptions).then(() => {
             this.log('Login completed.');
             return Promise.resolve();
         })
@@ -72,6 +63,12 @@ module.exports = class Tesla extends Events  {
         this.platform.addAccessory(accessory);
     }
 
+    pause(ms) {
+        return new Promise((resolve, reject) => {
+            setTimeout(resolve, ms);
+        });
+    }
+
 
     delay(ms) {
         return new Promise((resolve, reject) => {
@@ -79,28 +76,5 @@ module.exports = class Tesla extends Events  {
         });
     }
 
-    getVehicleData() {
-        return new Promise((resolve, reject) => {
-            var vin = this.config.vin;
-
-            Promise.resolve().then(() => {
-                return this.api.getVehicleData();
-            })
-            .then((response) => {
-
-                var data = new VehicleData(response);
-
-                this.accessories.forEach((accessory) => {
-                    accessory.emit('vehicleData', data);
-                });
-
-                resolve(data);
-            })
-            .catch((error) => {
-                reject(error);
-            });
-    
-        });
-    }
 
 }

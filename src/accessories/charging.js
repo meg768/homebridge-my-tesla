@@ -16,7 +16,7 @@ module.exports = class extends Accessory {
         this.enableSwitch();
         this.enableBatteryLevel();
 
-        this.on('vehicleData', (vehicleData) => {    
+        this.vehicle.on('vehicleData', (vehicleData) => {    
             this.updateSwitch(vehicleData);
             this.updateBatteryLevel(vehicleData);
         });
@@ -87,10 +87,10 @@ module.exports = class extends Accessory {
 
         return new Promise((resolve, reject) => {
             Promise.resolve().then(() => {
-                return value ? this.api.chargePortDoorOpen() : this.api.chargeStop();
+                return value ? this.vehicle.chargePortDoorOpen() : this.vehicle.chargeStop();
             })
             .then(() => {
-                return value ? this.api.chargeStart() : this.api.chargePortDoorOpen();
+                return value ? this.vehicle.chargeStart() : this.vehicle.chargePortDoorOpen();
             })
             .then(() => {
                 return this.pause(1000);

@@ -17,7 +17,7 @@ module.exports = class extends Accessory {
         var service = new Service.LockMechanism(this.name, 'door-lock');
         this.addService(service);
 
-        this.on('vehicleData', (data) => {       
+        this.vehicle.on('vehicleData', (data) => {       
             this.currentState = data.isVehicleLocked() ? Characteristic.LockCurrentState.SECURED : Characteristic.LockCurrentState.UNSECURED;
             this.targetState = this.currentState;
 
@@ -48,13 +48,13 @@ module.exports = class extends Accessory {
                 
                         Promise.resolve().then(() => {
                             if (value)
-                                return this.api.doorLock();
+                                return this.doorLock();
                             else
-                                return this.api.doorUnlock();
+                                return this.doorUnlock();
                         })
                         .then(() => {
                             if (!value)
-                                return this.api.remoteStartDrive();
+                                return this.remoteStartDrive();
                             else
                                 return Promise.resolve();
                         })

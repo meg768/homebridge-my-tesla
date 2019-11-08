@@ -18,7 +18,7 @@ module.exports = class extends Accessory {
         var service = new Service.Fan(this.name, __filename);
         this.addService(service);
 
-        this.on('vehicleData', (data) => {    
+        this.vehicle.on('vehicleData', (data) => {    
             this.isAirConditionerOn = data.isAirConditionerOn();
             this.debug(`Updated HVAC status to ${this.isAirConditionerOn ? 'ON' : 'OFF'}.`);  
             service.getCharacteristic(Characteristic.On).updateValue(this.isAirConditionerOn);
@@ -38,9 +38,9 @@ module.exports = class extends Accessory {
                     else {
                         Promise.resolve().then(() => {
                             if (value)
-                                return this.api.autoConditioningStart();
+                                return this.vehicle.autoConditioningStart();
                             else
-                                return this.api.autoConditioningStop();
+                                return this.vehicle.autoConditioningStop();
                         })
                         .then(() => {
                             this.isAirConditionerOn = value;

@@ -133,7 +133,7 @@ module.exports = class extends Accessory {
                         // Call getVehicleData() so other stuff gets updated
                         return this.vehicle.getVehicleData();
                     })
-                    .catch(() => {
+                    .catch((error) => {
                         this.log(error);
                     })
                     break;
@@ -179,7 +179,7 @@ module.exports = class extends Accessory {
 
         return new Promise((resolve, reject) => {
             Promise.resolve().then(() => {
-                return value ? this.api.autoConditioningStart() : this.api.autoConditioningStop();
+                return value ? this.autoConditioningStart() : this.autoConditioningStop();
             })
             .then(() => {
                 // Seems we have to pause a bit so the air condition state is updated in getVehicleData()...

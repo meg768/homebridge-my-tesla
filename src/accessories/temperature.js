@@ -14,7 +14,7 @@ module.exports = class extends Accessory {
         var service = new Service.TemperatureSensor(this.name, 'inside-temperature');
         this.addService(service);
 
-        this.on('vehicleData', (data) => {
+        this.vehicle.on('vehicleData', (data) => {
             this.currentTemperature = data.getInsideTemperature();
             this.debug(`Updated inside temperature to ${this.currentTemperature}.`);  
 

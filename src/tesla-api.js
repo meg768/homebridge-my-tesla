@@ -2,10 +2,16 @@ var isFunction = require('yow/isFunction');
 var isDate = require('yow/isDate');
 var isString = require('yow/isString');
 var Request = require('yow/request');
+var Events = require('events');
+var VehicleData = require('./vehicle-data.js');
 
-module.exports = class API {
+module.exports = class TeslaAPI extends Events {
 
     constructor(options) {
+
+        options = options || {};
+
+        super();
 
         var {vin = process.env.TESLA_VIN, username = process.env.TESLA_USER, password = process.env.TESLA_PASSWORD, clientID = process.env.TESLA_CLIENT_ID, clientSecret = process.env.TESLA_CLIENT_SECRET} = options;
 
@@ -39,16 +45,8 @@ module.exports = class API {
         this.clientSecret = clientSecret;
         this.requests     = {};
         this.lastResponse = null;
-
-        this.log = () => {};
-        this.debug = () => {};
-
-        if (options && isFunction(options.log))
-            this.log = options.log;
-
-        if (options && isFunction(options.debug))
-            this.debug = options.debug;
-
+        this.log          = isFunction(options.log) ? options.log : (options.log ? console.log : () => {});
+        this.debug        = isFunction(options.debug) ? options.debug : (options.debug ? console.debug : () => {});
     }
 
     getVehicle() {
@@ -292,7 +290,18 @@ module.exports = class API {
 
 
     getVehicleData() {
-        return this.request('GET', `/api/1/vehicles/${this.getVehicleID()}/vehicle_data`);
+        return new Promise((resolve, reject) => {
+            this.request('GET', `/api/1/vehicles/${this.getVehicleID()}/vehicle_data`).then((response) => {
+                var vehicleData = new VehicleData(response);
+                this.emit('vehicleData', vehicleData);
+
+                resolve(vehicleData);
+            })
+            .catch((error) => {
+                reject(error);
+            });
+
+        });
     }
 
     doorLock() {

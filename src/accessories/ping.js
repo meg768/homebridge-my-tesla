@@ -12,20 +12,22 @@ module.exports = class extends Accessory {
         super(options);
 
         var defaultConfig = {
-            requiredBatteryLevel : 40,
-            pingFrequency        : 5
+            requiredBatteryLevel   : 40,
+            responseTimeout        : 5,
+            responseCheckFrequency : 10000,
         };
 
         var config = {...defaultConfig, ...this.config};
 
-        this.isActive             = false;
-        this.timerInterval        = config.pingFrequency * 1000 * 60;
-        this.requiredBatteryLevel = config.requiredBatteryLevel;
-        this.timer                = new Timer();
+        this.isActive               = false;
+        this.requiredBatteryLevel   = config.requiredBatteryLevel;
+        this.responseTimeout        = config.responseTimeout * 60000;
+        this.timer                  = new Timer();
+        this.responseCheckFrequency = config.responseCheckFrequency;
 
         this.enableSwitch();
 
-        this.on('vehicleData', (vehicleData) => {    
+        this.vehicle.on('vehicleData', (vehicleData) => {    
             this.updateSwitch(vehicleData);
         });
 
@@ -76,20 +78,25 @@ module.exports = class extends Accessory {
     }
 
     ping() {
-        this.debug(`Ping!`);
+        var now = new Date();
+        var lastResponse = this.vehicle.lastResponse;
 
         Promise.resolve().then(() => {
-            return this.vehicle.getVehicleData();
-        })
-        .then((vehicleData) => {
-            //this.debug(JSON.stringify(vehicleData, null, '  '));
+            if (lastResponse && (now.valueOf() - lastResponse.valueOf() > this.responseTimeout)) {
+                this.debug(`Ping!`);
+                return this.vehicle.getVehicleData();
+            }
+            else {
+                return Promise.resolve();
+            }
         })
         .catch((error) => {
             console.log(error);
         })
         .then(() => {
-            this.timer.setTimer(this.timerInterval, this.ping.bind(this));
+            this.timer.setTimer(this.responseCheckFrequency, this.ping.bind(this));
         })
+
     }
 
 
