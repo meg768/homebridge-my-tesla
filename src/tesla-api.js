@@ -2,8 +2,10 @@ var isFunction = require('yow/isFunction');
 var isDate = require('yow/isDate');
 var isString = require('yow/isString');
 var Request = require('yow/request');
+var Events = require('events');
+var VehicleData = require('./vehicle-data.js');
 
-module.exports = class API {
+module.exports = class TeslaAPI extends Events {
 
     constructor(options) {
 
@@ -292,7 +294,18 @@ module.exports = class API {
 
 
     getVehicleData() {
-        return this.request('GET', `/api/1/vehicles/${this.getVehicleID()}/vehicle_data`);
+        return new Promise((resolve, reject) => {
+            this.request('GET', `/api/1/vehicles/${this.getVehicleID()}/vehicle_data`).then((response) => {
+                var vehicleData = new VehicleData(response);
+                this.emit('vehicleData', vehicleData);
+
+                resolve(vehicleData);
+            })
+            .catch((error) => {
+                reject(error);
+            });
+
+        });
     }
 
     doorLock() {
