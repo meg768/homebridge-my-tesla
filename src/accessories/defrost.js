@@ -44,11 +44,6 @@ module.exports = class extends Accessory {
         this.enableSwitch();
     }
 
-    pause(ms) {
-        return new Promise((resolve, reject) => {
-            setTimeout(resolve, ms);
-        });
-    }
 
     enableSwitch() {
         var service = new Service.Switch(this.name, __filename);

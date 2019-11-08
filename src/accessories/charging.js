@@ -45,11 +45,6 @@ module.exports = class extends Accessory {
         service.getCharacteristic(Characteristic.BatteryLevel).updateValue(vehicleData.batteryLevel);
     }
 
-    pause(ms) {
-        return new Promise((resolve, reject) => {
-            setTimeout(resolve, ms);
-        });
-    }
 
     enableSwitch() {
         var service = new Service.Switch(this.name, __filename);

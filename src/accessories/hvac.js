@@ -3,6 +3,7 @@ var Service = require('../homebridge.js').Service;
 var Characteristic = require('../homebridge.js').Characteristic;
 var Accessory = require('../accessory.js');
 
+
 module.exports = class extends Accessory {
 
     constructor(options) {
@@ -14,7 +15,7 @@ module.exports = class extends Accessory {
     }
 
     enableFan() {
-        var service = new Service.Fan(this.name, "hvac");
+        var service = new Service.Fan(this.name, __filename);
         this.addService(service);
 
         this.on('vehicleData', (data) => {    
@@ -42,21 +43,20 @@ module.exports = class extends Accessory {
                                 return this.api.autoConditioningStop();
                         })
                         .then(() => {
-                            resolve(this.isAirConditionerOn = value);
-                        })            
+                            this.isAirConditionerOn = value;
+                            resolve();
+                        })
                         .catch((error) => {
                             reject(error);
                         })
-            
                     }
-
-
                 });
             };
 
             setAirConditionerState(value).then(() => {
                 callback(null, this.isAirConditionerOn);
             })
+
             .catch((error) => {
                 this.log(error);
                 callback(null);

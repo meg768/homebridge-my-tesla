@@ -23,7 +23,6 @@ class Accessory extends homebridge.platformAccessory {
         this.name = name;
     }
 
-
     // Add the method getServices for static platforms
     getServices() {
         return this.services;
@@ -55,6 +54,13 @@ class VehicleAccessory extends Accessory {
         this.platform = vehicle.platform;
         this.api = vehicle.api;
     }
+
+    pause(ms) {
+        return new Promise((resolve, reject) => {
+            setTimeout(resolve, ms);
+        });
+    }
+    
 
 };
 
