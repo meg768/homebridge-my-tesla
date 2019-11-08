@@ -90,7 +90,7 @@ module.exports = class extends Accessory {
                 return this.vehicle.getVehicleData();
             }
             else {
-                this.debug('.'):
+                this.debug('.');
                 return Promise.resolve();
             }
         })
