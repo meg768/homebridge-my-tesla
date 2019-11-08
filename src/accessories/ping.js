@@ -76,7 +76,8 @@ module.exports = class extends Accessory {
             Promise.resolve().then(() => {
                 return this.vehicle.getVehicleData();
             })
-            .then(() => {
+            .then((vehicleData) => {
+                this.debug(JSON.stringify(vehicleData, null, '  '));
                 resolve();
             });
         })
