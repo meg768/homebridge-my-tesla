@@ -87,10 +87,10 @@ module.exports = class extends Accessory {
 
         return new Promise((resolve, reject) => {
             Promise.resolve().then(() => {
-                return value ? this.api.chargePortDoorOpen() : this.api.chargeStop();
+                return value ? this.chargePortDoorOpen() : this.chargeStop();
             })
             .then(() => {
-                return value ? this.api.chargeStart() : this.api.chargePortDoorOpen();
+                return value ? this.chargeStart() : this.chargePortDoorOpen();
             })
             .then(() => {
                 return this.pause(1000);

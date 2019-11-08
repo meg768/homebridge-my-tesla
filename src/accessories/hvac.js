@@ -38,9 +38,9 @@ module.exports = class extends Accessory {
                     else {
                         Promise.resolve().then(() => {
                             if (value)
-                                return this.api.autoConditioningStart();
+                                return this.autoConditioningStart();
                             else
-                                return this.api.autoConditioningStop();
+                                return this.autoConditioningStop();
                         })
                         .then(() => {
                             this.isAirConditionerOn = value;

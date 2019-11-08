@@ -48,13 +48,13 @@ module.exports = class extends Accessory {
                 
                         Promise.resolve().then(() => {
                             if (value)
-                                return this.api.doorLock();
+                                return this.doorLock();
                             else
-                                return this.api.doorUnlock();
+                                return this.doorUnlock();
                         })
                         .then(() => {
                             if (!value)
-                                return this.api.remoteStartDrive();
+                                return this.remoteStartDrive();
                             else
                                 return Promise.resolve();
                         })
