@@ -1,7 +1,8 @@
 "use strict";
 
 var Homebridge = require('./src/homebridge.js');
-KALLE
+
+
 module.exports = function(homebridge) {
 
     Homebridge.Service = homebridge.hap.Service;
