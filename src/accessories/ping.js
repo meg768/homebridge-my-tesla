@@ -11,9 +11,16 @@ module.exports = class extends Accessory {
     constructor(options) {
         super(options);
 
+        var defaultConfig = {
+            requiredBatteryLevel : 40,
+            pingFrequency        : 5
+        };
+
+        var config = {...defaultConfig, ...this.config};
+
         this.isActive             = false;
-        this.timerInterval        = 5 * 1000 * 60;
-        this.requiredBatteryLevel = 40;
+        this.timerInterval        = config.pingFrequency * 1000 * 60;
+        this.requiredBatteryLevel = config.requiredBatteryLevel;
         this.timer                = new Timer();
 
         this.enableSwitch();
