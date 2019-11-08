@@ -82,8 +82,11 @@ module.exports = class extends Accessory {
         var lastResponse = this.vehicle.lastResponse;
 
         Promise.resolve().then(() => {
+
             if (lastResponse && (now.valueOf() - lastResponse.valueOf() > this.responseTimeout)) {
-                this.debug(`Ping!`);
+                var timeSinceLastResponse = (now.valueOf() - lastResponse.valueOf());
+                var secondsSinceLastResponse = Math.floor(timeSinceLastResponse / 1000);
+                this.debug(`Pinging since last response was ${secondsSinceLastResponse} seconds ago.`);
                 return this.vehicle.getVehicleData();
             }
             else {
