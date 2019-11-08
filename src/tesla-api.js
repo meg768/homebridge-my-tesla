@@ -9,6 +9,10 @@ module.exports = class TeslaAPI extends Events {
 
     constructor(options) {
 
+        options = options || {};
+
+        super();
+
         var {vin = process.env.TESLA_VIN, username = process.env.TESLA_USER, password = process.env.TESLA_PASSWORD, clientID = process.env.TESLA_CLIENT_ID, clientSecret = process.env.TESLA_CLIENT_SECRET} = options;
 
         if (clientID == undefined || (isString(clientID) && clientID.length == 0))
@@ -41,16 +45,8 @@ module.exports = class TeslaAPI extends Events {
         this.clientSecret = clientSecret;
         this.requests     = {};
         this.lastResponse = null;
-
-        this.log = () => {};
-        this.debug = () => {};
-
-        if (options && isFunction(options.log))
-            this.log = options.log;
-
-        if (options && isFunction(options.debug))
-            this.debug = options.debug;
-
+        this.log          = isFunction(options.log) ? options.log : (options.log ? console.log : () => {});
+        this.debug        = isFunction(options.debug) ? options.debug : (options.debug ? console.debug : () => {});
     }
 
     getVehicle() {

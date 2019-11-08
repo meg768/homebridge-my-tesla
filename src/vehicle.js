@@ -6,15 +6,12 @@ module.exports = class Vehicle extends TeslaAPI  {
 
         super({log:platform.log, debug:platform.debug, vin:config.vin});
 
-        this.log = platform.log;
-        this.debug = platform.debug;
         this.pushover = platform.pushover;
         this.config = config;
         this.name = config.name;
         this.accessories = [];
         this.uuid = platform.generateUUID(config.vin);
         this.platform = platform;
-
 
         var DoorLockAccessory = require('./accessories/door-lock.js');
         var ChargingAccessory = require('./accessories/charging.js');

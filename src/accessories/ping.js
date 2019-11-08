@@ -13,19 +13,19 @@ module.exports = class extends Accessory {
 
         var defaultConfig = {
             requiredBatteryLevel : 40,
-            pingFrequency        : 5
+            responseTimeout      : 5
         };
 
         var config = {...defaultConfig, ...this.config};
 
         this.isActive             = false;
-        this.timerInterval        = config.pingFrequency * 1000 * 60;
         this.requiredBatteryLevel = config.requiredBatteryLevel;
+        this.responseTimeout      = console.responseTimeout * 60000;
         this.timer                = new Timer();
 
         this.enableSwitch();
 
-        this.on('vehicleData', (vehicleData) => {    
+        this.vehicle.on('vehicleData', (vehicleData) => {    
             this.updateSwitch(vehicleData);
         });
 
@@ -76,20 +76,27 @@ module.exports = class extends Accessory {
     }
 
     ping() {
-        this.debug(`Ping!`);
+        var now = new Date();
+        var lastResponse = this.vehicle.lastResponse;
 
-        Promise.resolve().then(() => {
-            return this.vehicle.getVehicleData();
-        })
-        .then((vehicleData) => {
-            //this.debug(JSON.stringify(vehicleData, null, '  '));
-        })
-        .catch((error) => {
-            console.log(error);
-        })
-        .then(() => {
-            this.timer.setTimer(this.timerInterval, this.ping.bind(this));
-        })
+        if (lastResponse && (now.valueOf() - lastResponse.valueOf() < this.responseTimeout)) {
+            // Do nothing
+        }
+        else {
+            this.debug(`Ping!`);
+
+            Promise.resolve().then(() => {
+                return this.vehicle.getVehicleData();
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+            .then(() => {
+                this.timer.setTimer(60000, this.ping.bind(this));
+            })
+    
+        }
+
     }
 
 

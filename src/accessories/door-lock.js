@@ -17,7 +17,7 @@ module.exports = class extends Accessory {
         var service = new Service.LockMechanism(this.name, 'door-lock');
         this.addService(service);
 
-        this.on('vehicleData', (data) => {       
+        this.vehicle.on('vehicleData', (data) => {       
             this.currentState = data.isVehicleLocked() ? Characteristic.LockCurrentState.SECURED : Characteristic.LockCurrentState.UNSECURED;
             this.targetState = this.currentState;
 
