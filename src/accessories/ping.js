@@ -13,7 +13,7 @@ module.exports = class extends Accessory {
 
         var defaultConfig = {
             requiredBatteryLevel   : 40,
-            responseTimeout        : 3,
+            responseTimeout        : 1,
             responseCheckFrequency : 1000,
         };
 
@@ -24,20 +24,17 @@ module.exports = class extends Accessory {
         this.responseTimeout        = config.responseTimeout * 60000;
         this.timer                  = new Timer();
         this.responseCheckFrequency = config.responseCheckFrequency;
+        this.lastPing               = null;
 
         this.enableSwitch();
 
         this.vehicle.on('vehicleData', (vehicleData) => {    
+            this.lastPing = new Date();
             this.updateSwitch(vehicleData);
         });
 
     }
 
-    pause(ms) {
-        return new Promise((resolve, reject) => {
-            setTimeout(resolve, ms);
-        });
-    }
 
     enableSwitch() {
         var service = new Service.Switch(this.name, __filename);
@@ -79,27 +76,28 @@ module.exports = class extends Accessory {
 
     ping() {
         var now = new Date();
-        var lastResponse = this.vehicle.lastResponse;
 
         Promise.resolve().then(() => {
 
-            if (lastResponse && (now.valueOf() - lastResponse.valueOf() > this.responseTimeout)) {
-                var timeSinceLastResponse = (now.valueOf() - lastResponse.valueOf());
-                var timeInSecondsSinceLastResponse = Math.floor(timeSinceLastResponse / 1000);
-                this.debug(`Pinging since last response was ${timeInSecondsSinceLastResponse} seconds ago.`);
+            if (this.lastPing == null) {
+                this.debug(`No ping specified. Calling for the first time.`);
                 return this.vehicle.getVehicleData();
             }
-            else {
-                this.debug('.');
-                return Promise.resolve();
+
+            if (this.lastPing && (now.valueOf() - this.lastPing.valueOf() > this.responseTimeout)) {
+                this.debug(`Ping is old. Refreshing vehicle data.`);
+                return this.vehicle.getVehicleData();
             }
+            
         })
         .catch((error) => {
-            console.log(error);
+            this.log(error);
         })
         .then(() => {
             this.timer.setTimer(this.responseCheckFrequency, this.ping.bind(this));
         })
+
+
 
     }
 
