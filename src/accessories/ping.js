@@ -14,7 +14,7 @@ module.exports = class extends Accessory {
         var defaultConfig = {
             requiredBatteryLevel   : 40,
             responseTimeout        : 3,
-            responseCheckFrequency : 10000,
+            responseCheckFrequency : 1000,
         };
 
         var config = {...defaultConfig, ...this.config};
