@@ -25,6 +25,7 @@ module.exports = class extends Accessory {
         this.timer                  = new Timer();
         this.responseCheckFrequency = config.responseCheckFrequency;
         this.lastPing               = null;
+        this.pingInterval           = 1 * 60000;
 
         this.enableSwitch();
 
@@ -98,7 +99,7 @@ module.exports = class extends Accessory {
             this.log(error);
         })
         .then(() => {
-            this.timer.setTimer(5 * 1000 * 60, this.ping.bind(this));
+            this.timer.setTimer(this.pingInterval, this.ping.bind(this));
         })
 
 
