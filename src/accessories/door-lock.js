@@ -76,7 +76,7 @@ module.exports = class extends Accessory {
             setTargetState(value).then(() => {
                 callback(null, this.targetState);
             })
-            .catch(() => {
+            .catch((error) => {
                 this.log(error);
                 callback(null);
             })
