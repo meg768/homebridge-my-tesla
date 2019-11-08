@@ -69,17 +69,21 @@ module.exports = class extends Accessory {
     }
 
     ping() {
-        return new Promise((resolve, reject) => {
+        this.timer.cancel();
 
-            this.debug(`Ping!`);
+        this.debug(`Ping!`);
 
-            Promise.resolve().then(() => {
-                return this.vehicle.getVehicleData();
-            })
-            .then((vehicleData) => {
-                //this.debug(JSON.stringify(vehicleData, null, '  '));
-                resolve();
-            });
+        Promise.resolve().then(() => {
+            return this.vehicle.getVehicleData();
+        })
+        .then((vehicleData) => {
+            //this.debug(JSON.stringify(vehicleData, null, '  '));
+        })
+        .catch((error) => {
+            console.log(error);
+        })
+        .then(() => {
+            this.timer.setTimer(this.timerInterval, this.ping.bind(this));
         })
     }
 
@@ -98,7 +102,6 @@ module.exports = class extends Accessory {
             .then(() => {
                 if (value) {
                     this.ping();
-                    this.timer.setTimer(this.timerInterval, this.ping.bind(this));
                 }
             })
             .then(() => {
