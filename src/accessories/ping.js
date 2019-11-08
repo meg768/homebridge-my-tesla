@@ -79,6 +79,7 @@ module.exports = class extends Accessory {
 
         Promise.resolve().then(() => {
 
+            /*
             if (this.lastPing == null) {
                 this.debug(`No ping specified. Calling for the first time.`);
                 return this.vehicle.getVehicleData();
@@ -88,13 +89,15 @@ module.exports = class extends Accessory {
                 this.debug(`Ping is old. Refreshing vehicle data.`);
                 return this.vehicle.getVehicleData();
             }
-            
+            */
+           return this.vehicle.getVehicleData();
+        
         })
         .catch((error) => {
             this.log(error);
         })
         .then(() => {
-            this.timer.setTimer(this.responseCheckFrequency, this.ping.bind(this));
+            this.timer.setTimer(5 * 1000 * 60, this.ping.bind(this));
         })
 
 
