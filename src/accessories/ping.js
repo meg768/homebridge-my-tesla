@@ -81,6 +81,7 @@ module.exports = class extends Accessory {
 
         if (lastResponse && (now.valueOf() - lastResponse.valueOf() < this.responseTimeout)) {
             // Do nothing
+            this.debug('Nothing to ping.');
         }
         else {
             this.debug(`Ping!`);
