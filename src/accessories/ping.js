@@ -80,19 +80,10 @@ module.exports = class extends Accessory {
     }
 
     ping() {
-        Promise.resolve().then(() => {
-            if (this.isActive) {
-                this.debug('Ping!');
-                return this.vehicle.getVehicleData();     
-            }
-            else {
-                return Promise.resolve();
-            }
-        })
-        .catch((error) => {
-            this.log(error);
-        })
-
+        if (this.isActive) {
+            this.debug('Ping!');
+            return this.vehicle.getVehicleData();     
+        }
     }
 
     setActiveState(value) {
@@ -104,11 +95,11 @@ module.exports = class extends Accessory {
                 resolve();
             }
             else {
-                this.debug(`Changing ping state to "${value}".`);
                 this.isActive = value;
 
-                if ()
-                thbis.Ping();
+                this.debug(`Changing ping state to "${value}".`);
+                this.Ping();
+                
                 resolve();    
             }
     
