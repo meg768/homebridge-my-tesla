@@ -99,20 +99,8 @@ module.exports = class extends Accessory {
             }
             else {
                 this.debug(`Setting ping state to "${value}".`);
-
-                Promise.resolve().then(() => {
-                    return this.setTimerState(value);
-                })
-                .then(() => {
-                    this.isActive = value;
-                    resolve();
-                })
-                .catch((error) => {
-                    this.log(error);
-
-                    reject(error);
-                });
-    
+                this.isActive = value;
+                resolve();    
             }
     
         })
