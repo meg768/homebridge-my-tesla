@@ -98,7 +98,7 @@ module.exports = class extends Accessory {
                 this.debug(`Changing ping state to "${this.isActive}".`);
 
                 if (this.isActive)
-                    this.Ping();
+                    this.ping();
                 
                 resolve();    
             }
