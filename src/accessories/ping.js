@@ -32,6 +32,8 @@ module.exports = class extends Accessory {
 
         // Listen to responses from Tesla API
         this.vehicle.on('response', () => {
+            this.debug('Response from Tesla API - resetting ping timer.');
+
             // Whenever we get a response, reset the timer
             if (this.isActive)
                 this.timer.setTimer(this.pingInterval, this.ping.bind(this));
@@ -56,7 +58,6 @@ module.exports = class extends Accessory {
             })
             .catch((error) => {
                 callback(null);
-
             })
         });
     }
@@ -73,7 +74,6 @@ module.exports = class extends Accessory {
     
         })
         .then(() => {
-            this.debug(`Updated ping to state ${this.isActive ? 'ON' : 'OFF'}.`);        
             this.getService(Service.Switch).getCharacteristic(Characteristic.On).updateValue(this.isActive);
 
         })
