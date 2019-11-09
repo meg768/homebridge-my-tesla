@@ -99,6 +99,7 @@ module.exports = class extends Accessory {
             }
             else {
                 this.debug(`Changing ping state to "${value}".`);
+                thbis.Ping();
                 this.isActive = value;
                 resolve();    
             }
