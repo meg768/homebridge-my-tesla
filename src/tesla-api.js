@@ -11,7 +11,6 @@ module.exports = class TeslaAPI extends Events {
 
         options = options || {};
 
-        X
         super();
 
         var {vin = process.env.TESLA_VIN, username = process.env.TESLA_USER, password = process.env.TESLA_PASSWORD, clientID = process.env.TESLA_CLIENT_ID, clientSecret = process.env.TESLA_CLIENT_SECRET} = options;
