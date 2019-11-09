@@ -81,7 +81,7 @@ module.exports = class extends Accessory {
 
     ping() {
         this.debug('Ping!');
-        return this.vehicle.getVehicleData();     
+        this.vehicle.getVehicleData();     
     }
 
     setActiveState(value) {
@@ -95,7 +95,7 @@ module.exports = class extends Accessory {
             else {
                 this.isActive = value;
 
-                this.debug(`Changing ping state to XXX"${value}".`);
+                this.debug(`Changing ping state to "${value}".`);
 
                 if (value)
                     this.Ping();
