@@ -36,15 +36,19 @@ module.exports = class TeslaAPI extends Events {
         if (!vin) 
             throw new Error('Need the VIN number of your Tesla.');
 
-        this.api          = null;
-        this.vehicle      = null;
-        this.vin          = vin;
-        this.username     = username;
-        this.password     = password;
-        this.clientID     = clientID;
-        this.clientSecret = clientSecret;
-        this.requests     = {};
-        this.lastResponse = null;
+        this.api            = null;
+        this.vehicle        = null;
+        this.vin            = vin;
+        this.username       = username;
+        this.password       = password;
+        this.clientID       = clientID;
+        this.clientSecret   = clientSecret;
+        this.requests       = {};
+        this.lastResponse   = null;
+        this.wakeupInterval = 7 * 60000;
+        this.wakeupTimeout  = 2 * 60000;
+
+
         this.log          = isFunction(options.log) ? options.log : (options.log ? console.log : () => {});
         this.debug        = isFunction(options.debug) ? options.debug : (options.debug ? console.debug : () => {});
     }
@@ -57,9 +61,11 @@ module.exports = class TeslaAPI extends Events {
         return this.vehicle.id_s;
     }
 
-    isOnline() {
-        return this.vehicle;
-    }
+    pause(ms) {
+        return new Promise((resolve, reject) => {
+            setTimeout(resolve, ms);
+        });            
+    };
 
     login() {
         if (this.vehicle)
@@ -116,7 +122,6 @@ module.exports = class TeslaAPI extends Events {
 
                 this.api = api;
                 this.vehicle = vehicle;
-                this.lastResponse = null;
 
                 resolve(this.vehicle);
 
@@ -139,8 +144,6 @@ module.exports = class TeslaAPI extends Events {
             this.api.request(method, path).then((response) => {
                 // Mask out the important stuff... 
                 response = response.body.response;
-
-                this.lastResponse = new Date();
 
                 this.log(`${key} completed...`);
 
@@ -192,6 +195,12 @@ module.exports = class TeslaAPI extends Events {
                 return this.queuedRequest(method, path);
             })
             .then((response) => {
+                // Save last response time
+                this.lastResponse = new Date();
+
+                // Notify we have a response
+                this.emit('response', method, path, response);
+
                 resolve(response);                
             })
             .catch((error) => {
@@ -201,28 +210,15 @@ module.exports = class TeslaAPI extends Events {
 
     }
 
-
     wakeUp() {
         var STATE_ONLINE = 'online';
 
-        // Call wakeUp() if not done within last x minutes
-        var wakeupInterval = 7 * 60000;
-
-        // Keep calling wakeUp() for x minutes if no reply
-        var wakeupTimeout = 2 * 60000;
-
         var now = new Date();
 
-        // Check if called with in reasonable time
-        if (this.lastResponse && isDate(this.lastResponse) && (now.valueOf() - this.lastResponse.valueOf() < wakeupInterval)) {
+        // Check if called within reasonable time
+        if (this.lastResponse && isDate(this.lastResponse) && (now.valueOf() - this.lastResponse.valueOf() < this.wakeupInterval)) {
             return Promise.resolve(this.lastResponse);
         }
-
-        var pause = (ms) => {
-            return new Promise((resolve, reject) => {
-                setTimeout(resolve, ms);
-            });            
-        };
 
         var wakeUp = (timestamp) => {
             return new Promise((resolve, reject) => {
@@ -236,12 +232,9 @@ module.exports = class TeslaAPI extends Events {
                     if (response.state == STATE_ONLINE)
                         return Promise.resolve(response);
 
-                    // Tesla is not online. Reset lastResponse value.
-                    this.lastResponse = null;
-
                     this.debug(`Current state is "${response.state}". Must be "${STATE_ONLINE}" to continue. Pausing for ${pauseTime} ms and will try again...`);
     
-                    return pause(pauseTime).then(() => {
+                    return this.pause(pauseTime).then(() => {
                         return Promise.resolve(response);
                     });
                 })
@@ -251,7 +244,7 @@ module.exports = class TeslaAPI extends Events {
                     if (response.state == STATE_ONLINE)
                         return Promise.resolve();
     
-                    if (timestamp && now.getTime() - timestamp.getTime() > wakeupTimeout)
+                    if (timestamp && now.getTime() - timestamp.getTime() > this.wakeupTimeout)
                         throw new Error('The Tesla cannot be reached within timeout period.');
     
                     this.debug(`State is now "${response.state}", trying to wake up...`);
@@ -260,10 +253,10 @@ module.exports = class TeslaAPI extends Events {
                         if (timestamp == undefined) {
                             // Only pause on first wakeUp() call
                             this.debug('wakeUp() succeeded. Delaying a bit after a hard sleep...');
-                            return pause(4000);    
+                            return this.pause(4000);
                         }
                         else
-                            return pause(0);
+                            return this.pause(0);
                     });
                 })
                 .then(() => {
