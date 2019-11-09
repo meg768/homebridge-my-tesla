@@ -71,7 +71,7 @@ module.exports = class extends Accessory {
             }
             else
                 return Promise.resolve();
-    
+     
         })
         .then(() => {
             this.getService(Service.Switch).getCharacteristic(Characteristic.On).updateValue(this.isActive);
