@@ -42,7 +42,6 @@ module.exports = class extends Accessory {
 
     }
 
-
     enableSwitch() {
         var service = new Service.Switch(this.name, __filename);
         this.addService(service);
@@ -56,7 +55,6 @@ module.exports = class extends Accessory {
                 callback(null, this.isActive);
             })
             .catch((error) => {
-                this.log(error);
                 callback(null);
 
             })
@@ -110,6 +108,8 @@ module.exports = class extends Accessory {
                     resolve();
                 })
                 .catch((error) => {
+                    this.log(error);
+
                     reject(error);
                 });
     
