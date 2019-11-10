@@ -45,6 +45,10 @@
                 "defrost": {
                     "name": "Frostfri",
                     "enabled": true
+                },
+                "thermostat": {
+                    "name": "Termostat",
+                    "enabled": true
                 }
 
             }

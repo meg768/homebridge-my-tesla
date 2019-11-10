@@ -3,8 +3,6 @@ var Service  = require('../homebridge.js').Service;
 var Characteristic  = require('../homebridge.js').Characteristic;
 var Accessory = require('../accessory.js');
 var Timer = require('yow/timer');
-var isArray = require('yow/isArray');
-var isNumber = require('yow/isNumber');
 
 module.exports = class extends Accessory {
 
@@ -13,7 +11,7 @@ module.exports = class extends Accessory {
 
         var defaultConfig = {
             requiredBatteryLevel   : 40,
-            pingInterval           : 1,
+            pingInterval           : 5,
         };
 
         var config = {...defaultConfig, ...this.config};
@@ -71,11 +69,9 @@ module.exports = class extends Accessory {
             }
             else
                 return Promise.resolve();
-     
         })
         .then(() => {
             this.getService(Service.Switch).getCharacteristic(Characteristic.On).updateValue(this.isActive);
-
         })
     }
 
