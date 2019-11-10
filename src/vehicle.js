@@ -39,7 +39,7 @@ module.exports = class Vehicle extends TeslaAPI  {
         if (this.config.ping && this.config.ping.enabled)
             this.addAccessory(new PingAccessory({vehicle:this, config:this.config.ping}));
         
-        if (this.thermostat.ping && this.config.thermostat.enabled)
+        if (this.config.thermostat && this.config.thermostat.enabled)
             this.addAccessory(new ThermostatAccessory({vehicle:this, config:this.config.thermostat}));
         
             var configLoginOptions = {username:config.username, password:config.password, clientID:config.clientID, clientSecret:config.clientSecret};
