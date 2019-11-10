@@ -41,19 +41,18 @@ module.exports = class extends Accessory {
         var service = new Service.Thermostat(this.name, __filename);
         this.addService(service);
 
-        this.enableCurrentHeatingCoolingState();
-        this.enableTargetHeatingCoolingState();
-        this.enableCurrentTemperature();
-        this.enableTargetTemperature();
+        this.enableCurrentHeatingCoolingState(service);
+        this.enableTargetHeatingCoolingState(service);
+        this.enableCurrentTemperature(service);
+        this.enableTargetTemperature(service);
         // this.enableDisplayUnits();
-        this.enableCoolingThresholdTemperature();
-        this.enableHeatingThresholdTemperature();
+        this.enableCoolingThresholdTemperature(service);
+        this.enableHeatingThresholdTemperature(service);
 
     }
 
 
-    enableCurrentHeatingCoolingState() {
-        var service = this.getService(Service.Thermostat);
+    enableCurrentHeatingCoolingState(service) {
         var characteristic = service.getCharacteristic(Characteristic.CurrentHeatingCoolingState);
 
         characteristic.on('get', callback => {
@@ -70,8 +69,7 @@ module.exports = class extends Accessory {
     }
 
 
-    enableTargetHeatingCoolingState() {
-        var service = this.getService(Service.Thermostat);
+    enableTargetHeatingCoolingState(service) {
         var characteristic = service.getCharacteristic(Characteristic.TargetHeatingCoolingState);
 
         characteristic.on('get', callback => {
@@ -90,8 +88,7 @@ module.exports = class extends Accessory {
     }
 
 
-    enableCurrentTemperature() {
-        var service = this.getService(Service.Thermostat);
+    enableCurrentTemperature(service) {
         var characteristic = service.getCharacteristic(Characteristic.CurrentTemperature);
 
         characteristic.setProps({
@@ -113,8 +110,7 @@ module.exports = class extends Accessory {
         });
     }
 
-    enableTargetTemperature() {
-        var service = this.getService(Service.Thermostat);
+    enableTargetTemperature(service) {
         var characteristic = service.getCharacteristic(Characteristic.TargetTemperature);
 
         characteristic.setProps({
@@ -138,9 +134,7 @@ module.exports = class extends Accessory {
 
     }
 
-    enableDisplayUnits() {
-        var service = this.getService(Service.Thermostat);
-
+    enableDisplayUnits(service) {
         // °C or °F for units
         var characteristic = service.getCharacteristic(Characteristic.TemperatureDisplayUnits);
 
@@ -154,8 +148,7 @@ module.exports = class extends Accessory {
         });
     }
 
-    enableCoolingThresholdTemperature() {
-        var service = this.getService(Service.Thermostat);
+    enableCoolingThresholdTemperature(service) {
         var characteristic = service.getCharacteristic(Characteristic.CoolingThresholdTemperature);
 
         characteristic.on('get', callback => {
@@ -169,8 +162,7 @@ module.exports = class extends Accessory {
 
     }
 
-    enableHeatingThresholdTemperature() {
-        var service = this.getService(Service.Thermostat);
+    enableHeatingThresholdTemperature(service) {
         var characteristic = service.getCharacteristic(Characteristic.HeatingThresholdTemperature);
 
         characteristic.on('get', callback => {
