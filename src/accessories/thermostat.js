@@ -11,6 +11,8 @@ module.exports = class extends Accessory {
     constructor(options) {
         super(options);
 
+        this.maxTemperature = 30
+        this.minTemperature = 0;
 
         this.currentTemperature = 20;
         this.targetTemperature = 20;
@@ -62,7 +64,6 @@ module.exports = class extends Accessory {
         characteristic.on('set', (value, callback) => {
             this.currentHeatingCoolingState = value;
             this.updateCurrentHeatingCoolingState();
-            this.fireRequests();
 
             callback(null);
         });
@@ -104,7 +105,6 @@ module.exports = class extends Accessory {
         characteristic.on('set', (value, callback) => {
             this.currentTemperature = value;
             this.updateCurrentHeatingCoolingState();
-            this.fireRequests();
 
             callback(null);
         });
