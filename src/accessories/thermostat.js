@@ -37,21 +37,21 @@ module.exports = class extends Accessory {
         //Characteristic.TargetHeatingCoolingState.AUTO = 3;
         this.targetHeatingCoolingState = Characteristic.TargetHeatingCoolingState.OFF;
 
-        var service = new Service.Thermostat(this.name, __filename);
-        this.addService(service);
+        this.addService(new Service.Thermostat(this.name, __filename));
 
-        this.enableCurrentHeatingCoolingState(service);
-        this.enableTargetHeatingCoolingState(service);
-        this.enableCurrentTemperature(service);
-        this.enableTargetTemperature(service);
-        this.enableCoolingThresholdTemperature(service);
-        this.enableHeatingThresholdTemperature(service);
-        this.enableDisplayUnits(service);
+        this.enableCurrentHeatingCoolingState();
+        this.enableTargetHeatingCoolingState();
+        this.enableCurrentTemperature();
+        this.enableTargetTemperature();
+        this.enableCoolingThresholdTemperature();
+        this.enableHeatingThresholdTemperature();
+        this.enableDisplayUnits();
 
         this.vehicle.on('vehicleData', (data) => {
             this.currentTemperature = data.getInsideTemperature();
             this.debug(`Updated inside temperature for thermostat to ${this.currentTemperature}.`);  
 
+            var service = this.getService(Service.Thermostat);
             service.getCharacteristic(Characteristic.CurrentTemperature).updateValue(this.currentTemperature);
             this.updateCurrentHeatingCoolingState();
         });
@@ -62,7 +62,8 @@ module.exports = class extends Accessory {
 
 
 
-    enableCurrentHeatingCoolingState(service) {
+    enableCurrentHeatingCoolingState() {
+        var service = this.getService(Service.Thermostat);
         var characteristic = service.getCharacteristic(Characteristic.CurrentHeatingCoolingState);
 
         characteristic.on('get', callback => {
@@ -78,7 +79,8 @@ module.exports = class extends Accessory {
     }
 
 
-    enableTargetHeatingCoolingState(service) {
+    enableTargetHeatingCoolingState() {
+        var service = this.getService(Service.Thermostat);
         var characteristic = service.getCharacteristic(Characteristic.TargetHeatingCoolingState);
 
         characteristic.on('get', callback => {
@@ -86,7 +88,6 @@ module.exports = class extends Accessory {
         });
 
         characteristic.on('set', (value, callback) => {
-
             this.targetHeatingCoolingState = value;
             this.updateCurrentHeatingCoolingState();
 
@@ -96,7 +97,8 @@ module.exports = class extends Accessory {
     }
 
 
-    enableCurrentTemperature(service) {
+    enableCurrentTemperature() {
+        var service = this.getService(Service.Thermostat);
         var characteristic = service.getCharacteristic(Characteristic.CurrentTemperature);
 
         characteristic.setProps({
@@ -117,7 +119,8 @@ module.exports = class extends Accessory {
         });
     }
 
-    enableTargetTemperature(service) {
+    enableTargetTemperature() {
+        var service = this.getService(Service.Thermostat);
         var characteristic = service.getCharacteristic(Characteristic.TargetTemperature);
 
         characteristic.setProps({
@@ -131,7 +134,6 @@ module.exports = class extends Accessory {
         });
 
         characteristic.on('set', (value, callback) => {
-
             this.targetTemperature = value;
             this.updateCurrentHeatingCoolingState();
 
@@ -140,8 +142,9 @@ module.exports = class extends Accessory {
 
     }
 
-    enableDisplayUnits(service) {
+    enableDisplayUnits() {
         // °C or °F for units
+        var service = this.getService(Service.Thermostat);
         var characteristic = service.getCharacteristic(Characteristic.TemperatureDisplayUnits);
 
         characteristic.on('get', callback => {
@@ -154,7 +157,8 @@ module.exports = class extends Accessory {
         });
     }
 
-    enableCoolingThresholdTemperature(service) {
+    enableCoolingThresholdTemperature() {
+        var service = this.getService(Service.Thermostat);
         var characteristic = service.getCharacteristic(Characteristic.CoolingThresholdTemperature);
 
         characteristic.on('get', callback => {
@@ -163,12 +167,14 @@ module.exports = class extends Accessory {
         characteristic.on('set', (value, callback) => {
             this.coolingThresholdTemperature = value;
             this.updateCurrentHeatingCoolingState();
+
             callback(null);
         });
 
     }
 
-    enableHeatingThresholdTemperature(service) {
+    enableHeatingThresholdTemperature() {
+        var service = this.getService(Service.Thermostat);
         var characteristic = service.getCharacteristic(Characteristic.HeatingThresholdTemperature);
 
         characteristic.on('get', callback => {
@@ -177,6 +183,7 @@ module.exports = class extends Accessory {
         characteristic.on('set', (value, callback) => {
             this.heatingThresholdTemperature = value;
             this.updateCurrentHeatingCoolingState();
+            
             callback(null);
         });
 
