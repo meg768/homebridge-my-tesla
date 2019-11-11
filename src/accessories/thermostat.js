@@ -47,6 +47,15 @@ module.exports = class extends Accessory {
         this.enableCoolingThresholdTemperature(service);
         this.enableHeatingThresholdTemperature(service);
         this.enableDisplayUnits(service);
+
+        this.vehicle.on('vehicleData', (data) => {
+            this.currentTemperature = data.getInsideTemperature();
+            this.debug(`Updated inside temperature for thermostat to ${this.currentTemperature}.`);  
+
+            service.getCharacteristic(Characteristic.CurrentTemperature).updateValue(this.currentTemperature);
+        });
+
+
     }
     
 
