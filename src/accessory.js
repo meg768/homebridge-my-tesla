@@ -34,13 +34,13 @@ class Accessory extends Events {
 
         this.services = [];
 
-        var service = this.addService(Service.AccessoryInformation);
+        var service = new Service.AccessoryInformation();
         service.setCharacteristic(Characteristic.Name, name);
         service.setCharacteristic(Characteristic.Manufacturer, "Default-Manufacturer");
         service.setCharacteristic(Characteristic.Model, "Default-Model");
         service.setCharacteristic(Characteristic.SerialNumber, "Default-SerialNumber");
         service.setCharacteristic(Characteristic.FirmwareRevision, "1.0");
-  
+        this.addService(service); 
         
         // Seems like we have to give it a name...
         this.name = name;
