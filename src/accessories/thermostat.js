@@ -36,6 +36,8 @@ module.exports = class extends Accessory {
         //Characteristic.TargetHeatingCoolingState.COOL = 2;
         //Characteristic.TargetHeatingCoolingState.AUTO = 3;
         this.targetHeatingCoolingState = Characteristic.TargetHeatingCoolingState.OFF;
+
+        this.enableThermostat();
     }
     
 
