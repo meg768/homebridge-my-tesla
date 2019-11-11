@@ -53,6 +53,7 @@ module.exports = class extends Accessory {
             this.debug(`Updated inside temperature for thermostat to ${this.currentTemperature}.`);  
 
             service.getCharacteristic(Characteristic.CurrentTemperature).updateValue(this.currentTemperature);
+            this.updateCurrentHeatingCoolingState();
         });
 
 
@@ -87,7 +88,6 @@ module.exports = class extends Accessory {
         characteristic.on('set', (value, callback) => {
 
             this.targetHeatingCoolingState = value;
-
             this.updateCurrentHeatingCoolingState();
 
             callback(null);
@@ -133,7 +133,6 @@ module.exports = class extends Accessory {
         characteristic.on('set', (value, callback) => {
 
             this.targetTemperature = value;
-
             this.updateCurrentHeatingCoolingState();
 
             callback(null);
@@ -184,9 +183,75 @@ module.exports = class extends Accessory {
     }
 
 
-    updateCurrentHeatingCoolingState() {
-        this.debug('Updating heating/cooling state.')
+    shouldTurnOnHeating() {
+
+        switch (this.targetHeatingCoolingState) {
+            case Characteristic.TargetHeatingCoolingState.AUTO:
+                return this.currentTemperature < this.heatingThresholdTemperature;
+
+            case Characteristic.TargetHeatingCoolingState.HEAT:
+                return this.currentTemperature < this.targetTemperature;
+
+        }
+
+        return false;
+
     }
+
+    shouldTurnOnCooling() {
+        switch (this.targetHeatingCoolingState) {
+            case Characteristic.TargetHeatingCoolingState.AUTO:
+                return this.currentTemperature > this.coolingThresholdTemperature;
+
+            case Characteristic.TargetHeatingCoolingState.COOL:
+                return this.currentTemperature > this.targetTemperature;
+
+        }
+
+        return false;
+    }
+
+
+
+
+    updateCurrentHeatingCoolingState() {
+
+        var service = this.getService(Service.Thermostat);
+        var state = this.currentHeatingCoolingState;
+
+        if (this.shouldTurnOnHeating()) {
+            state = Characteristic.CurrentHeatingCoolingState.HEAT;
+        } else if (this.shouldTurnOnCooling()) {
+            state = Characteristic.CurrentHeatingCoolingState.COOL;
+        } else {
+            state = Characteristic.CurrentHeatingCoolingState.OFF;
+        }
+
+        if (state != this.currentHeatingCoolingState) {
+            switch (state) {
+                case Characteristic.CurrentHeatingCoolingState.OFF: {
+                    this.log('Turning off since current temperature is', this.currentTemperature, '.');
+                    notification = this.config.notifications ? this.config.notifications.OFF : null;
+                    break;
+                }
+                case Characteristic.CurrentHeatingCoolingState.HEAT: {
+                    this.log('Turning on heat since current temperature is', this.currentTemperature, '.');
+                    notification = this.config.notifications ? this.config.notifications.HEAT : null;
+                    break;
+                }
+                case Characteristic.CurrentHeatingCoolingState.COOL: {
+                    this.log('Turning on cool since current temperature is', this.currentTemperature, '.');
+                    notification = this.config.notifications ? this.config.notifications.COOL : null;
+                    break;
+                }
+            }
+
+
+            service.setCharacteristic(Characteristic.CurrentHeatingCoolingState, state);
+        }
+
+    }
+
 
 }
 
