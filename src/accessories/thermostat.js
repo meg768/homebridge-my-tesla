@@ -3,14 +3,14 @@ var Service  = require('../homebridge.js').Service;
 var Characteristic  = require('../homebridge.js').Characteristic;
 var Accessory = require('../accessory.js');
 var Timer = require('yow/timer');
-var isArray = require('yow/isArray');
-var isNumber = require('yow/isNumber');
 
 module.exports = class extends Accessory {
 
     constructor(options) {
         super(options);
 
+        this.timer = new Timer();
+        this.timeout = 1000 * 5;
         this.maxTemperature = 30
         this.minTemperature = 0;
 
@@ -183,7 +183,7 @@ module.exports = class extends Accessory {
         characteristic.on('set', (value, callback) => {
             this.heatingThresholdTemperature = value;
             this.updateCurrentHeatingCoolingState();
-            
+
             callback(null);
         });
 
@@ -238,17 +238,14 @@ module.exports = class extends Accessory {
             switch (state) {
                 case Characteristic.CurrentHeatingCoolingState.OFF: {
                     this.log('Turning off since current temperature is', this.currentTemperature, '.');
-                    notification = this.config.notifications ? this.config.notifications.OFF : null;
                     break;
                 }
                 case Characteristic.CurrentHeatingCoolingState.HEAT: {
                     this.log('Turning on heat since current temperature is', this.currentTemperature, '.');
-                    notification = this.config.notifications ? this.config.notifications.HEAT : null;
                     break;
                 }
                 case Characteristic.CurrentHeatingCoolingState.COOL: {
                     this.log('Turning on cool since current temperature is', this.currentTemperature, '.');
-                    notification = this.config.notifications ? this.config.notifications.COOL : null;
                     break;
                 }
             }
