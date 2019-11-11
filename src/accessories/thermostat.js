@@ -114,6 +114,12 @@ module.exports = class extends Accessory {
         var service = this.getService(Service.Thermostat);
         var characteristic = service.getCharacteristic(Characteristic.TargetHeatingCoolingState);
 
+        characteristic.setProps({
+            maxValue: 3,
+            minValue: 0,
+            validValues: [0, 3]
+          });
+      
         characteristic.on('get', callback => {
             callback(null, this.targetHeatingCoolingState);
         });
