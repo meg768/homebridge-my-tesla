@@ -61,6 +61,37 @@ module.exports = class extends Accessory {
     
 
 
+    updateHVAC() {
+
+        // Be silent if turned off
+        if (this.targetHeatingCoolingState == Characteristic.TargetHeatingCoolingState.OFF)
+            return;
+
+        var action = 'none';
+
+        switch (this.currentHeatingCoolingState) {
+            case Characteristic.CurrentHeatingCoolingState.OFF:
+                {
+                    action = 'off';
+                    break;
+                };
+            case Characteristic.CurrentHeatingCoolingState.HEAT:
+                {
+                    action = 'on';
+                    break;
+                };
+            case Characteristic.CurrentHeatingCoolingState.COOL:
+                {
+                    action = 'on';
+                    break;
+                };
+        }
+
+
+
+    }
+
+
 
     enableCurrentHeatingCoolingState() {
         var service = this.getService(Service.Thermostat);
