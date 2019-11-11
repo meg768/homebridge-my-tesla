@@ -9,6 +9,7 @@ module.exports = function(homebridge) {
     Homebridge.Accessory = homebridge.hap.Accessory;
     Homebridge.PlatformAccessory = homebridge.platformAccessory;
     Homebridge.api = homebridge;
+    Homebridge.uuid = homebridge.hap.uuid;
 
     homebridge.registerPlatform('homebridge-my-tesla', 'Tesla', require('./src/platform.js'));
 };

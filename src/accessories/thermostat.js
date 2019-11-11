@@ -37,11 +37,6 @@ module.exports = class extends Accessory {
         //Characteristic.TargetHeatingCoolingState.AUTO = 3;
         this.targetHeatingCoolingState = Characteristic.TargetHeatingCoolingState.OFF;
 
-        this.enableThermostat();
-    }
-    
-
-    enableThermostat() {
         var service = new Service.Thermostat(this.name, __filename);
         this.addService(service);
 
@@ -49,11 +44,12 @@ module.exports = class extends Accessory {
         this.enableTargetHeatingCoolingState(service);
         this.enableCurrentTemperature(service);
         this.enableTargetTemperature(service);
-        // this.enableDisplayUnits();
         this.enableCoolingThresholdTemperature(service);
         this.enableHeatingThresholdTemperature(service);
-
+        this.enableDisplayUnits(service);
     }
+    
+
 
 
     enableCurrentHeatingCoolingState(service) {
@@ -179,6 +175,9 @@ module.exports = class extends Accessory {
     }
 
 
+    updateCurrentHeatingCoolingState() {
+        this.debug('Updating heating/cooling state.')
+    }
 
 }
 
