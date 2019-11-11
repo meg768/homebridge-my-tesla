@@ -1,4 +1,6 @@
 var homebridge = require('./homebridge.js').api;
+var {Service, Characteristic} = require('../homebridge.js');
+
 var Events = require('events');
 
 // Basic accessory - may be used for most projects
