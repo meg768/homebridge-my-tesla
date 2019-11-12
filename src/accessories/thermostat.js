@@ -186,13 +186,14 @@ module.exports = class extends Accessory {
     shouldTurnOnHeating() {
 
         switch (this.targetHeatingCoolingState) {
-            case Characteristic.TargetHeatingCoolingState.AUTO:
+            case Characteristic.TargetHeatingCoolingState.AUTO: {
                 return this.currentTemperature < this.heatingThresholdTemperature;
 
-            case Characteristic.TargetHeatingCoolingState.HEAT:
-                return this.currentTemperature < this.targetTemperature;
+            }
 
-    
+            case Characteristic.TargetHeatingCoolingState.HEAT:
+                return this.currentTemperature < this.coolingThresholdTemperature;
+
         }
 
         return false;
@@ -205,7 +206,7 @@ module.exports = class extends Accessory {
                 return this.currentTemperature > this.coolingThresholdTemperature;
 
             case Characteristic.TargetHeatingCoolingState.COOL:
-                return this.currentTemperature > this.targetTemperature;
+                return this.currentTemperature > this.heatingThresholdTemperature;
 
         }
 
