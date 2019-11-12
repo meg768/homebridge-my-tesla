@@ -94,10 +94,11 @@ module.exports = class extends Accessory {
         });
 
         characteristic.on('set', (value, callback) => {
-            var states = {
-                Characteristic.TargetHeatingCoolingState.OFF: 'OFF', 
-                Characteristic.TargetHeatingCoolingState.AUTO: 'AUTO' 
-            };
+            var states = {};
+            states[Characteristic.TargetHeatingCoolingState.OFF] = 'OFF';
+            states[Characteristic.TargetHeatingCoolingState.AUTO] = 'AUTO';
+            states[Characteristic.TargetHeatingCoolingState.COOL] = 'COOL';
+            states[Characteristic.TargetHeatingCoolingState.HEAT] = 'HEAT';
 
             if (this.targetHeatingCoolingState != value) {
                 this.debug(`Setting thermostat to state "${states[value]}".`);
