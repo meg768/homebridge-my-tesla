@@ -208,22 +208,27 @@ module.exports = class extends Accessory {
 
         }
 
-
-        if (state != this.currentHeatingCoolingState) {
-            switch (state) {
-                case Characteristic.CurrentHeatingCoolingState.OFF: {
-                    this.log(`Turning off conditioner since current temperature is ${this.currentTemperature} °C and temperature range is ${temperatureRange} °C`);
-                    this.setAirConditioningState(false);
-                    break;
+        if (state == undefined) {
+            this.debug(`Currrent heating/cooling state undefined.`);
+        }
+        else {
+            if (state != this.currentHeatingCoolingState) {
+                switch (state) {
+                    case Characteristic.CurrentHeatingCoolingState.OFF: {
+                        this.log(`Turning off conditioner since current temperature is ${this.currentTemperature} °C and temperature range is ${temperatureRange} °C`);
+                        this.setAirConditioningState(false);
+                        break;
+                    }
+                    case Characteristic.CurrentHeatingCoolingState.COOL:
+                    case Characteristic.CurrentHeatingCoolingState.HEAT: {
+                        this.log(`Turning on air conditioner since current temperature is ${this.currentTemperature} °C and temperature range should be ${temperatureRange} °C`);
+                        this.setAirConditioningState(true);
+                        break;
+                    }
                 }
-                case Characteristic.CurrentHeatingCoolingState.COOL:
-                case Characteristic.CurrentHeatingCoolingState.HEAT: {
-                    this.log(`Turning on air conditioner since current temperature is ${this.currentTemperature} °C and temperature range should be ${temperatureRange} °C`);
-                    this.setAirConditioningState(true);
-                    break;
-                }
+    
             }
-
+    
         }
 
     }
