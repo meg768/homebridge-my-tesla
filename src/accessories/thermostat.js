@@ -273,8 +273,9 @@ module.exports = class extends Accessory {
         })
 
         .then((response) => {
-            this.timer.setTimer(this.timerInterval, this.checkTemperature.bind(this));
-
+            if (this.targetHeatingCoolingState != Characteristic.TargetHeatingCoolingState.OFF)
+                this.timer.setTimer(5000, this.checkTemperature.bind(this));
+ 
         })
 
         .catch((error) => {
