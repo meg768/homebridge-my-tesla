@@ -192,7 +192,10 @@ module.exports = class extends Accessory {
 
     updateCurrentHeatingCoolingState() {
 
-        this.timer.setTimer(5000, this.checkTemperature.bind(this));
+        this.timer.cancel();
+
+        if (this.targetHeatingCoolingState != Characteristic.TargetHeatingCoolingState.OFF)
+            this.timer.setTimer(5000, this.checkTemperature.bind(this));
     }
 
 
