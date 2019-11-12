@@ -196,7 +196,7 @@ module.exports = class extends Accessory {
                     state = Characteristic.CurrentHeatingCoolingState.HEAT;
                 }
                 else if (this.currentTemperature > this.coolingThresholdTemperature) {
-                    state = Characteristic.CurrentHeatingCoolingState.COOL;
+                    state = Characteristic.CurrentHeatingCoolingState.OFF;
                 }
                 else {
                     state = Characteristic.CurrentHeatingCoolingState.OFF;
@@ -208,6 +208,7 @@ module.exports = class extends Accessory {
                 state = Characteristic.CurrentHeatingCoolingState.OFF;
                 break;
             }
+
 
         }
 
