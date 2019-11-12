@@ -183,37 +183,6 @@ module.exports = class extends Accessory {
     }
 
 
-    shouldTurnOnHeating() {
-
-        switch (this.targetHeatingCoolingState) {
-            case Characteristic.TargetHeatingCoolingState.AUTO: {
-                return this.currentTemperature < this.heatingThresholdTemperature;
-
-            }
-
-            case Characteristic.TargetHeatingCoolingState.HEAT:
-                return this.currentTemperature < this.coolingThresholdTemperature;
-
-        }
-
-        return false;
-
-    }
-
-    shouldTurnOnCooling() {
-        switch (this.targetHeatingCoolingState) {
-            case Characteristic.TargetHeatingCoolingState.AUTO:
-                return this.currentTemperature > this.coolingThresholdTemperature;
-
-            case Characteristic.TargetHeatingCoolingState.COOL:
-                return this.currentTemperature > this.heatingThresholdTemperature;
-
-        }
-
-        return false;
-    }
-
-
 
 
     updateCurrentHeatingCoolingState() {
@@ -221,18 +190,24 @@ module.exports = class extends Accessory {
         var state = this.currentHeatingCoolingState;
         var temperatureRange = `[${this.heatingThresholdTemperature}-${this.coolingThresholdTemperature}]`;
 
-        if (this.targetHeatingCoolingState == Characteristic.TargetHeatingCoolingState.OFF) {
-            state = Characteristic.CurrentHeatingCoolingState.OFF;
+        switch (this.targetHeatingCoolingState) {
+            case Characteristic.TargetHeatingCoolingState.AUTO: {
+                if (this.currentTemperature < this.heatingThresholdTemperature) {
+                    state = Characteristic.CurrentHeatingCoolingState.HEAT;
+                }
+                else if (this.currentTemperature > this.coolingThresholdTemperature) {
+                    state = Characteristic.CurrentHeatingCoolingState.COOL;
+                }
+                break;
+            }
+
+            case Characteristic.TargetHeatingCoolingState.OFF: {
+                state = Characteristic.CurrentHeatingCoolingState.OFF;
+                break;
+            }
+
         }
-        else if (this.shouldTurnOnHeating()) {
-            state = Characteristic.CurrentHeatingCoolingState.HEAT;
-        }
-        else if (this.shouldTurnOnCooling()) {
-            state = Characteristic.CurrentHeatingCoolingState.COOL;
-        }
-        else {
-            state = Characteristic.CurrentHeatingCoolingState.OFF;
-        }
+
 
         if (state != this.currentHeatingCoolingState) {
             switch (state) {
