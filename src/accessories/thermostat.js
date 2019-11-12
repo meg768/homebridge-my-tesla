@@ -25,6 +25,7 @@ module.exports = class extends Accessory {
 
         this.currentTemperature = 20;
         this.targetTemperature = 20;
+        this.outsideTemperature = 20;
 
         this.heatingThresholdTemperature = 18;
         this.coolingThresholdTemperature = 21;
@@ -50,6 +51,7 @@ module.exports = class extends Accessory {
         this.vehicle.on('vehicleData', (data) => {
             var service = this.getService(Service.Thermostat);
 
+            this.outsideTemperature = data.getOutsideTemperature();
             this.currentTemperature = data.getInsideTemperature();
             service.getCharacteristic(Characteristic.CurrentTemperature).updateValue(this.currentTemperature);
             this.debug(`Updated temperature for thermostat to ${this.currentTemperature} °C.`);  
@@ -187,19 +189,17 @@ module.exports = class extends Accessory {
 
     updateCurrentHeatingCoolingState() {
 
-        var state = undefined;
+        var state = this.currentHeatingCoolingState;
         var temperatureRange = `[${this.heatingThresholdTemperature}-${this.coolingThresholdTemperature}]`;
 
         switch (this.targetHeatingCoolingState) {
             case Characteristic.TargetHeatingCoolingState.AUTO: {
                 if (this.currentTemperature < this.heatingThresholdTemperature) {
                     state = Characteristic.CurrentHeatingCoolingState.HEAT;
+
                 }
                 else if (this.currentTemperature > this.coolingThresholdTemperature) {
-                    state = Characteristic.CurrentHeatingCoolingState.OFF;
-                }
-                else {
-                    state = Characteristic.CurrentHeatingCoolingState.OFF;
+                    state = Characteristic.CurrentHeatingCoolingState.COOL;
                 }
                 break;
             }
@@ -208,9 +208,8 @@ module.exports = class extends Accessory {
                 state = Characteristic.CurrentHeatingCoolingState.OFF;
                 break;
             }
-
-
         }
+
 
         if (state != this.currentHeatingCoolingState) {
             switch (state) {
