@@ -21,7 +21,7 @@ module.exports = class extends Accessory {
         super(options);
 
         this.timer = new Timer();
-        this.timerInterval = 10000;
+        this.timerInterval = 30 * 1000;
 
         this.maxTemperature = 30
         this.minTemperature = 0;
@@ -94,8 +94,11 @@ module.exports = class extends Accessory {
         });
 
         characteristic.on('set', (value, callback) => {
-            this.targetHeatingCoolingState = value;
-            this.updateCurrentHeatingCoolingState();
+            if (this.targetHeatingCoolingState != value) {
+                this.log(`Setting thermostat to state "${value}".`);
+                this.targetHeatingCoolingState = value;
+                this.updateCurrentHeatingCoolingState();
+            }
             callback(null);
         });
 
