@@ -4,13 +4,22 @@ var Characteristic  = require('../homebridge.js').Characteristic;
 var Accessory = require('../accessory.js');
 var Timer = require('yow/timer');
 
+// Reminders...
+// Characteristic.TemperatureDisplayUnits.CELSIUS = 0;
+// Characteristic.TemperatureDisplayUnits.FAHRENHEIT = 1;
+// Characteristic.CurrentHeatingCoolingState.OFF = 0;
+// Characteristic.CurrentHeatingCoolingState.HEAT = 1;
+// Characteristic.CurrentHeatingCoolingState.COOL = 2;
+// Characteristic.TargetHeatingCoolingState.OFF = 0;
+// Characteristic.TargetHeatingCoolingState.HEAT = 1;
+// Characteristic.TargetHeatingCoolingState.COOL = 2;
+// Characteristic.TargetHeatingCoolingState.AUTO = 3;
+
 module.exports = class extends Accessory {
 
     constructor(options) {
         super(options);
 
-        this.timer = new Timer();
-        this.timeout = 1000 * 5;
         this.maxTemperature = 30
         this.minTemperature = 0;
 
@@ -20,21 +29,12 @@ module.exports = class extends Accessory {
         this.heatingThresholdTemperature = 18;
         this.coolingThresholdTemperature = 21;
 
-        //Characteristic.TemperatureDisplayUnits.CELSIUS = 0;
-        //Characteristic.TemperatureDisplayUnits.FAHRENHEIT = 1;
         this.temperatureDisplayUnits = Characteristic.TemperatureDisplayUnits.CELSIUS;
 
         // The value property of CurrentHeatingCoolingState must be one of the following:
-        //Characteristic.CurrentHeatingCoolingState.OFF = 0;
-        //Characteristic.CurrentHeatingCoolingState.HEAT = 1;
-        //Characteristic.CurrentHeatingCoolingState.COOL = 2;
         this.currentHeatingCoolingState = Characteristic.CurrentHeatingCoolingState.OFF;
 
         // The value property of TargetHeatingCoolingState must be one of the following:
-        //Characteristic.TargetHeatingCoolingState.OFF = 0;
-        //Characteristic.TargetHeatingCoolingState.HEAT = 1;
-        //Characteristic.TargetHeatingCoolingState.COOL = 2;
-        //Characteristic.TargetHeatingCoolingState.AUTO = 3;
         this.targetHeatingCoolingState = Characteristic.TargetHeatingCoolingState.OFF;
 
         this.addService(new Service.Thermostat(this.name, __filename));
@@ -90,6 +90,7 @@ module.exports = class extends Accessory {
 
         characteristic.on('set', (value, callback) => {
             this.targetHeatingCoolingState = value;
+            this.updateCurrentHeatingCoolingState();
             callback(null);
         });
 
@@ -110,10 +111,6 @@ module.exports = class extends Accessory {
             callback(null, this.currentTemperature);
         });
 
-        characteristic.on('set', (value, callback) => {
-            this.currentTemperature = value;
-            callback(null);
-        });
     }
 
     enableTargetTemperature() {
@@ -132,6 +129,7 @@ module.exports = class extends Accessory {
 
         characteristic.on('set', (value, callback) => {
             this.targetTemperature = value;
+            this.updateCurrentHeatingCoolingState();
             callback(null);
         });
 
@@ -147,7 +145,7 @@ module.exports = class extends Accessory {
         });
         characteristic.on('set', (value, callback) => {
             this.temperatureDisplayUnits = value;
-
+            this.updateCurrentHeatingCoolingState();
             callback(null);
         });
     }
@@ -161,6 +159,7 @@ module.exports = class extends Accessory {
         });
         characteristic.on('set', (value, callback) => {
             this.coolingThresholdTemperature = value;
+            this.updateCurrentHeatingCoolingState();
 
             callback(null);
         });
@@ -255,6 +254,32 @@ module.exports = class extends Accessory {
 
         return new Promise((resolve, reject) => {
             Promise.resolve().then(() => {
+                return this.setAirConditioningState(value);
+            })
+            .then(() => {
+                // Seems we have to pause a bit so the air condition state is updated in getVehicleData()...
+                return this.pause(1000);
+            })
+            .then(() => {
+                return this.vehicle.getVehicleData();
+            })
+            .then(() => {
+                resolve();
+            })
+            .catch((error) => {
+                reject(error);                
+            })
+        })
+    }
+
+    setAirConditioningState(value) {
+
+        var value = value ? true : false; 
+
+        this.debug(`Turning on ${value ? 'ON' : 'OFF'} air conditioner.`);
+
+        return new Promise((resolve, reject) => {
+            Promise.resolve().then(() => {
                 return value ? this.vehicle.autoConditioningStart() : this.vehicle.autoConditioningStop();
             })
             .then(() => {
@@ -272,6 +297,7 @@ module.exports = class extends Accessory {
             })
         })
     }
+
 
 }
 
