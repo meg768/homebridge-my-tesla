@@ -192,11 +192,14 @@ module.exports = class extends Accessory {
 
         switch (this.targetHeatingCoolingState) {
             case Characteristic.TargetHeatingCoolingState.AUTO: {
-                if (this.currentTemperature < this.coolingThresholdTemperature) {
+                if (this.currentTemperature < this.heatingThresholdTemperature) {
                     state = Characteristic.CurrentHeatingCoolingState.HEAT;
                 }
-                else if (this.currentTemperature > this.heatingThresholdTemperature) {
+                else if (this.currentTemperature > this.coolingThresholdTemperature) {
                     state = Characteristic.CurrentHeatingCoolingState.COOL;
+                }
+                else {
+                    state = Characteristic.CurrentHeatingCoolingState.OFF;
                 }
                 break;
             }
