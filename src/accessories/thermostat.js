@@ -232,44 +232,19 @@ module.exports = class extends Accessory {
             switch (state) {
                 case Characteristic.CurrentHeatingCoolingState.OFF: {
                     this.log(`Turning off conditioner since current temperature is ${this.currentTemperature} °C and temperature range is ${temperatureRange} °C`);
+                    this.setAirConditioningState(false);
                     break;
                 }
                 case Characteristic.CurrentHeatingCoolingState.COOL:
                 case Characteristic.CurrentHeatingCoolingState.HEAT: {
                     this.log(`Turning on air conditioner since current temperature is ${this.currentTemperature} °C and temperature range should be ${temperatureRange} °C`);
+                    this.setAirConditioningState(true);
                     break;
                 }
             }
 
-
-            service.setCharacteristic(Characteristic.CurrentHeatingCoolingState, state);
         }
 
-    }
-
-
-    updateAirConditionerState() {
-
-        var value = (this.targetHeatingCoolingState == Characteristic.TargetHeatingCoolingState.OFF) ? false : true; 
-
-        return new Promise((resolve, reject) => {
-            Promise.resolve().then(() => {
-                return this.setAirConditioningState(value);
-            })
-            .then(() => {
-                // Seems we have to pause a bit so the air condition state is updated in getVehicleData()...
-                return this.pause(1000);
-            })
-            .then(() => {
-                return this.vehicle.getVehicleData();
-            })
-            .then(() => {
-                resolve();
-            })
-            .catch((error) => {
-                reject(error);                
-            })
-        })
     }
 
     setAirConditioningState(value) {
