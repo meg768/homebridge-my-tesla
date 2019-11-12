@@ -219,6 +219,7 @@ module.exports = class extends Accessory {
 
         var service = this.getService(Service.Thermostat);
         var state = this.currentHeatingCoolingState;
+        var temperatureRange = `[${this.heatingThresholdTemperature}-${this.coolingThresholdTemperature}]`;
 
         if (this.shouldTurnOnHeating()) {
             state = Characteristic.CurrentHeatingCoolingState.HEAT;
@@ -231,15 +232,12 @@ module.exports = class extends Accessory {
         if (state != this.currentHeatingCoolingState) {
             switch (state) {
                 case Characteristic.CurrentHeatingCoolingState.OFF: {
-                    this.log('Turning off since current temperature is', this.currentTemperature, '.');
+                    this.log(`Turning off conditioner since current temperature is ${this.currentTemperature} °C and temperature range is ${temperatureRange} °C`);
                     break;
                 }
+                case Characteristic.CurrentHeatingCoolingState.COOL:
                 case Characteristic.CurrentHeatingCoolingState.HEAT: {
-                    this.log('Turning on heat since current temperature is', this.currentTemperature, '.');
-                    break;
-                }
-                case Characteristic.CurrentHeatingCoolingState.COOL: {
-                    this.log('Turning on cool since current temperature is', this.currentTemperature, '.');
+                    this.log(`Turning on air conditioner since current temperature is ${this.currentTemperature} °C and temperature range should be ${temperatureRange} °C`);
                     break;
                 }
             }
@@ -253,7 +251,7 @@ module.exports = class extends Accessory {
 
     updateAirConditionerState() {
 
-        var value = this.targetHeatingCoolingState == Characteristic.TargetHeatingCoolingState.OFF ? false : true; 
+        var value = (this.targetHeatingCoolingState == Characteristic.TargetHeatingCoolingState.OFF) ? false : true; 
 
         return new Promise((resolve, reject) => {
             Promise.resolve().then(() => {
