@@ -192,10 +192,10 @@ module.exports = class extends Accessory {
 
         switch (this.targetHeatingCoolingState) {
             case Characteristic.TargetHeatingCoolingState.AUTO: {
-                if (this.currentTemperature <= this.heatingThresholdTemperature) {
+                if (this.currentTemperature < this.heatingThresholdTemperature) {
                     state = Characteristic.CurrentHeatingCoolingState.HEAT;
                 }
-                else if (this.currentTemperature >= this.coolingThresholdTemperature) {
+                else if (this.currentTemperature > this.coolingThresholdTemperature) {
                     state = Characteristic.CurrentHeatingCoolingState.COOL;
                 }
                 else {
@@ -211,29 +211,23 @@ module.exports = class extends Accessory {
 
         }
 
-        if (state == undefined) {
-            this.debug(`Currrent heating/cooling state undefined.`);
-        }
-        else {
-            if (state != this.currentHeatingCoolingState) {
-                switch (state) {
-                    case Characteristic.CurrentHeatingCoolingState.OFF: {
-                        this.log(`Turning off conditioner since current temperature is ${this.currentTemperature} °C and temperature range is ${temperatureRange} °C`);
-                        this.setAirConditioningState(false);
-                        break;
-                    }
-                    case Characteristic.CurrentHeatingCoolingState.COOL:
-                    case Characteristic.CurrentHeatingCoolingState.HEAT: {
-                        this.log(`Turning on air conditioner since current temperature is ${this.currentTemperature} °C and temperature range should be ${temperatureRange} °C`);
-                        this.setAirConditioningState(true);
-                        break;
-                    }
+        if (state != this.currentHeatingCoolingState) {
+            switch (state) {
+                case Characteristic.CurrentHeatingCoolingState.OFF: {
+                    this.log(`Turning off conditioner since current temperature is ${this.currentTemperature} °C and temperature range is ${temperatureRange} °C`);
+                    this.setAirConditioningState(false);
+                    break;
                 }
-    
+                case Characteristic.CurrentHeatingCoolingState.COOL:
+                case Characteristic.CurrentHeatingCoolingState.HEAT: {
+                    this.log(`Turning on air conditioner since current temperature is ${this.currentTemperature} °C and temperature range should be ${temperatureRange} °C`);
+                    this.setAirConditioningState(true);
+                    break;
+                }
             }
-    
-        }
 
+        }
+    
     }
 
     setAirConditioningState(value) {
