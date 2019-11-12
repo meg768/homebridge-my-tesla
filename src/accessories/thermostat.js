@@ -192,6 +192,7 @@ module.exports = class extends Accessory {
             case Characteristic.TargetHeatingCoolingState.HEAT:
                 return this.currentTemperature < this.targetTemperature;
 
+    
         }
 
         return false;
@@ -216,15 +217,19 @@ module.exports = class extends Accessory {
 
     updateCurrentHeatingCoolingState() {
 
-        var service = this.getService(Service.Thermostat);
         var state = this.currentHeatingCoolingState;
         var temperatureRange = `[${this.heatingThresholdTemperature}-${this.coolingThresholdTemperature}]`;
 
-        if (this.shouldTurnOnHeating()) {
+        if (this.targetHeatingCoolingState == Characteristic.TargetHeatingCoolingState.OFF) {
+            state = Characteristic.CurrentHeatingCoolingState.OFF;
+        }
+        else if (this.shouldTurnOnHeating()) {
             state = Characteristic.CurrentHeatingCoolingState.HEAT;
-        } else if (this.shouldTurnOnCooling()) {
+        }
+        else if (this.shouldTurnOnCooling()) {
             state = Characteristic.CurrentHeatingCoolingState.COOL;
-        } else {
+        }
+        else {
             state = Characteristic.CurrentHeatingCoolingState.OFF;
         }
 
