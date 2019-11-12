@@ -187,7 +187,7 @@ module.exports = class extends Accessory {
 
     updateCurrentHeatingCoolingState() {
 
-        var state = this.currentHeatingCoolingState;
+        var state = undefined;
         var temperatureRange = `[${this.heatingThresholdTemperature}-${this.coolingThresholdTemperature}]`;
 
         switch (this.targetHeatingCoolingState) {
