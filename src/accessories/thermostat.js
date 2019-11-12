@@ -195,7 +195,7 @@ module.exports = class extends Accessory {
         this.timer.cancel();
 
         if (this.targetHeatingCoolingState != Characteristic.TargetHeatingCoolingState.OFF)
-            this.timer.setTimer(5000, this.checkTemperature.bind(this));
+            this.checkTemperature();
     }
 
 
@@ -274,7 +274,7 @@ module.exports = class extends Accessory {
 
         .then((response) => {
             if (this.targetHeatingCoolingState != Characteristic.TargetHeatingCoolingState.OFF)
-                this.timer.setTimer(5000, this.checkTemperature.bind(this));
+                this.timer.setTimer(this.timerInterval, this.checkTemperature.bind(this));
  
         })
 
