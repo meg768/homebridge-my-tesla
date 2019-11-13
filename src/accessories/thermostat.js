@@ -173,6 +173,12 @@ module.exports = class extends Accessory {
         var service = this.getService(Service.Thermostat);
         var characteristic = service.getCharacteristic(Characteristic.CoolingThresholdTemperature);
 
+        characteristic.setProps({
+            minValue: this.minTemperature,
+            maxValue: this.maxTemperature,
+            minStep: 1
+        });
+
         characteristic.on('get', callback => {
             callback(null, this.coolingThresholdTemperature);
         });
@@ -188,6 +194,13 @@ module.exports = class extends Accessory {
     enableHeatingThresholdTemperature() {
         var service = this.getService(Service.Thermostat);
         var characteristic = service.getCharacteristic(Characteristic.HeatingThresholdTemperature);
+        
+        characteristic.setProps({
+            minValue: this.minTemperature,
+            maxValue: this.maxTemperature,
+            minStep: 1
+        });
+
 
         characteristic.on('get', callback => {
             callback(null, this.heatingThresholdTemperature);
