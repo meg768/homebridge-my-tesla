@@ -6,7 +6,8 @@ module.exports = class extends Accessory {
 
     constructor(options) {
         var defaultConfig = {
-            name: 'Door'
+            "name": "Door",
+            "enabled": true
         };
 
         var {config, ...options} = options;

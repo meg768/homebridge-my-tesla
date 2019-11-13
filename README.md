@@ -65,8 +65,7 @@ If you name things correctly you might get Siri to work by saying "Lock car", "U
 
 By default, all the features (or buttons) available are added to the Home app automatically. 
 Each feature has its own name and you may control each feature seperately since each 
-feature has its own configuration.
-
+feature has its own configuration. Default values are displayed below, you may change them as you wish.
 
 ```json
 
@@ -76,23 +75,31 @@ feature has its own configuration.
                 "features": {
                     "ping": {
                         "name": "Ping",
-                        "interval": 5,
-                        "enabled": false
+                        "timerInterval": 5,
+                        "requiredBatteryLevel": 40,
+                        "enabled": true
                     },
                     "charging": {
-                        "name": "Laddning"
+                        "name": "Charging",
+                        "enabled": true
                     },
                     "hvac": {
-                        "name": "Fläkten"
-                    },
+                        "name": "Fan",
+                        "enabled": true
+                   },
                     "doors": {
-                        "name": "Dörren"
+                        "name": "Door",
+                        "enabled": true
                     },
                     "temperature": {
-                        "name": "Temperatur"
+                        "name": "Temperature",
+                        "enabled": true
                     },
                     "thermostat": {
-                        "name": "Termostat"
+                        "name": 'Thermostat',
+                        "timerInterval": 5,
+                        "requiredBatteryLevel": 40,
+                        "enabled": true
                     }
                 }
             }
