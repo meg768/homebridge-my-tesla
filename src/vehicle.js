@@ -7,7 +7,7 @@ module.exports = class Vehicle extends TeslaAPI  {
         super({log:platform.log, debug:platform.debug, vin:config.vin});
 
         this.pushover = platform.pushover;
-        this.config = config;
+        this.config = config || {};
         this.name = config.name;
         this.accessories = [];
         this.uuid = platform.generateUUID(config.vin);
@@ -21,26 +21,13 @@ module.exports = class Vehicle extends TeslaAPI  {
         var PingAccessory = require('./accessories/ping.js');
         var ThermostatAccessory = require('./accessories/thermostat.js');
 
-        if (this.config.locks && this.config.locks.enabled)
-            this.addAccessory(new DoorLockAccessory({vehicle:this, config:this.config.locks}));
-
-        if (this.config.charging && this.config.charging.enabled)
-            this.addAccessory(new ChargingAccessory({vehicle:this, config:this.config.charging}));
-
-        if (this.config.hvac && this.config.hvac.enabled)
-            this.addAccessory(new AirConditioningAccessory({vehicle:this, config:this.config.hvac}));
-
-        if (this.config.temperature && this.config.temperature.enabled)
-            this.addAccessory(new TemperatureAccessory({vehicle:this, config:this.config.temperature}));
-
-        if (this.config.defrost && this.config.defrost.enabled)
-            this.addAccessory(new DefrostAccessory({vehicle:this, config:this.config.defrost}));
-
-        if (this.config.ping && this.config.ping.enabled)
-            this.addAccessory(new PingAccessory({vehicle:this, config:this.config.ping}));
-        
-        if (this.config.thermostat && this.config.thermostat.enabled)
-            this.addAccessory(new ThermostatAccessory({vehicle:this, config:this.config.thermostat}));
+        this.addAccessory(new DoorLockAccessory({vehicle:this, config:this.config.locks}));
+        this.addAccessory(new ChargingAccessory({vehicle:this, config:this.config.charging}));
+        this.addAccessory(new AirConditioningAccessory({vehicle:this, config:this.config.hvac}));
+        this.addAccessory(new TemperatureAccessory({vehicle:this, config:this.config.temperature}));
+        //this.addAccessory(new DefrostAccessory({vehicle:this, config:this.config.defrost}));
+        this.addAccessory(new PingAccessory({vehicle:this, config:this.config.ping}));
+        this.addAccessory(new ThermostatAccessory({vehicle:this, config:this.config.thermostat}));
         
         var configLoginOptions = {username:config.username, password:config.password, clientID:config.clientID, clientSecret:config.clientSecret};
         var processLoginOptions = {username:process.env.TESLA_USER, password:process.env.TESLA_PASSWORD, clientID:process.env.TESLA_CLIENT_ID, clientSecret:process.env.TESLA_CLIENT_SECRET};

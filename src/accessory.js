@@ -87,7 +87,7 @@ class VehicleAccessory extends Accessory {
 
         super({name:config.name});
 
-        this.config = config;
+        this.config = config || {};
         this.vehicle = vehicle;
         this.log = vehicle.log;
         this.debug = vehicle.debug;

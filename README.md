@@ -35,37 +35,14 @@ Configure your **~/.homebridge/config.json** with the following platform.
         "name": "Tesla",
         "debug": false,
         "vehicles": [
-            {         
-                "name": "Model 3",       
-                "vin": "5YJ3E7EB9KF240654",
+        {         
+            "name": "Model 3",       
+            "vin": "5YJ3E7EB9KF240654",
 
-                "username": "Your username at tesla.com",
-                "password": "Your password at tesla.com",
-
-                "charging": {
-                    "name": "Laddning",
-                    "enabled": true
-                },
-                "hvac": {
-                    "name": "Fläkten",
-                    "enabled": true
-                },
-                "locks": {
-                    "name": "Dörrar",
-                    "enabled": true
-                },
-                "temperature": {
-                    "name": "Temperatur",
-                    "enabled": true
-                },
-                "defrost": {
-                    "name": "Frostfri",
-                    "enabled": true,
-                    "temperatureRange": [0, 5]
-                }
-
-            }
-        ]
+            "username": "Your username at tesla.com",
+            "password": "Your password at tesla.com",
+        }
+    ]
     }]
 }
 
