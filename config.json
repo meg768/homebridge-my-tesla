@@ -32,7 +32,7 @@
                     "hvac": {
                         "name": "Fläkten"
                     },
-                    "locks": {
+                    "doors": {
                         "name": "Dörren"
                     },
                     "temperature": {
