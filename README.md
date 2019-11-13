@@ -71,11 +71,8 @@ feature has its own configuration.
 ```json
 
     "platforms": [{
-        ...
         "vehicles": [
             {
-                ...         
-
                 "features": {
                     "ping": {
                         "name": "Ping",
