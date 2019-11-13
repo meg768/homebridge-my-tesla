@@ -23,7 +23,8 @@
 
                 "features": {
                     "ping": {
-                        "name": "Ping"
+                        "name": "Ping",
+                        "interval": 5
                     },
                     "charging": {
                         "name": "Laddning"
