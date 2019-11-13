@@ -123,6 +123,8 @@ module.exports = class TeslaAPI extends Events {
                 this.api = api;
                 this.vehicle = vehicle;
 
+                this.emit('login', this.vehicle);
+
                 resolve(this.vehicle);
 
             })

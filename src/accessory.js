@@ -36,9 +36,9 @@ class Accessory extends Events {
 
         var service = new Service.AccessoryInformation();
         service.setCharacteristic(Characteristic.Name, name);
-        service.setCharacteristic(Characteristic.Manufacturer, "Default-Manufacturer");
-        service.setCharacteristic(Characteristic.Model, "Default-Model");
-        service.setCharacteristic(Characteristic.SerialNumber, "Default-SerialNumber");
+        service.setCharacteristic(Characteristic.Manufacturer, "meg768");
+        service.setCharacteristic(Characteristic.Model, "S3XY");
+        service.setCharacteristic(Characteristic.SerialNumber, "123-456-789");
         service.setCharacteristic(Characteristic.FirmwareRevision, "1.0");
         this.addService(service); 
         
@@ -86,6 +86,12 @@ class VehicleAccessory extends Accessory {
             throw new Error('A configuration name must be specified');
 
         super({name:config.name});
+
+        this.vehicle.on('login', (response) => {
+            var service = this.getService(Service.AccessoryInformation);
+            service.setCharacteristic(Characteristic.Model, response.display_name);
+            service.setCharacteristic(Characteristic.SerialNumber, response.vin);
+        });
 
         this.config = config;
         this.vehicle = vehicle;
