@@ -97,12 +97,18 @@ class VehicleAccessory extends Accessory {
             this.debug(`Event "login" recieved for accessory ${this.name}.`);
             this.debug(`${JSON.stringify(response, null, "  ")}`);
             var service = this.getService(Service.AccessoryInformation);
+
+            this.debug(`Setting Model to ${response.display_name}.`);
             service.getCharacteristic(Characteristic.Model).updateValue(response.display_name);
+
+            this.debug(`Setting SerialNumber to ${response.vin}.`);
             service.getCharacteristic(Characteristic.SerialNumber).updateValue(response.vin);
         });
 
 
     }
+
+
 
     pause(ms) {
         return new Promise((resolve, reject) => {
