@@ -87,17 +87,19 @@ class VehicleAccessory extends Accessory {
 
         super({name:config.name});
 
+        this.config = config;
+        this.vehicle = vehicle;
+        this.log = vehicle.log;
+        this.debug = vehicle.debug;
+        this.platform = vehicle.platform;
+
         this.vehicle.on('login', (response) => {
             var service = this.getService(Service.AccessoryInformation);
             service.setCharacteristic(Characteristic.Model, response.display_name);
             service.setCharacteristic(Characteristic.SerialNumber, response.vin);
         });
 
-        this.config = config;
-        this.vehicle = vehicle;
-        this.log = vehicle.log;
-        this.debug = vehicle.debug;
-        this.platform = vehicle.platform;
+
     }
 
     pause(ms) {
