@@ -22,7 +22,7 @@ module.exports = class extends Accessory {
 
         this.setttingsTimer = new Timer();
         this.timer = new Timer();
-        this.timerInterval = 2 * 60 * 1000;
+        this.timerInterval = 1 * 60 * 1000;
 
         this.maxTemperature = 30
         this.minTemperature = 0;
