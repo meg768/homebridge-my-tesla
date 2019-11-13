@@ -1,13 +1,37 @@
 var TeslaAPI = require('./tesla-api.js');
+var merge = require('yow/merge');
+
 
 module.exports = class Vehicle extends TeslaAPI  {
 
     constructor(platform, config) {
 
+        var defaultConfig = {
+            ping: {
+                name: 'Ping'
+            },
+            locks: {
+                name: 'Door'
+            },
+            charging: {
+                name: 'Charging'
+            },
+            hvac: {
+                name: 'Air Conditioner'
+            },
+            temperature: {
+                name: 'Temperature'
+            },
+            thermostat: {
+                name: 'Thermostat'
+            }
+        };
+        
+
         super({log:platform.log, debug:platform.debug, vin:config.vin});
 
         this.pushover = platform.pushover;
-        this.config = config || {};
+        this.config = merge({}, defaultConfig, config);
         this.name = config.name;
         this.accessories = [];
         this.uuid = platform.generateUUID(config.vin);
@@ -25,7 +49,6 @@ module.exports = class Vehicle extends TeslaAPI  {
         this.addAccessory(new ChargingAccessory({vehicle:this, config:this.config.charging}));
         this.addAccessory(new AirConditioningAccessory({vehicle:this, config:this.config.hvac}));
         this.addAccessory(new TemperatureAccessory({vehicle:this, config:this.config.temperature}));
-        //this.addAccessory(new DefrostAccessory({vehicle:this, config:this.config.defrost}));
         this.addAccessory(new PingAccessory({vehicle:this, config:this.config.ping}));
         this.addAccessory(new ThermostatAccessory({vehicle:this, config:this.config.thermostat}));
         
