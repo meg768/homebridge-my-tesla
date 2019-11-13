@@ -4,6 +4,7 @@
 
 Homebridge plugin for Tesla owners. This plugin assumes you are familiar with Homebridge. 
 
+
 ## Installation
 
 First, install Homebridge. See https://www.npmjs.com/package/homebridge
