@@ -21,6 +21,7 @@ module.exports = class extends Accessory {
     constructor(options) {
 
         var defaultConfig = {
+            name: 'Thermostat',
             timerInterval: 2,
             requiredBatteryLevel: 40
         }
