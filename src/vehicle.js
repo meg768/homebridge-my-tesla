@@ -45,7 +45,6 @@ module.exports = class Vehicle extends TeslaAPI  {
             return this.getVehicleData();
         })
         .then((vehicleData) => {
-            this.debug(`${JSON.stringify(vehicleData.json)}`);
         })
         .catch((error) => {
             this.log(error);
