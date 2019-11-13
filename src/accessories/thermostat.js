@@ -24,7 +24,7 @@ module.exports = class extends Accessory {
         this.timer = new Timer();
         this.timerInterval = 2 * 60 * 1000;
 
-        this.maxTemperature = 30
+        this.maxTemperature = 28;
         this.minTemperature = 0;
 
         this.currentTemperature = 20;
@@ -57,12 +57,13 @@ module.exports = class extends Accessory {
 
             this.outsideTemperature = data.getOutsideTemperature();
             this.currentTemperature = data.getInsideTemperature();
-            service.getCharacteristic(Characteristic.CurrentTemperature).updateValue(this.currentTemperature);
-            this.debug(`Updated temperature for thermostat to ${this.currentTemperature} °C.`);  
-
             this.currentHeatingCoolingState = data.isAirConditionerOn();
+
+            service.getCharacteristic(Characteristic.CurrentTemperature).updateValue(this.currentTemperature);
+            this.debug(`Updated temperature for thermostat to ${this.currentTemperature} °C.`); 
+
             service.getCharacteristic(Characteristic.CurrentHeatingCoolingState).updateValue(this.currentHeatingCoolingState);
-            this.debug(`Updated air conditioner state for thermostat to "${this.currentHeatingCoolingState}".`);  
+            this.debug(`Updated air conditioner state for thermostat to "${this.currentHeatingCoolingState ? 'ON' : 'OFF'}".`);  
 
         });
 
@@ -277,7 +278,7 @@ module.exports = class extends Accessory {
                 }
             }
             else {
-                this.debug(`Current temperature is ${insideTemperature} and inside the limits of (${this.heatingThresholdTemperature} - ${this.coolingThresholdTemperature}).`);
+                this.debug(`Current temperature is ${insideTemperature} °C and inside the limits of [${this.heatingThresholdTemperature} - ${this.coolingThresholdTemperature}] °C.`);
             }
 
             return ({vehicleData:vehicleData, action:action});
