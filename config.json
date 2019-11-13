@@ -23,7 +23,6 @@
 
                 "ping": {
                     "name": "Ping",
-                    "interval": 5,
                     "enabled": true
                 },
                 "charging": {

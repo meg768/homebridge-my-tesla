@@ -1,6 +1,14 @@
 var TeslaAPI = require('./tesla-api.js');
 var merge = require('yow/merge');
 
+var DoorLockAccessory = require('./accessories/door-lock.js');
+var ChargingAccessory = require('./accessories/charging.js');
+var AirConditioningAccessory = require('./accessories/hvac.js');
+var TemperatureAccessory = require('./accessories/temperature.js');
+var DefrostAccessory = require('./accessories/defrost.js');
+var PingAccessory = require('./accessories/ping.js');
+var ThermostatAccessory = require('./accessories/thermostat.js');
+
 
 module.exports = class Vehicle extends TeslaAPI  {
 
@@ -10,7 +18,7 @@ module.exports = class Vehicle extends TeslaAPI  {
             ping: {
                 name: 'Ping'
             },
-            locks: {
+            doors: {
                 name: 'Door'
             },
             charging: {
@@ -37,20 +45,12 @@ module.exports = class Vehicle extends TeslaAPI  {
         this.uuid = platform.generateUUID(config.vin);
         this.platform = platform;
 
-        var DoorLockAccessory = require('./accessories/door-lock.js');
-        var ChargingAccessory = require('./accessories/charging.js');
-        var AirConditioningAccessory = require('./accessories/hvac.js');
-        var TemperatureAccessory = require('./accessories/temperature.js');
-        var DefrostAccessory = require('./accessories/defrost.js');
-        var PingAccessory = require('./accessories/ping.js');
-        var ThermostatAccessory = require('./accessories/thermostat.js');
-
-        this.addAccessory(new DoorLockAccessory({vehicle:this, config:this.config.locks}));
-        this.addAccessory(new ChargingAccessory({vehicle:this, config:this.config.charging}));
-        this.addAccessory(new AirConditioningAccessory({vehicle:this, config:this.config.hvac}));
-        this.addAccessory(new TemperatureAccessory({vehicle:this, config:this.config.temperature}));
-        this.addAccessory(new PingAccessory({vehicle:this, config:this.config.ping}));
-        this.addAccessory(new ThermostatAccessory({vehicle:this, config:this.config.thermostat}));
+        this.addFeature(DoorLockAccessory, 'doors');
+        this.addFeature(ChargingAccessory, 'charging');
+        this.addFeature(AirConditioningAccessory, 'hvac');
+        this.addFeature(PingAccessory, 'ping');
+        this.addFeature(TemperatureAccessory, 'temperature');
+        this.addFeature(ThermostatAccessory, 'thermostat');
         
         var configLoginOptions = {username:config.username, password:config.password, clientID:config.clientID, clientSecret:config.clientSecret};
         var processLoginOptions = {username:process.env.TESLA_USER, password:process.env.TESLA_PASSWORD, clientID:process.env.TESLA_CLIENT_ID, clientSecret:process.env.TESLA_CLIENT_SECRET};
@@ -74,6 +74,18 @@ module.exports = class Vehicle extends TeslaAPI  {
 
 
     }
+
+    addFeature(fn, name) {
+        var config = this.config[name];
+
+        if (config != undefined) {
+            if (config.enabled == undefined || config.enabled) {
+                this.addAccessory(new fn({vehicle:this, config:config}));
+            }
+        }
+
+    }
+    
 
     addAccessory(accessory) {
         this.accessories.push(accessory);
