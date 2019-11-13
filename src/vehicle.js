@@ -78,7 +78,7 @@ module.exports = class Vehicle extends TeslaAPI  {
     }
 
     addFeature(fn, name) {
-        var feature = this.config.feature[name];
+        var feature = this.config.features[name];
 
         if (feature != undefined) {
             if (feature.enabled == undefined || feature.enabled) {
