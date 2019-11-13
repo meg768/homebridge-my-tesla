@@ -23,32 +23,22 @@
 
                 "features": {
                     "ping": {
-                        "name": "Ping",
-                        "enabled": true
+                        "name": "Ping"
                     },
                     "charging": {
-                        "name": "Laddning",
-                        "enabled": true
+                        "name": "Laddning"
                     },
                     "hvac": {
-                        "name": "Fläkten",
-                        "enabled": true
+                        "name": "Fläkten"
                     },
                     "locks": {
-                        "name": "Dörren",
-                        "enabled": true
+                        "name": "Dörren"
                     },
                     "temperature": {
-                        "name": "Temperatur",
-                        "enabled": true
-                    },
-                    "defrost": {
-                        "name": "Frostfri",
-                        "enabled": true
+                        "name": "Temperatur"
                     },
                     "thermostat": {
-                        "name": "Termostat",
-                        "enabled": true
+                        "name": "Termostat"
                     }
                 }
             }
