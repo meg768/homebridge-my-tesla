@@ -3,8 +3,6 @@ var Service  = require('../homebridge.js').Service;
 var Characteristic  = require('../homebridge.js').Characteristic;
 var Accessory = require('../accessory.js');
 var Timer = require('yow/timer');
-var isArray = require('yow/isArray');
-var isNumber = require('yow/isNumber');
 
 module.exports = class extends Accessory {
 
@@ -13,29 +11,37 @@ module.exports = class extends Accessory {
 
         var defaultConfig = {
             requiredBatteryLevel   : 40,
-            responseTimeout        : 1,
-            responseCheckFrequency : 1000,
+            pingInterval           : 5,
         };
 
         var config = {...defaultConfig, ...this.config};
 
         this.isActive               = false;
         this.requiredBatteryLevel   = config.requiredBatteryLevel;
-        this.responseTimeout        = config.responseTimeout * 60000;
         this.timer                  = new Timer();
-        this.responseCheckFrequency = config.responseCheckFrequency;
-        this.lastPing               = null;
-        this.pingInterval           = 5 * 60000;
+        this.pingInterval           = config.pingInterval * 60000;
 
         this.enableSwitch();
 
-        this.vehicle.on('vehicleData', (vehicleData) => {    
-            this.lastPing = new Date();
+        this.vehicle.on('vehicleData', (vehicleData) => {
+            // Update switch state
             this.updateSwitch(vehicleData);
         });
 
-    }
+        // Listen to responses from Tesla API
+        this.vehicle.on('response', () => {
 
+            // Whenever we get a response, reset the timer
+            if (this.isActive) {
+                this.debug('Response from Tesla API, resetting ping timer.');
+                this.timer.setTimer(this.pingInterval, this.ping.bind(this));
+            }
+            else
+                this.timer.cancel();
+
+        });
+
+    }
 
     enableSwitch() {
         var service = new Service.Switch(this.name, __filename);
@@ -50,9 +56,7 @@ module.exports = class extends Accessory {
                 callback(null, this.isActive);
             })
             .catch((error) => {
-                this.log(error);
                 callback(null);
-
             })
         });
     }
@@ -66,70 +70,15 @@ module.exports = class extends Accessory {
             }
             else
                 return Promise.resolve();
-    
         })
         .then(() => {
-            this.debug(`Updated ping to state ${this.isActive ? 'ON' : 'OFF'}.`);        
             this.getService(Service.Switch).getCharacteristic(Characteristic.On).updateValue(this.isActive);
-
         })
     }
 
     ping() {
-        var now = new Date();
-
-        Promise.resolve().then(() => {
-
-            /*
-            if (this.lastPing == null) {
-                this.debug(`No ping specified. Calling for the first time.`);
-                return this.vehicle.getVehicleData();
-            }
-
-            if (this.lastPing && (now.valueOf() - this.lastPing.valueOf() > this.responseTimeout)) {
-                this.debug(`Ping is old. Refreshing vehicle data.`);
-                return this.vehicle.getVehicleData();
-            }
-            */
-           this.debug('Ping!');
-           return this.vehicle.getVehicleData();
-        
-        })
-        .catch((error) => {
-            this.log(error);
-        })
-        .then(() => {
-            this.timer.setTimer(this.pingInterval, this.ping.bind(this));
-        })
-
-
-
-    }
-
-
-    setTimerState(value) {
-        value = value ? true : false;
-
-        return new Promise((resolve, reject) => {
-            this.debug(`Setting ping timer state to "${value}".`);
-            this.timer.cancel();
-
-            Promise.resolve().then(() => {
-                return Promise.resolve();
-            })
-            .then(() => {
-                if (value) {
-                    this.ping();
-                }
-            })
-            .then(() => {
-                resolve();
-
-            })
-            .catch((error) => {
-                this.log(error);
-            })
-        });
+        this.debug('Ping!');
+        this.vehicle.getVehicleData();     
     }
 
     setActiveState(value) {
@@ -141,19 +90,14 @@ module.exports = class extends Accessory {
                 resolve();
             }
             else {
-                this.debug(`Setting ping state to "${value}".`);
+                this.isActive = value;
 
-                Promise.resolve().then(() => {
-                    return this.setTimerState(value);
-                })
-                .then(() => {
-                    this.isActive = value;
-                    resolve();
-                })
-                .catch((error) => {
-                    reject(error);
-                });
-    
+                this.debug(`Changing ping state to "${this.isActive}".`);
+
+                if (this.isActive)
+                    this.ping();
+                
+                resolve();    
             }
     
         })

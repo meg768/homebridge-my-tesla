@@ -21,32 +21,27 @@
                 "username": "Replace with your username at tesla.com",
                 "password": "Replace with your password at tesla.com",
 
-                "ping": {
-                    "name": "Ping",
-                    "interval": 5,
-                    "enabled": true
-                },
-                "charging": {
-                    "name": "Laddning",
-                    "enabled": true
-                },
-                "hvac": {
-                    "name": "Fläkten",
-                    "enabled": true
-                },
-                "locks": {
-                    "name": "Dörren",
-                    "enabled": true
-                },
-                "temperature": {
-                    "name": "Temperatur",
-                    "enabled": true
-                },
-                "defrost": {
-                    "name": "Frostfri",
-                    "enabled": true
+                "features": {
+                    "ping": {
+                        "name": "Ping",
+                        "interval": 5
+                    },
+                    "charging": {
+                        "name": "Laddning"
+                    },
+                    "hvac": {
+                        "name": "Fläkten"
+                    },
+                    "doors": {
+                        "name": "Dörren"
+                    },
+                    "temperature": {
+                        "name": "Temperatur"
+                    },
+                    "thermostat": {
+                        "name": "Termostat"
+                    }
                 }
-
             }
         ]
     }]

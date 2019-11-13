@@ -4,6 +4,7 @@ module.exports = class VehicleData {
 
     constructor(response) {
         this.response = response;
+        this.json = response;
     }
 
     isVehicleLocked() {

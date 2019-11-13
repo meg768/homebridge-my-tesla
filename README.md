@@ -4,6 +4,7 @@
 
 Homebridge plugin for Tesla owners. This plugin assumes you are familiar with Homebridge. 
 
+
 ## Installation
 
 First, install Homebridge. See https://www.npmjs.com/package/homebridge
@@ -35,37 +36,14 @@ Configure your **~/.homebridge/config.json** with the following platform.
         "name": "Tesla",
         "debug": false,
         "vehicles": [
-            {         
-                "name": "Model 3",       
-                "vin": "5YJ3E7EB9KF240654",
+        {         
+            "name": "Model 3",       
+            "vin": "5YJ3E7EB9KF240655",
 
-                "username": "Your username at tesla.com",
-                "password": "Your password at tesla.com",
-
-                "charging": {
-                    "name": "Laddning",
-                    "enabled": true
-                },
-                "hvac": {
-                    "name": "Fläkten",
-                    "enabled": true
-                },
-                "locks": {
-                    "name": "Dörrar",
-                    "enabled": true
-                },
-                "temperature": {
-                    "name": "Temperatur",
-                    "enabled": true
-                },
-                "defrost": {
-                    "name": "Frostfri",
-                    "enabled": true,
-                    "temperatureRange": [0, 5]
-                }
-
-            }
-        ]
+            "username": "Your username at tesla.com",
+            "password": "Your password at tesla.com",
+        }
+    ]
     }]
 }
 
@@ -82,6 +60,48 @@ it only adds controls to open the doors, control the HVAC and to display current
 ## Siri
 
 If you name things correctly you might get Siri to work by saying "Lock car", "Unlock car", "Turn on fan" or "Turn off fan"...
+
+## Localise
+
+By default, all the features (or buttons) available are added to the Home app automatically. 
+Each feature has its own name and you may control each feature seperately since each 
+feature has its own configuration.
+
+
+```json
+
+    "platforms": [{
+        ...
+        "vehicles": [
+            {
+                ...         
+
+                "features": {
+                    "ping": {
+                        "name": "Ping",
+                        "interval": 5,
+                        "enabled": false
+                    },
+                    "charging": {
+                        "name": "Laddning"
+                    },
+                    "hvac": {
+                        "name": "Fläkten"
+                    },
+                    "doors": {
+                        "name": "Dörren"
+                    },
+                    "temperature": {
+                        "name": "Temperatur"
+                    },
+                    "thermostat": {
+                        "name": "Termostat"
+                    }
+                }
+            }
+        ]
+    }]
+```
 
 ## Usage
 
