@@ -16,8 +16,8 @@ module.exports = class extends Accessory {
         };
 
         var {config, ...options} = options;
-        
-        super({...options, config:{...defaultConfig, ...config}});
+        options = {...options, config:{...defaultConfig, ...config}};
+        super(options);
 
 
         this.isActive               = false;

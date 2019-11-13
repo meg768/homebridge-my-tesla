@@ -26,8 +26,8 @@ module.exports = class extends Accessory {
         }
 
         var {config, ...options} = options;
-
-        super({...options, config:merge({}, defaultConfig, config)});
+        options = {...options, config:{...defaultConfig, ...config}};
+        super(options);
 
         this.debug(`Creating Thermostat with options ${JSON.stringify(this.config)}`);
 
