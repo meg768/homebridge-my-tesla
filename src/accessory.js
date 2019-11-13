@@ -33,7 +33,7 @@ class Accessory extends Events {
         console.log(`Created new Accessory with name ${name}, uuid ${uuid} and category ${category}`);
 
         this.services = [];
-/*
+
         var service = new Service.AccessoryInformation();
         service.setCharacteristic(Characteristic.Name, name);
         service.setCharacteristic(Characteristic.Manufacturer, "meg768");
@@ -41,7 +41,7 @@ class Accessory extends Events {
         service.setCharacteristic(Characteristic.SerialNumber, "123-456-789");
         service.setCharacteristic(Characteristic.FirmwareRevision, "1.0");
         this.addService(service); 
-  */      
+
         // Seems like we have to give it a name...
         this.name = name;
         this.displayName = name;
@@ -94,32 +94,9 @@ class VehicleAccessory extends Accessory {
         this.platform = vehicle.platform;
 
         this.vehicle.on('login', (response) => {
-            this.debug(`Event "login" recieved for accessory ${this.name}.`);
-            this.debug(`${JSON.stringify(response, null, "  ")}`);
-            /*
-            var service = this.getService(Service.AccessoryInformation);
-
-            this.debug(`Setting Model to ${response.display_name}.`);
-            service.getCharacteristic(Characteristic.Model).setValue(response.display_name);
-
-            this.debug(`Setting SerialNumber to ${response.vin}.`);
-            service.getCharacteristic(Characteristic.SerialNumber).setValue(response.vin);
-            */
-            var service = new Service.AccessoryInformation();
-            service.setCharacteristic(Characteristic.Name, this.name);
-            service.setCharacteristic(Characteristic.Manufacturer, "meg768");
-            service.setCharacteristic(Characteristic.Model, response.display_name);
-            service.setCharacteristic(Characteristic.SerialNumber, response.vin);
-            service.setCharacteristic(Characteristic.FirmwareRevision, "1.0");
-            this.addService(service); 
-    
-
         });
 
-
     }
-
-
 
     pause(ms) {
         return new Promise((resolve, reject) => {
