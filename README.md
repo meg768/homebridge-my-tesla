@@ -60,6 +60,47 @@ it only adds controls to open the doors, control the HVAC and to display current
 
 If you name things correctly you might get Siri to work by saying "Lock car", "Unlock car", "Turn on fan" or "Turn off fan"...
 
+## Localise
+
+By default, all the features (or buttons) available are added to the Home app automatically. 
+Each feature has its own name and you may control each feature seperately since each 
+feature has its own configuration.
+
+```json
+
+    "platforms": [{
+        ...
+        "vehicles": [
+            {
+                ...         
+
+                "features": {
+                    "ping": {
+                        "name": "Ping",
+                        "interval": 5,
+                        "enabled": false
+                    },
+                    "charging": {
+                        "name": "Laddning"
+                    },
+                    "hvac": {
+                        "name": "Fläkten"
+                    },
+                    "doors": {
+                        "name": "Dörren"
+                    },
+                    "temperature": {
+                        "name": "Temperatur"
+                    },
+                    "thermostat": {
+                        "name": "Termostat"
+                    }
+                }
+            }
+        ]
+    }]
+```
+
 ## Usage
 
 As for now, it is a good idea to create a new home in Apple's Home app. Name
