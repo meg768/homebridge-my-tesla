@@ -11,6 +11,8 @@ module.exports = class extends Accessory {
 
         var {config, ...options} = options;
         options = {...options, config:{...defaultConfig, ...config}};
+
+        this.debug('******************', options);
         super(options);
 
         this.currentState = Characteristic.LockCurrentState.UNKNOWN;

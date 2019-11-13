@@ -83,7 +83,7 @@ class VehicleAccessory extends Accessory {
             throw new Error('A configuration must be specified');
 
         if (config.name == undefined)
-            throw new Error('A configuration name must be specified');
+            throw new Error('An accessory name must be specified');
 
         super({name:config.name});
 
