@@ -291,8 +291,7 @@ module.exports = class extends Accessory {
                 case ACTION_STOP_HVAC: {
 
                     this.setAutoConditioningState(action == ACTION_START_HVAC ? true : false).then(() => {
-                        // Call getVehicleData() so other stuff gets updated
-                        return this.vehicle.getVehicleData();
+                        return Promise.resolve();
                     })
                     .catch((error) => {
                         this.log(error);
@@ -327,6 +326,9 @@ module.exports = class extends Accessory {
             .then(() => {
                 // Seems we have to pause a bit so the air condition state is updated in getVehicleData()...
                 return this.pause(1000);
+            })
+            .then(() => {
+                return this.vehicle.getVehicleData();
             })
             .then(() => {
                 resolve();
