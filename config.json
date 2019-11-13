@@ -24,7 +24,8 @@
                 "features": {
                     "ping": {
                         "name": "Ping",
-                        "interval": 5
+                        "requiredBatteryLevel": 40,
+                        "pingInterval": 5
                     },
                     "charging": {
                         "name": "Laddning"
@@ -39,7 +40,8 @@
                         "name": "Temperatur"
                     },
                     "thermostat": {
-                        "name": "Termostat"
+                        "name": "Termostat",
+                        "requiredBatteryLevel": 40
                     }
                 }
             }

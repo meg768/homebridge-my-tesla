@@ -3,6 +3,7 @@ var Service  = require('../homebridge.js').Service;
 var Characteristic  = require('../homebridge.js').Characteristic;
 var Accessory = require('../accessory.js');
 var Timer = require('yow/timer');
+var merge = require('yow/merge');
 
 // Reminders...
 // Characteristic.TemperatureDisplayUnits.CELSIUS = 0;
@@ -18,11 +19,21 @@ var Timer = require('yow/timer');
 module.exports = class extends Accessory {
 
     constructor(options) {
-        super(options);
+
+        var defaultConfig = {
+            pollInterval: 2,
+            requiredBatteryLevel: 40
+        }
+
+        var {config, ...options} = options;
+
+        super({config:merge({}, defaultConfig, config), ...options});
+
+        this.debug(`Creating Thermostat with options ${JSON.stringify(this.config)}`);
 
         this.setttingsTimer = new Timer();
         this.timer = new Timer();
-        this.timerInterval = 2 * 60 * 1000;
+        this.timerInterval = this.config.pollInterval * 60 * 1000;
 
         this.maxTemperature = 28;
         this.minTemperature = 0;
@@ -33,6 +44,7 @@ module.exports = class extends Accessory {
 
         this.heatingThresholdTemperature = 18;
         this.coolingThresholdTemperature = 21;
+        this.requiredBatteryLevel = this.config.requiredBatteryLevel;
 
         this.temperatureDisplayUnits = Characteristic.TemperatureDisplayUnits.CELSIUS;
 
@@ -262,7 +274,7 @@ module.exports = class extends Accessory {
             else if (insideTemperature < this.heatingThresholdTemperature) {
                 if (!isClimateOn) {
 
-                    if (batteryLevel < this.config.requiredBatteryLevel) {
+                    if (batteryLevel < this.requiredBatteryLevel) {
                         this.log(`Battery level is ${batteryLevel}%. Will not activate air conditioning since it is below ${this.requiredBatteryLevel}%.`);
                     }
                     else {
