@@ -109,6 +109,10 @@ module.exports = class extends Accessory {
                 this.debug(`Setting thermostat to state "${getTargetHeatingCoolingStateName(value)}".`);
                 this.targetHeatingCoolingState = value;
                 this.updateSettings();
+
+                if (value == Characteristic.TargetHeatingCoolingState.OFF) {
+                    this.setAutoConditioningState(false);
+                }
             }
             callback(null);
         });
