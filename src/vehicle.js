@@ -5,6 +5,7 @@ var DoorLockAccessory = require('./accessories/door-lock.js');
 var ChargingAccessory = require('./accessories/charging.js');
 var AirConditioningAccessory = require('./accessories/hvac.js');
 var TemperatureAccessory = require('./accessories/temperature.js');
+var OutsideTemperatureAccessory = require('./accessories/outside-temperature.js');
 var DefrostAccessory = require('./accessories/defrost.js');
 var PingAccessory = require('./accessories/ping.js');
 var ThermostatAccessory = require('./accessories/thermostat.js');
@@ -30,6 +31,7 @@ module.exports = class Vehicle extends TeslaAPI  {
         this.addFeature(PingAccessory, 'ping');
         this.addFeature(TemperatureAccessory, 'temperature');
         this.addFeature(ThermostatAccessory, 'thermostat');
+        this.addFeature(OutsideTemperatureAccessory, 'outsideTemperature');
         
         var configLoginOptions = {username:config.username, password:config.password, clientID:config.clientID, clientSecret:config.clientSecret};
         var processLoginOptions = {username:process.env.TESLA_USER, password:process.env.TESLA_PASSWORD, clientID:process.env.TESLA_CLIENT_ID, clientSecret:process.env.TESLA_CLIENT_SECRET};
