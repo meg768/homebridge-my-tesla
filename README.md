@@ -66,6 +66,7 @@ By default, all the features (or buttons) available are added to the Home app au
 Each feature has its own name and you may control each feature seperately since each 
 feature has its own configuration.
 
+
 ```json
 
     "platforms": [{
