@@ -20,6 +20,7 @@ module.exports = class extends Accessory {
     constructor(options) {
         super(options);
 
+        this.setttingsTimer = new Timer();
         this.timer = new Timer();
         this.timerInterval = 5 * 60 * 1000;
 
@@ -107,7 +108,7 @@ module.exports = class extends Accessory {
             if (this.targetHeatingCoolingState != value) {
                 this.debug(`Setting thermostat to state "${getTargetHeatingCoolingStateName(value)}".`);
                 this.targetHeatingCoolingState = value;
-                this.updateCurrentHeatingCoolingState();
+                this.updateSettings();
             }
             callback(null);
         });
@@ -147,7 +148,7 @@ module.exports = class extends Accessory {
 
         characteristic.on('set', (value, callback) => {
             this.targetTemperature = value;
-            this.updateCurrentHeatingCoolingState();
+            this.updateSettings();
             callback(null);
         });
 
@@ -163,7 +164,7 @@ module.exports = class extends Accessory {
         });
         characteristic.on('set', (value, callback) => {
             this.temperatureDisplayUnits = value;
-            this.updateCurrentHeatingCoolingState();
+            this.updateSettings();
             callback(null);
         });
     }
@@ -177,7 +178,7 @@ module.exports = class extends Accessory {
         });
         characteristic.on('set', (value, callback) => {
             this.coolingThresholdTemperature = value;
-            this.updateCurrentHeatingCoolingState();
+            this.updateSettings();
 
             callback(null);
         });
@@ -193,7 +194,7 @@ module.exports = class extends Accessory {
         });
         characteristic.on('set', (value, callback) => {
             this.heatingThresholdTemperature = value;
-            this.updateCurrentHeatingCoolingState();
+            this.updateSettings();
 
             callback(null);
         });
@@ -201,15 +202,16 @@ module.exports = class extends Accessory {
     }
 
 
+    updateSettings() {
+        this.setttingsTimer.setTimer(1000, () => {
+            this.timer.cancel();
 
-
-    updateCurrentHeatingCoolingState() {
-
-        this.timer.cancel();
-
-        if (this.targetHeatingCoolingState != Characteristic.TargetHeatingCoolingState.OFF)
-            this.checkTemperature();
+            if (this.targetHeatingCoolingState != Characteristic.TargetHeatingCoolingState.OFF)
+                this.checkTemperature();
+    
+        });
     }
+
 
 
     checkTemperature() {
