@@ -84,6 +84,16 @@ module.exports = class extends Accessory {
         var service = this.getService(Service.Thermostat);
         var characteristic = service.getCharacteristic(Characteristic.TargetHeatingCoolingState);
 
+        var getTargetHeatingCoolingStateName = (value) => {
+            var state = {};
+            state[Characteristic.TargetHeatingCoolingState.OFF]  = 'OFF';
+            state[Characteristic.TargetHeatingCoolingState.AUTO] = 'AUTO';
+            state[Characteristic.TargetHeatingCoolingState.COOL] = 'COOL';
+            state[Characteristic.TargetHeatingCoolingState.HEAT] = 'HEAT';
+
+            return state[value] ? state[value] : 'UNKNOWN';
+        }
+
         // Allow only OFF or AUTO
         characteristic.setProps({
             validValues: [Characteristic.TargetHeatingCoolingState.OFF, Characteristic.TargetHeatingCoolingState.AUTO]
@@ -94,14 +104,8 @@ module.exports = class extends Accessory {
         });
 
         characteristic.on('set', (value, callback) => {
-            var states = {};
-            states[Characteristic.TargetHeatingCoolingState.OFF] = 'OFF';
-            states[Characteristic.TargetHeatingCoolingState.AUTO] = 'AUTO';
-            states[Characteristic.TargetHeatingCoolingState.COOL] = 'COOL';
-            states[Characteristic.TargetHeatingCoolingState.HEAT] = 'HEAT';
-
             if (this.targetHeatingCoolingState != value) {
-                this.debug(`Setting thermostat to state "${states[value]}".`);
+                this.debug(`Setting thermostat to state "${getTargetHeatingCoolingStateName(value)}".`);
                 this.targetHeatingCoolingState = value;
                 this.updateCurrentHeatingCoolingState();
             }
