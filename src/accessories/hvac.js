@@ -8,12 +8,11 @@ module.exports = class extends Accessory {
 
     constructor(options) {
         var defaultConfig = {
-            name: 'Air Conditioner'
+            name: 'Fan'
         };
 
         var {config, ...options} = options;
-        options = {...options, config:{...defaultConfig, ...config}};
-        super(options);
+        super({...options, config:{...defaultConfig, ...config}});
 
         this.isAirConditionerOn = undefined;
 

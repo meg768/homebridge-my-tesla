@@ -10,10 +10,7 @@ module.exports = class extends Accessory {
         };
 
         var {config, ...options} = options;
-        options = {...options, config:{...defaultConfig, ...config}};
-
-        console.log('******************', options);
-        super(options);
+        super({...options, config:{...defaultConfig, ...config}});
 
         this.currentState = Characteristic.LockCurrentState.UNKNOWN;
         this.targetState  = undefined;

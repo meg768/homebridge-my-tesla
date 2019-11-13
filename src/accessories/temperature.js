@@ -13,8 +13,7 @@ module.exports = class extends Accessory {
         };
 
         var {config, ...options} = options;
-        options = {...options, config:{...defaultConfig, ...config}};
-        super(options);
+        super({...options, config:{...defaultConfig, ...config}});
 
         this.currentTemperature = undefined;
 
