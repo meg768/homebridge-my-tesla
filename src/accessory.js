@@ -97,8 +97,8 @@ class VehicleAccessory extends Accessory {
             this.debug(`Event "login" recieved for accessory ${this.name}.`);
             this.debug(`${JSON.stringify(response, null, "  ")}`);
             var service = this.getService(Service.AccessoryInformation);
-            service.setCharacteristic(Characteristic.Model, response.display_name);
-            service.setCharacteristic(Characteristic.SerialNumber, response.vin);
+            service.setCharacteristic(Characteristic.Model).updateValue(response.display_name);
+            service.setCharacteristic(Characteristic.SerialNumber).updateValue(response.vin);
         });
 
 
