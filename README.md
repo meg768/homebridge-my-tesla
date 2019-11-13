@@ -38,7 +38,7 @@ Configure your **~/.homebridge/config.json** with the following platform.
         "vehicles": [
         {         
             "name": "Model 3",       
-            "vin": "5YJ3E7EB9KF240654",
+            "vin": "5YJ3E7EB9KF240655",
 
             "username": "Your username at tesla.com",
             "password": "Your password at tesla.com",
