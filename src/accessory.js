@@ -99,10 +99,10 @@ class VehicleAccessory extends Accessory {
             var service = this.getService(Service.AccessoryInformation);
 
             this.debug(`Setting Model to ${response.display_name}.`);
-            service.getCharacteristic(Characteristic.Model).updateValue(response.display_name);
+            service.getCharacteristic(Characteristic.Model).setValue(response.display_name);
 
             this.debug(`Setting SerialNumber to ${response.vin}.`);
-            service.getCharacteristic(Characteristic.SerialNumber).updateValue(response.vin);
+            service.getCharacteristic(Characteristic.SerialNumber).setValue(response.vin);
         });
 
 
