@@ -22,7 +22,7 @@ module.exports = class extends Accessory {
 
         this.setttingsTimer = new Timer();
         this.timer = new Timer();
-        this.timerInterval = 5 * 60 * 1000;
+        this.timerInterval = 3 * 60 * 1000;
 
         this.maxTemperature = 30
         this.minTemperature = 0;
@@ -194,7 +194,7 @@ module.exports = class extends Accessory {
     enableHeatingThresholdTemperature() {
         var service = this.getService(Service.Thermostat);
         var characteristic = service.getCharacteristic(Characteristic.HeatingThresholdTemperature);
-        
+
         characteristic.setProps({
             minValue: this.minTemperature,
             maxValue: this.maxTemperature,
