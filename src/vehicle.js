@@ -13,30 +13,7 @@ var ThermostatAccessory = require('./accessories/thermostat.js');
 module.exports = class Vehicle extends TeslaAPI  {
 
     constructor(platform, config) {
-/*
-        var defaultConfig = {
-            features: {
-                ping: {
-                    name: 'Ping'
-                },
-                doors: {
-                    name: 'Door'
-                },
-                charging: {
-                    name: 'Charging'
-                },
-                hvac: {
-                    name: 'Air Conditioner'
-                },
-                temperature: {
-                    name: 'Temperature'
-                },
-                thermostat: {
-                    name: 'Thermostat'
-                }    
-            }
-        };
-        */
+
 
         super({log:platform.log, debug:platform.debug, vin:config.vin});
 
@@ -68,7 +45,7 @@ module.exports = class Vehicle extends TeslaAPI  {
             return this.getVehicleData();
         })
         .then((vehicleData) => {
-            this.debug(`${JSON.stringify(vehicleData.json, null, "  ")}`);
+            this.debug(`${JSON.stringify(vehicleData.json)}`);
         })
         .catch((error) => {
             this.log(error);
