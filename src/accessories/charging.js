@@ -6,7 +6,12 @@ var Accessory = require('../accessory.js');
 module.exports = class extends Accessory {
 
     constructor(options) {
-        super(options);
+        var defaultConfig = {
+            name: 'Charging'
+        };
+
+        var {config, ...options} = options;
+        super({...options, config:{...defaultConfig, ...config}});        
 
         this.batteryLevel = undefined;
         this.isActive = false;

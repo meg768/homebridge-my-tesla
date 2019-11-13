@@ -13,7 +13,7 @@ var ThermostatAccessory = require('./accessories/thermostat.js');
 module.exports = class Vehicle extends TeslaAPI  {
 
     constructor(platform, config) {
-
+/*
         var defaultConfig = {
             features: {
                 ping: {
@@ -36,12 +36,12 @@ module.exports = class Vehicle extends TeslaAPI  {
                 }    
             }
         };
-        
+        */
 
         super({log:platform.log, debug:platform.debug, vin:config.vin});
 
         this.pushover = platform.pushover;
-        this.config = merge({}, defaultConfig, config);
+        this.config = config;
         this.name = config.name;
         this.accessories = [];
         this.uuid = platform.generateUUID(config.vin);
@@ -78,12 +78,16 @@ module.exports = class Vehicle extends TeslaAPI  {
     }
 
     addFeature(fn, name) {
-        var feature = this.config.features[name];
+        var feature = this.config.features ? this.config.features[name] : undefined;
 
         if (feature != undefined) {
             if (feature.enabled == undefined || feature.enabled) {
                 this.addAccessory(new fn({vehicle:this, config:feature}));
             }
+        }
+        else {
+            this.addAccessory(new fn({vehicle:this, config:{}}));
+
         }
 
     }

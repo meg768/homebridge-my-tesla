@@ -5,7 +5,12 @@ var Accessory = require('../accessory.js');
 module.exports = class extends Accessory {
 
     constructor(options) {
-        super(options);
+        var defaultConfig = {
+            name: 'Door'
+        };
+
+        var {config, ...options} = options;
+        super({...options, config:{...defaultConfig, ...config}});              
 
         this.currentState = Characteristic.LockCurrentState.UNKNOWN;
         this.targetState  = undefined;

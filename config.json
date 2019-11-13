@@ -25,13 +25,14 @@
                     "ping": {
                         "name": "Ping",
                         "requiredBatteryLevel": 40,
-                        "pollInterval": 5
+                        "timerInterval": 5
                     },
                     "charging": {
                         "name": "Laddning"
                     },
                     "hvac": {
-                        "name": "Fläkten"
+                        "name": "Fläkten",
+                        "requiredBatteryLevel": 20
                     },
                     "doors": {
                         "name": "Dörren"
@@ -41,7 +42,8 @@
                     },
                     "thermostat": {
                         "name": "Termostat",
-                        "requiredBatteryLevel": 40
+                        "requiredBatteryLevel": 40,
+                        "timerInterval": 2
                     }
                 }
             }

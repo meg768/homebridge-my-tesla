@@ -10,8 +10,9 @@ module.exports = class extends Accessory {
     constructor(options) {
 
         var defaultConfig = {
-            requiredBatteryLevel   : 40,
-            timerInterval          : 5
+            name: 'Ping',
+            requiredBatteryLevel : 40,
+            timerInterval : 5
         };
 
         var {config, ...options} = options;

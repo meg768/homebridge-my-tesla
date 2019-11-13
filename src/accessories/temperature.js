@@ -7,6 +7,14 @@ var Accessory = require('../accessory.js');
 module.exports = class extends Accessory {
 
     constructor(options) {
+
+        var defaultConfig = {
+            name: 'Temperature'
+        };
+
+        var {config, ...options} = options;
+        super({...options, config:{...defaultConfig, ...config}});
+
         super(options);
 
         this.currentTemperature = undefined;
