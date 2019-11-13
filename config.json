@@ -21,35 +21,36 @@
                 "username": "Replace with your username at tesla.com",
                 "password": "Replace with your password at tesla.com",
 
-                "ping": {
-                    "name": "Ping",
-                    "enabled": true
-                },
-                "charging": {
-                    "name": "Laddning",
-                    "enabled": true
-                },
-                "hvac": {
-                    "name": "Fläkten",
-                    "enabled": true
-                },
-                "locks": {
-                    "name": "Dörren",
-                    "enabled": true
-                },
-                "temperature": {
-                    "name": "Temperatur",
-                    "enabled": true
-                },
-                "defrost": {
-                    "name": "Frostfri",
-                    "enabled": true
-                },
-                "thermostat": {
-                    "name": "Termostat",
-                    "enabled": true
+                "features": {
+                    "ping": {
+                        "name": "Ping",
+                        "enabled": true
+                    },
+                    "charging": {
+                        "name": "Laddning",
+                        "enabled": true
+                    },
+                    "hvac": {
+                        "name": "Fläkten",
+                        "enabled": true
+                    },
+                    "locks": {
+                        "name": "Dörren",
+                        "enabled": true
+                    },
+                    "temperature": {
+                        "name": "Temperatur",
+                        "enabled": true
+                    },
+                    "defrost": {
+                        "name": "Frostfri",
+                        "enabled": true
+                    },
+                    "thermostat": {
+                        "name": "Termostat",
+                        "enabled": true
+                    }
                 }
-
             }
         ]
     }]

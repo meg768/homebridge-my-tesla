@@ -15,23 +15,25 @@ module.exports = class Vehicle extends TeslaAPI  {
     constructor(platform, config) {
 
         var defaultConfig = {
-            ping: {
-                name: 'Ping'
-            },
-            doors: {
-                name: 'Door'
-            },
-            charging: {
-                name: 'Charging'
-            },
-            hvac: {
-                name: 'Air Conditioner'
-            },
-            temperature: {
-                name: 'Temperature'
-            },
-            thermostat: {
-                name: 'Thermostat'
+            features: {
+                ping: {
+                    name: 'Ping'
+                },
+                doors: {
+                    name: 'Door'
+                },
+                charging: {
+                    name: 'Charging'
+                },
+                hvac: {
+                    name: 'Air Conditioner'
+                },
+                temperature: {
+                    name: 'Temperature'
+                },
+                thermostat: {
+                    name: 'Thermostat'
+                }    
             }
         };
         
@@ -76,11 +78,11 @@ module.exports = class Vehicle extends TeslaAPI  {
     }
 
     addFeature(fn, name) {
-        var config = this.config[name];
+        var feature = this.config.feature[name];
 
-        if (config != undefined) {
-            if (config.enabled == undefined || config.enabled) {
-                this.addAccessory(new fn({vehicle:this, config:config}));
+        if (feature != undefined) {
+            if (feature.enabled == undefined || feature.enabled) {
+                this.addAccessory(new fn({vehicle:this, config:feature}));
             }
         }
 
