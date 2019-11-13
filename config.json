@@ -25,7 +25,7 @@
                     "ping": {
                         "name": "Ping",
                         "requiredBatteryLevel": 40,
-                        "pingInterval": 5
+                        "pollInterval": 5
                     },
                     "charging": {
                         "name": "Laddning"

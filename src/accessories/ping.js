@@ -3,23 +3,26 @@ var Service  = require('../homebridge.js').Service;
 var Characteristic  = require('../homebridge.js').Characteristic;
 var Accessory = require('../accessory.js');
 var Timer = require('yow/timer');
+var merge = require('yow/merge');
 
 module.exports = class extends Accessory {
 
     constructor(options) {
-        super(options);
 
         var defaultConfig = {
             requiredBatteryLevel   : 40,
-            pingInterval           : 5,
+            timerInterval          : 5
         };
 
-        var config = {...defaultConfig, ...this.config};
+        var {config, ...options} = options;
+        
+        super({...options, config:{...defaultConfig, ...config}});
+
 
         this.isActive               = false;
         this.requiredBatteryLevel   = config.requiredBatteryLevel;
         this.timer                  = new Timer();
-        this.pingInterval           = config.pingInterval * 60000;
+        this.timerInterval          = this.config.timerInterval * 60000;
 
         this.enableSwitch();
 
@@ -34,7 +37,7 @@ module.exports = class extends Accessory {
             // Whenever we get a response, reset the timer
             if (this.isActive) {
                 this.debug('Response from Tesla API, resetting ping timer.');
-                this.timer.setTimer(this.pingInterval, this.ping.bind(this));
+                this.timer.setTimer(this.timerInterval, this.ping.bind(this));
             }
             else
                 this.timer.cancel();

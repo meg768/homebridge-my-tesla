@@ -21,19 +21,19 @@ module.exports = class extends Accessory {
     constructor(options) {
 
         var defaultConfig = {
-            pollInterval: 2,
+            timerInterval: 2,
             requiredBatteryLevel: 40
         }
 
         var {config, ...options} = options;
 
-        super({config:merge({}, defaultConfig, config), ...options});
+        super({...options, config:merge({}, defaultConfig, config)});
 
         this.debug(`Creating Thermostat with options ${JSON.stringify(this.config)}`);
 
         this.setttingsTimer = new Timer();
         this.timer = new Timer();
-        this.timerInterval = this.config.pollInterval * 60 * 1000;
+        this.timerInterval = this.config.timerInterval * 60 * 1000;
 
         this.maxTemperature = 28;
         this.minTemperature = 0;
