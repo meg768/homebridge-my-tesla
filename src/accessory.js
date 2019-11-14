@@ -94,7 +94,7 @@ class VehicleAccessory extends Accessory {
         this.debug = vehicle.debug;
         this.platform = vehicle.platform;
 
-        this.vehicle.once('vehicleData', (vehicleData) => {
+        this.vehicle.once('vehicleDdata', (vehicleData) => {
             /*
             this.log(`Accessory "${this.name}" logged in...`)
             var service = this.getService(Service.AccessoryInformation);
