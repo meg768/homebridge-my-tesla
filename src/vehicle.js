@@ -4,7 +4,7 @@ var merge = require('yow/merge');
 var DoorLockAccessory = require('./accessories/door-lock.js');
 var ChargingAccessory = require('./accessories/charging.js');
 var AirConditioningAccessory = require('./accessories/hvac.js');
-var TemperatureAccessory = require('./accessories/temperature.js');
+var InsideTemperatureAccessory = require('./accessories/inside-temperature.js');
 var OutsideTemperatureAccessory = require('./accessories/outside-temperature.js');
 var DefrostAccessory = require('./accessories/defrost.js');
 var PingAccessory = require('./accessories/ping.js');
@@ -29,7 +29,7 @@ module.exports = class Vehicle extends TeslaAPI  {
         this.addFeature(ChargingAccessory, 'charging');
         this.addFeature(AirConditioningAccessory, 'hvac');
         this.addFeature(PingAccessory, 'ping');
-        this.addFeature(TemperatureAccessory, 'temperature');
+        this.addFeature(TemperatureAccessory, 'insideTemperature');
         this.addFeature(ThermostatAccessory, 'thermostat');
         this.addFeature(OutsideTemperatureAccessory, 'outsideTemperature');
         

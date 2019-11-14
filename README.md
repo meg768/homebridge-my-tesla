@@ -91,12 +91,16 @@ feature has its own configuration. Default values are displayed below, you may c
                         "name": "Door",
                         "enabled": true
                     },
-                    "temperature": {
-                        "name": "Temperature",
+                    "insideTemperature": {
+                        "name": "Inside",
+                        "enabled": true
+                    },
+                    "outsideTemperature": {
+                        "name": "Outside",
                         "enabled": true
                     },
                     "thermostat": {
-                        "name": 'Thermostat',
+                        "name": "Thermostat",
                         "timerInterval": 5,
                         "requiredBatteryLevel": 40,
                         "enabled": true

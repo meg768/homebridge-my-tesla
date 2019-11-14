@@ -37,10 +37,13 @@
                     "doors": {
                         "name": "Dörren"
                     },
-                    "temperature": {
-                        "name": "Temperatur"
+                    "outsideTemperature": {
+                        "name": "Ute"
                     },
-                    "thermostat": {
+                    "insideTemperature": {
+                        "name": "Inne"
+                    },
+                   "thermostat": {
                         "name": "Termostat",
                         "requiredBatteryLevel": 40,
                         "timerInterval": 2
