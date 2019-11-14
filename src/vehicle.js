@@ -6,7 +6,6 @@ var ChargingAccessory = require('./accessories/charging.js');
 var AirConditioningAccessory = require('./accessories/hvac.js');
 var InsideTemperatureAccessory = require('./accessories/inside-temperature.js');
 var OutsideTemperatureAccessory = require('./accessories/outside-temperature.js');
-var DefrostAccessory = require('./accessories/defrost.js');
 var PingAccessory = require('./accessories/ping.js');
 var ThermostatAccessory = require('./accessories/thermostat.js');
 
@@ -29,7 +28,7 @@ module.exports = class Vehicle extends TeslaAPI  {
         this.addFeature(ChargingAccessory, 'charging');
         this.addFeature(AirConditioningAccessory, 'hvac');
         this.addFeature(PingAccessory, 'ping');
-        this.addFeature(TemperatureAccessory, 'insideTemperature');
+        this.addFeature(InsideTemperatureAccessory, 'insideTemperature');
         this.addFeature(ThermostatAccessory, 'thermostat');
         this.addFeature(OutsideTemperatureAccessory, 'outsideTemperature');
         
