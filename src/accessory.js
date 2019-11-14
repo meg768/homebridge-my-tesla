@@ -34,13 +34,6 @@ class Accessory extends Events {
 
         this.services = [];
 
-        var service = new Service.AccessoryInformation();
-        service.setCharacteristic(Characteristic.Name, name);
-        service.setCharacteristic(Characteristic.Manufacturer, "meg768");
-        service.setCharacteristic(Characteristic.Model, "S3XY");
-        service.setCharacteristic(Characteristic.SerialNumber, "123-456-789");
-        service.setCharacteristic(Characteristic.FirmwareRevision, "1.0");
-        this.addService(service); 
 
         // Seems like we have to give it a name...
         this.name = name;
@@ -94,6 +87,14 @@ class VehicleAccessory extends Accessory {
         this.platform = vehicle.platform;
 
         this.vehicle.on('login', (response) => {
+            var service = new Service.AccessoryInformation();
+            service.setCharacteristic(Characteristic.Name, name);
+            service.setCharacteristic(Characteristic.Manufacturer, "meg768");
+            service.setCharacteristic(Characteristic.Model, "S3XY");
+            service.setCharacteristic(Characteristic.SerialNumber, "123-456-789");
+            service.setCharacteristic(Characteristic.FirmwareRevision, "1.0");
+            this.addService(service); 
+                
         });
 
     }
