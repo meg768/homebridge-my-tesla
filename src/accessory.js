@@ -33,7 +33,10 @@ class Accessory extends Events {
         console.log(`Created new Accessory with name ${name}, uuid ${uuid} and category ${category}`);
 
         this.services = [];
-/*
+
+        this.addService(new Service.AccessoryInformation());
+
+        /*
         var service = new Service.AccessoryInformation();
         service.setCharacteristic(Characteristic.Name, name);
         service.setCharacteristic(Characteristic.Manufacturer, "meg768");
@@ -93,7 +96,13 @@ class VehicleAccessory extends Accessory {
         this.debug = vehicle.debug;
         this.platform = vehicle.platform;
 
+        this.vehicle.on('vehicleData', (vehicleData) => {
+
+        });
+
         this.vehicle.on('login', (response) => {
+            var service = this.getServices(Service.AccessoryInformation);
+            service.setCharacteristic(Characteristic.SerialNumber, `VIN ${response.vin}`);
         });
 
     }
