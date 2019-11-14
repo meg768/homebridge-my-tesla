@@ -33,7 +33,7 @@ class Accessory extends Events {
         console.log(`Created new Accessory with name ${name}, uuid ${uuid} and category ${category}`);
 
         this.services = [];
-
+x
         var service = new Service.AccessoryInformation();
         service.setCharacteristic(Characteristic.Name, this.name);
         service.setCharacteristic(Characteristic.Manufacturer, "XXCmeg768879876");
