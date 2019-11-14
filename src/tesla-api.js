@@ -82,6 +82,7 @@ module.exports = class TeslaAPI extends Events {
         };
 
         var api = new Request('https://owner-api.teslamotors.com', defaultOptions);
+        var vehicle = null;
         var token = null;
 
         return new Promise((resolve, reject) => {
