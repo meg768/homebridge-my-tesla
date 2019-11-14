@@ -96,6 +96,7 @@ class VehicleAccessory extends Accessory {
         this.platform = vehicle.platform;
 
         this.vehicle.on('login', (response) => {
+            this.log(`Logged in ${this.name}`)
             var service = this.getService(Service.AccessoryInformation);
             service.setCharacteristic(Characteristic.Name, this.name);
             service.setCharacteristic(Characteristic.Manufacturer, "meg768879876");
