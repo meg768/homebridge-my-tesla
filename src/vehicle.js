@@ -1,5 +1,7 @@
 var TeslaAPI = require('./tesla-api.js');
 var merge = require('yow/merge');
+var {Service, Characteristic} = require('./homebridge.js');
+
 
 var DoorLockAccessory = require('./accessories/door-lock.js');
 var ChargingAccessory = require('./accessories/charging.js');
@@ -46,6 +48,14 @@ module.exports = class Vehicle extends TeslaAPI  {
             return this.getVehicleData();
         })
         .then((vehicleData) => {
+            this.accessories.forEach((accessory) => {
+                var service = new Service.AccessoryInformation();
+                service.setCharacteristic(Characteristic.Name, accessory.name);
+                service.setCharacteristic(Characteristic.Manufacturer, "XXX");
+                service.setCharacteristic(Characteristic.Model, "YYY");
+                service.setCharacteristic(Characteristic.SerialNumber, "ZZZ");
+                accessory.addService(service);
+            })
         })
         .catch((error) => {
             this.log(error);

@@ -34,15 +34,17 @@ class Accessory extends Events {
 
         this.services = [];
 
-        var service = new Service.AccessoryInformation();
-/*
+//        var service = new Service.AccessoryInformation();
+  //      service.getCharacteristic(Characteristic.FirmwareRevision, "1.0");
+
+        /*
         service.setCharacteristic(Characteristic.Name, this.name);
         service.setCharacteristic(Characteristic.Manufacturer, "meg768879876");
         service.setCharacteristic(Characteristic.Model, "S3XY");
         service.setCharacteristic(Characteristic.SerialNumber, "123-456-789");
         service.setCharacteristic(Characteristic.FirmwareRevision, "1.0");
 */
-        this.addService(service); 
+//        this.addService(service); 
 
         // Seems like we have to give it a name...
         this.name = name;
@@ -93,16 +95,17 @@ class VehicleAccessory extends Accessory {
         this.log = vehicle.log;
         this.debug = vehicle.debug;
         this.platform = vehicle.platform;
-
+/*
         this.vehicle.once('vehicleData', (vehicleData) => {
             this.log(`Accessory "${this.name}" logged in...`)
             var service = this.getService(Service.AccessoryInformation);
-            service.setCharacteristic(Characteristic.Name, this.name);
-            service.setCharacteristic(Characteristic.Manufacturer, "meg768879876");
-            service.setCharacteristic(Characteristic.Model, "S3XYXXX");
-            service.setCharacteristic(Characteristic.SerialNumber, `VIN ${vehicleData.json.vin}`);
-            service.setCharacteristic(Characteristic.FirmwareRevision, "1.0");
+            service.getCharacteristic(Characteristic.Name).updateValue(this.name);
+            service.getCharacteristic(Characteristic.Manufacturer).updateValue("meg768879876");
+            service.getCharacteristic(Characteristic.Model).updateValue("S3XYXXX");
+            service.getCharacteristic(Characteristic.SerialNumber).updateValue(`VIN ${vehicleData.json.vin}`);
         });
+ */
+ 
     }
 
     pause(ms) {
