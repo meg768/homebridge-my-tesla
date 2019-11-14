@@ -99,7 +99,7 @@ class VehicleAccessory extends Accessory {
             var service = this.getService(Service.AccessoryInformation);
             service.setCharacteristic(Characteristic.Name, this.name);
             service.setCharacteristic(Characteristic.Manufacturer, "meg768879876");
-            service.setCharacteristic(Characteristic.Model, "S3XY");
+            service.setCharacteristic(Characteristic.Model, "S3XYXXX");
             service.setCharacteristic(Characteristic.SerialNumber, `VIN ${response.vin}`);
             service.setCharacteristic(Characteristic.FirmwareRevision, "1.0");
                 
