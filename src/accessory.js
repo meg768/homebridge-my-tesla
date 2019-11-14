@@ -33,7 +33,7 @@ class Accessory extends Events {
         console.log(`Created new Accessory with name ${name}, uuid ${uuid} and category ${category}`);
 
         this.services = [];
-
+/*
         var service = new Service.AccessoryInformation();
         service.setCharacteristic(Characteristic.Name, name);
         service.setCharacteristic(Characteristic.Manufacturer, "meg768");
@@ -41,7 +41,7 @@ class Accessory extends Events {
         service.setCharacteristic(Characteristic.SerialNumber, "123-456-789");
         service.setCharacteristic(Characteristic.FirmwareRevision, "1.0");
         this.addService(service); 
-
+*/
         // Seems like we have to give it a name...
         this.name = name;
         this.displayName = name;
