@@ -93,14 +93,15 @@ class VehicleAccessory extends Accessory {
         this.log = vehicle.log;
         this.debug = vehicle.debug;
         this.platform = vehicle.platform;
+        
 
-        this.vehicle.once('vehicleData', (response) => {
+        this.vehicle.once('vehicleData', (vehicleData) => {
             this.log(`Accessory "${this.name}" logged in...`)
             var service = this.getService(Service.AccessoryInformation);
             service.setCharacteristic(Characteristic.Name, this.name);
             service.setCharacteristic(Characteristic.Manufacturer, "meg768879876");
             service.setCharacteristic(Characteristic.Model, "S3XYXXX");
-            service.setCharacteristic(Characteristic.SerialNumber, `VIN ${response.vin}`);
+            service.setCharacteristic(Characteristic.SerialNumber, `VIN ${vehicleData.json.vin}`);
             service.setCharacteristic(Characteristic.FirmwareRevision, "1.0");
                 
         });
