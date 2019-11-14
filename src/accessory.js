@@ -34,8 +34,9 @@ class Accessory extends Events {
 
         this.services = [];
 
-//        var service = new Service.AccessoryInformation();
-  //      service.getCharacteristic(Characteristic.FirmwareRevision, "1.0");
+        var service = new Service.AccessoryInformation();
+        service.getCharacteristic(Characteristic.FirmwareRevision, "9.0");
+        this.addService(service); 
 
         /*
         service.setCharacteristic(Characteristic.Name, this.name);
@@ -95,16 +96,7 @@ class VehicleAccessory extends Accessory {
         this.log = vehicle.log;
         this.debug = vehicle.debug;
         this.platform = vehicle.platform;
-/*
-        this.vehicle.once('vehicleData', (vehicleData) => {
-            this.log(`Accessory "${this.name}" logged in...`)
-            var service = this.getService(Service.AccessoryInformation);
-            service.getCharacteristic(Characteristic.Name).updateValue(this.name);
-            service.getCharacteristic(Characteristic.Manufacturer).updateValue("meg768879876");
-            service.getCharacteristic(Characteristic.Model).updateValue("S3XYXXX");
-            service.getCharacteristic(Characteristic.SerialNumber).updateValue(`VIN ${vehicleData.json.vin}`);
-        });
- */
+
  
     }
 

@@ -49,12 +49,11 @@ module.exports = class Vehicle extends TeslaAPI  {
         })
         .then((vehicleData) => {
             this.accessories.forEach((accessory) => {
-                var service = new Service.AccessoryInformation();
+                var service = this.getService(Service.AccessoryInformation);
                 service.setCharacteristic(Characteristic.Name, accessory.name);
                 service.setCharacteristic(Characteristic.Manufacturer, "XXX");
                 service.setCharacteristic(Characteristic.Model, "YYY");
                 service.setCharacteristic(Characteristic.SerialNumber, "ZZZ");
-                accessory.addService(service);
             })
         })
         .catch((error) => {
