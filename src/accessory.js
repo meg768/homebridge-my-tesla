@@ -34,7 +34,7 @@ class Accessory extends Events {
 
         this.services = [];
 
-        this.addService(new Service.AccessoryInformation());
+//        this.addService(new Service.AccessoryInformation());
 
         /*
         var service = new Service.AccessoryInformation();
@@ -64,6 +64,8 @@ class Accessory extends Events {
             else if (typeof name === 'function' && ((service instanceof name) || (name.UUID === service.UUID)))
                 return service;
           }
+
+          return undefined;
         
     }
     // Add the method getServices for static platforms
@@ -102,6 +104,9 @@ class VehicleAccessory extends Accessory {
 
         this.vehicle.on('login', (response) => {
             var service = this.getServices(Service.AccessoryInformation);
+            if (service == undefined) {
+                this.addService(service = new Service.AccessoryInformation());
+            }
             service.setCharacteristic(Characteristic.SerialNumber, `VIN ${response.vin}`);
         });
 
