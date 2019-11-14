@@ -103,11 +103,13 @@ class VehicleAccessory extends Accessory {
         });
 
         this.vehicle.on('login', (response) => {
+            /*
             var service = this.getServices(Service.AccessoryInformation);
             if (service == undefined) {
                 this.addService(service = new Service.AccessoryInformation());
             }
             service.setCharacteristic(Characteristic.SerialNumber, `VIN ${response.vin}`);
+            */
         });
 
     }
