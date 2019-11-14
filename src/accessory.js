@@ -72,7 +72,6 @@ class Accessory extends Events {
 };
 
 
-
 class VehicleAccessory extends Accessory {
 
     constructor(options) {
@@ -95,13 +94,13 @@ class VehicleAccessory extends Accessory {
         this.debug = vehicle.debug;
         this.platform = vehicle.platform;
 
-        this.vehicle.on('login', (response) => {
-            this.log(`Logged in ${this.name}`)
+        this.vehicle.once('vehicleData', (response) => {
+            this.log(`Accessory "${this.name}" logged in...`)
             var service = this.getService(Service.AccessoryInformation);
             service.setCharacteristic(Characteristic.Name, this.name);
             service.setCharacteristic(Characteristic.Manufacturer, "meg768879876");
             service.setCharacteristic(Characteristic.Model, "S3XY");
-            service.setCharacteristic(Characteristic.SerialNumber, "123-456-789");
+            service.setCharacteristic(Characteristic.SerialNumber, `VIN ${response.vin}`);
             service.setCharacteristic(Characteristic.FirmwareRevision, "1.0");
                 
         });
