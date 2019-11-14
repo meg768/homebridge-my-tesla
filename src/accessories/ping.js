@@ -69,7 +69,7 @@ module.exports = class extends Accessory {
 
         Promise.resolve().then(() => {
             if (vehicleData.getBatteryLevel() < this.requiredBatteryLevel) {
-                this.debug(`Battery level too low for ping to be enabled. Turning off.`);
+                this.log(`Battery level too low for ping to be enabled. Turning off.`);
                 return this.setActiveState(false);
             }
             else
