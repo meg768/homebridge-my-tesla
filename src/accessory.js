@@ -93,7 +93,7 @@ class VehicleAccessory extends Accessory {
         this.log = vehicle.log;
         this.debug = vehicle.debug;
         this.platform = vehicle.platform;
-/*
+
         this.vehicle.once('vehicleData', (response) => {
             this.log(`Accessory "${this.name}" logged in...`)
             var service = this.getService(Service.AccessoryInformation);
@@ -104,7 +104,6 @@ class VehicleAccessory extends Accessory {
             service.setCharacteristic(Characteristic.FirmwareRevision, "1.0");
                 
         });
-*/
     }
 
     pause(ms) {
