@@ -1,4 +1,4 @@
-
+var isString = require('yow/isString');
 
 module.exports = class VehicleData {
 
@@ -16,7 +16,7 @@ module.exports = class VehicleData {
     }
 
     getOptionCodes() {
-        return this.json.option_codes.splt(',');
+        return isString(this.json.option_codes) ? this.json.option_codes.split(',') : [];
     }
 
     getModel() {
