@@ -1,7 +1,7 @@
 var isString = require('yow/isString');
 
 
-module.exports.VehicleState = class VehicleState {
+class VehicleState {
 
     constructor(json) {
         this.json = json || {};
@@ -18,7 +18,7 @@ module.exports.VehicleState = class VehicleState {
 }
 
 
-module.exports.ClimateState = class ClimateState {
+class ClimateState {
 
     constructor(json) {
         this.json = json || {};
@@ -38,7 +38,7 @@ module.exports.ClimateState = class ClimateState {
 
 }
 
-module.exports.ChargeState = class ChargeState {
+class ChargeState {
 
     constructor(json) {
         this.json = json || {};
@@ -52,15 +52,33 @@ module.exports.ChargeState = class ChargeState {
     getBatteryLevel() {
         return this.json.battery_level;
     }
+
+    isChargingStarting() {
+        return this.getChargingState() == 'Starting';
+    }
+
+    isChargingStopped() {
+        return this.getChargingState() == 'Stopped';
+    }
+
+    isChargingComplete() {
+        return this.getChargingState() == 'Complete';
+    }
+
+    isChargingDisconnected() {
+        return this.getChargingState() == 'Disconnected';
+    }
+
+
 }
 
-module.exports.VehicleData = class VehicleData {
+class VehicleData {
 
     constructor(json) {
         this.json = json;
         this.vehicleState = new VehicleState(json.vehicle_state);
         this.climateState = new ClimateState(json.climate_state);
-        this.chargeState = new ClimateState(json.charge_state);
+        this.chargeState = new ChargeState(json.charge_state);
     }
 
     getCarVersion() {
@@ -133,25 +151,31 @@ module.exports.VehicleData = class VehicleData {
     }
 
     isCharging() {
-        return this.getChargingState() == 'Charging';
+        return this.chargeState.getChargingState() == 'Charging';
     }
 
     isChargingStarting() {
-        return this.getChargingState() == 'Starting';
+        return this.chargeState.getChargingState() == 'Starting';
     }
 
     isChargingStopped() {
-        return this.getChargingState() == 'Stopped';
+        return this.chargeState.getChargingState() == 'Stopped';
     }
 
     isChargingComplete() {
-        return this.getChargingState() == 'Complete';
+        return this.chargeState.getChargingState() == 'Complete';
     }
 
     isChargingDisconnected() {
-        return this.getChargingState() == 'Disconnected';
+        return this.chargeState.getChargingState() == 'Disconnected';
     }
 
 
 }
+
+
+module.exports.VehicleData = VehicleData;
+module.exports.ClimateState = ClimateState;
+module.exports.ChargeState = ChargeState;
+module.exports.VehicleState = VehicleState;
 
