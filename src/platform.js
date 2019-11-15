@@ -10,7 +10,6 @@ module.exports = class Platform {
         this.config = config;
         this.log = log;
         this.homebridge = homebridge;
-        this.items = [];
         this.vehicles = [];
         this.debug = config.debug ? log : () => {};
 
@@ -25,19 +24,38 @@ module.exports = class Platform {
             this.debug('Finished launching.');
         });
         
-        this.config.vehicles.forEach((config, index) => {
-            this.vehicles.push(new Vehicle(this, config));
-        });
-
     }
 
     accessories(callback) {
-        callback(this.items);
+
+        var vehicles = [];
+        var accessories = [];
+
+        this.debug(`Creating accessories...`);
+        this.config.vehicles.forEach((config, index) => {
+            vehicles.push(new Vehicle(this, config));
+        });
+
+        var promise = Promise.resolve();
+
+        vehicles.forEach((vehicle) => {
+            promise = promise.then(() => {
+                return vehicle.getAccessories();                
+            })
+            .then((vehicleAccessories) => {
+                accessories = accessories.concat(vehicleAccessories);
+            })
+        });
+
+        promise.then(() => {
+            this.vehicles = vehicles;
+            callback(accessories);
+        })
+        .catch((error) => {
+            this.log(error);
+        })
     }
 
-    addAccessory(accessory) {
-        this.items.push(accessory);
-    }
 
     pushover() {
         var util = require('util');
