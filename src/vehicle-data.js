@@ -1,18 +1,70 @@
 var isString = require('yow/isString');
 
-module.exports = class VehicleData {
 
-    constructor(response) {
-        this.response = response;
-        this.json = response;
+module.exports.VehicleState = class VehicleState {
+
+    constructor(json) {
+        this.json = json || {};
     }
 
     getCarVersion() {
-        return this.json.vehicle_state && isString(this.json.vehicle_state.car_version) ? this.json.vehicle_state.car_version : 'Unknown';
+        return isString(this.json.car_version) ? this.json.car_version : 'Unknown';
     }
 
-    getVIN() {
-        return this.json.vin;
+    isLocked() {
+        return this.json.locked === true;
+    }
+
+}
+
+
+module.exports.ClimateState = class ClimateState {
+
+    constructor(json) {
+        this.json = json || {};
+    }
+
+    isClimateOn() {
+        return this.json.is_climate_on === true;
+    }
+
+    getInsideTemperature() {
+        return this.json.inside_temp;        
+    }
+
+    getOutsideTemperature() {
+        return this.json.outside_temp;        
+    }
+
+}
+
+module.exports.ChargeState = class ChargeState {
+
+    constructor(json) {
+        this.json = json || {};
+    }
+
+    getChargingState() {
+        // returns "Disconnected", "Stopped", "Complete" or "Charging"
+        return isString(this.json.charging_state) ? this.json.charging_state : '';
+    }
+
+    getBatteryLevel() {
+        return this.json.battery_level;
+    }
+}
+
+module.exports.VehicleData = class VehicleData {
+
+    constructor(json) {
+        this.json = json;
+        this.vehicleState = new VehicleState(json.vehicle_state);
+        this.climateState = new ClimateState(json.climate_state);
+        this.chargeState = new ClimateState(json.charge_state);
+    }
+
+    getCarVersion() {
+        return this.vehicleState.getCarVersion();
     }
 
     getDisplayName() {
@@ -56,41 +108,28 @@ module.exports = class VehicleData {
     }
 
     isVehicleLocked() {
-        return this.response && this.response.vehicle_state && this.response.vehicle_state.locked;
-    }
-
-    isAirConditionerOn() {
-        return this.response && this.response.climate_state && this.response.climate_state.is_climate_on;
+        return this.vehicleState.isLocked();
     }
 
     isClimateOn() {
-        return this.response && this.response.climate_state && this.response.climate_state.is_climate_on;
+        return this.climateState.isClimateOn();
     }
 
-    getInsideTemperature(defaultValue = 20) {
-        if (this.response && this.response.climate_state && this.response.climate_state.inside_temp)
-            return this.response.climate_state.inside_temp;
-            
-        return defaultValue;
+
+    getInsideTemperature() {
+        return this.climateState.getInsideTemperature();
     }
 
-    getOutsideTemperature(defaultValue = 20) {
-        if (this.response && this.response.climate_state && this.response.climate_state.outside_temp)
-            return this.response.climate_state.outside_temp;
-            
-        return defaultValue;
+    getOutsideTemperature() {
+        return this.climateState.getOutsideTemperature();
     }
 
-    getBatteryLevel(defaultValue = 0) {
-        if (this.response.charge_state && this.response.charge_state.battery_level != undefined)
-            return this.response.charge_state.battery_level;
-
-        return defaultValue;        
+    getBatteryLevel() {
+        return this.chargeState.getBatteryLevel();
     }
 
     getChargingState() {
-        // returns "Disconnected", "Stopped", "Complete" or "Charging"
-        return (this.response && this.response.charge_state) ? this.response.charge_state.charging_state : '';
+        return this.chargeState.getChargingState();
     }
 
     isCharging() {

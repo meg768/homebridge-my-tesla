@@ -25,42 +25,6 @@ module.exports = class Vehicle extends TeslaAPI  {
         this.accessories = [];
         this.uuid = platform.generateUUID(config.vin);
         this.platform = platform;
-/*
-        this.addFeature(DoorLockAccessory, 'doors');
-        this.addFeature(ChargingAccessory, 'charging');
-        this.addFeature(AirConditioningAccessory, 'hvac');
-        this.addFeature(PingAccessory, 'ping');
-        this.addFeature(InsideTemperatureAccessory, 'insideTemperature');
-        this.addFeature(ThermostatAccessory, 'thermostat');
-        this.addFeature(OutsideTemperatureAccessory, 'outsideTemperature');
-        
-        var configLoginOptions = {username:config.username, password:config.password, clientID:config.clientID, clientSecret:config.clientSecret};
-        var processLoginOptions = {username:process.env.TESLA_USER, password:process.env.TESLA_PASSWORD, clientID:process.env.TESLA_CLIENT_ID, clientSecret:process.env.TESLA_CLIENT_SECRET};
-        var loginOptions = {...configLoginOptions, ...processLoginOptions};
-
-        this.debug(loginOptions);
-
-        this.login(loginOptions).then(() => {
-            this.debug('Login completed.');
-            return Promise.resolve();
-        })
-        .then(() => {
-            return this.getVehicleData();
-        })
-        .then((vehicleData) => {
-            this.accessories.forEach((accessory) => {
-                var service = accessory.getService(Service.AccessoryInformation);
-                service.setCharacteristic(Characteristic.Name, accessory.name);
-                service.setCharacteristic(Characteristic.Manufacturer, "XXX");
-                service.setCharacteristic(Characteristic.Model, "YYY");
-                service.setCharacteristic(Characteristic.SerialNumber, "ZZZ");
-            })
-        })
-        .catch((error) => {
-            this.log(error);
-        });
-*/
-
     }
 
     getAccessories() {
@@ -99,6 +63,7 @@ module.exports = class Vehicle extends TeslaAPI  {
                 return this.getVehicleData();                
             })
             .then((vehicleData) => {
+                // Update all accessories with info from Tesla
                 accessories.forEach((accessory) => {
                     var service = accessory.getService(Service.AccessoryInformation);
                     service.setCharacteristic(Characteristic.Name, accessory.name);
