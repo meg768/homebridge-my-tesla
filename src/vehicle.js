@@ -104,7 +104,7 @@ module.exports = class Vehicle extends TeslaAPI  {
                     service.setCharacteristic(Characteristic.Name, accessory.name);
                     service.setCharacteristic(Characteristic.Manufacturer, "XXX");
                     service.setCharacteristic(Characteristic.Model, "YYY");
-                    service.setCharacteristic(Characteristic.SerialNumber, "ZZZ");
+                    service.setCharacteristic(Characteristic.SerialNumber, `VIN ${vehicleData.}`);
                 })
 
                 resolve(accessories);

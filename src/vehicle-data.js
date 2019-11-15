@@ -7,6 +7,50 @@ module.exports = class VehicleData {
         this.json = response;
     }
 
+    getVIN() {
+        return this.json.vin;
+    }
+
+    getDisplayName() {
+        return this.json.display_name;
+    }
+
+    getOptionCodes() {
+        return this.json.option_codes.splt(',');
+    }
+
+    getModel() {
+
+        var optionCodes = this.getOptionCodes();
+        var model = 'Unknown';
+
+        optionCodes.forEach((code) => {
+            switch(code) {
+                case 'MDLS':
+                case 'MS03':
+                case 'MS04': {
+                    model = 'Model S';
+                    break;
+                }
+                case 'MDLX': {
+                    model = 'Model X';
+                    break;
+                }
+                case 'MDL3': {
+                    model = 'Model 3';
+                    break;
+                }
+                case 'MDLY': {
+                    model = 'Model Y';
+                    break;
+                }
+            }            
+        });
+
+        return model;
+
+    }
+
     isVehicleLocked() {
         return this.response && this.response.vehicle_state && this.response.vehicle_state.locked;
     }
