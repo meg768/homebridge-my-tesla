@@ -70,45 +70,47 @@ feature has its own configuration. Default values are displayed below, you may c
 ```json
 
     "platforms": [{
+        "platform": "Tesla",
+        "name": "Tesla",
+        "debug": true,
         "vehicles": [
-            {
-                "features": {
-                    "ping": {
-                        "name": "Ping",
-                        "timerInterval": 5,
-                        "requiredBatteryLevel": 40,
-                        "enabled": true
-                    },
-                    "charging": {
-                        "name": "Charging",
-                        "enabled": true
-                    },
-                    "hvac": {
-                        "name": "Fan",
-                        "enabled": true
-                   },
-                    "doors": {
-                        "name": "Door",
-                        "enabled": true
-                    },
-                    "insideTemperature": {
-                        "name": "Inside",
-                        "enabled": true
-                    },
-                    "outsideTemperature": {
-                        "name": "Outside",
-                        "enabled": true
-                    },
-                    "thermostat": {
-                        "name": "Thermostat",
-                        "timerInterval": 5,
-                        "requiredBatteryLevel": 40,
-                        "enabled": true
-                    }
+        {         
+            "name": "Model 3",       
+            "vin": "5YJ3E7EB9KF240654",
+
+            "username": "Replace with your username at tesla.com",
+            "password": "Replace with your password at tesla.com",
+
+            "features": {
+                "ping": {
+                    "name": "Ping",
+                    "requiredBatteryLevel": 40,
+                    "timerInterval": 5
+                },
+                "charging": {
+                    "name": "Laddning"
+                },
+                "hvac": {
+                    "name": "Fläkten",
+                    "requiredBatteryLevel": 20
+                },
+                "doors": {
+                    "name": "Dörren"
+                },
+                "outsideTemperature": {
+                    "name": "Ute"
+                },
+                "insideTemperature": {
+                    "name": "Inne"
+                },
+                "thermostat": {
+                    "name": "Termostat",
+                    "requiredBatteryLevel": 40,
+                    "timerInterval": 2
                 }
             }
-        ]
-    }]
+        }
+    ]
 ```
 
 ## Usage
@@ -120,4 +122,4 @@ the new home to the same name of your car. Then add the this accessory to the ne
 ## Updates
 
 2019-11-15 -- Accessory information updated properly with serial number (VIN) and firmware version.
- 
+
