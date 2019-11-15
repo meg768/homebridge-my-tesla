@@ -15,7 +15,7 @@ module.exports = class extends Accessory {
         var {config, ...options} = options;
         super({...options, config:{...defaultConfig, ...config}});
 
-        this.isAirConditionerOn = undefined;
+        this.isClimateOn = undefined;
 
         this.enableFan();
     }
@@ -25,21 +25,21 @@ module.exports = class extends Accessory {
         this.addService(service);
 
         this.vehicle.on('vehicleData', (data) => {    
-            this.isAirConditionerOn = data.isAirConditionerOn();
-            this.debug(`Updated HVAC status to ${this.isAirConditionerOn ? 'ON' : 'OFF'}.`);  
-            service.getCharacteristic(Characteristic.On).updateValue(this.isAirConditionerOn);
+            this.isClimateOn = data.isClimateOn();
+            this.debug(`Updated HVAC status to ${this.isClimateOn ? 'ON' : 'OFF'}.`);  
+            service.getCharacteristic(Characteristic.On).updateValue(this.isClimateOn);
         });
 
         service.getCharacteristic(Characteristic.On).on('get', (callback) => {
-            callback(null, this.isAirConditionerOn);
+            callback(null, this.isClimateOn);
         });
 
         service.getCharacteristic(Characteristic.On).on('set', (value, callback) => {
 
             var setAirConditionerState = (value) => {
                 return new Promise((resolve, reject) => {
-                    if (value == this.isAirConditionerOn) {
-                        resolve(this.isAirConditionerOn);
+                    if (value == this.isClimateOn) {
+                        resolve(this.isClimateOn);
                     }
                     else {
                         Promise.resolve().then(() => {
@@ -49,7 +49,7 @@ module.exports = class extends Accessory {
                                 return this.vehicle.autoConditioningStop();
                         })
                         .then(() => {
-                            this.isAirConditionerOn = value;
+                            this.isClimateOn = value;
                             resolve();
                         })
                         .catch((error) => {
@@ -60,7 +60,7 @@ module.exports = class extends Accessory {
             };
 
             setAirConditionerState(value).then(() => {
-                callback(null, this.isAirConditionerOn);
+                callback(null, this.isClimateOn);
             })
 
             .catch((error) => {

@@ -70,7 +70,7 @@ module.exports = class extends Accessory {
 
             this.outsideTemperature = data.getOutsideTemperature();
             this.currentTemperature = data.getInsideTemperature();
-            this.currentHeatingCoolingState = data.isAirConditionerOn();
+            this.currentHeatingCoolingState = data.isClimateOn();
 
             service.getCharacteristic(Characteristic.CurrentTemperature).updateValue(this.currentTemperature);
             this.debug(`Updated temperature for thermostat to ${this.currentTemperature} °C.`); 
