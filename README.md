@@ -85,28 +85,35 @@ feature has its own configuration. Default values are displayed below, you may c
                 "ping": {
                     "name": "Ping",
                     "requiredBatteryLevel": 40,
-                    "timerInterval": 5
+                    "timerInterval": 5,
+                    "enabled": true
                 },
                 "charging": {
-                    "name": "Laddning"
+                    "name": "Laddning",
+                    "enabled": true
                 },
                 "hvac": {
                     "name": "Fläkten",
-                    "requiredBatteryLevel": 20
+                    "requiredBatteryLevel": 20,
+                    "enabled": true
                 },
                 "doors": {
-                    "name": "Dörren"
+                    "name": "Dörren",
+                    "enabled": true
                 },
                 "outsideTemperature": {
-                    "name": "Ute"
+                    "name": "Ute",
+                    "enabled": true
                 },
                 "insideTemperature": {
-                    "name": "Inne"
+                    "name": "Inne",
+                    "enabled": true
                 },
                 "thermostat": {
                     "name": "Termostat",
                     "requiredBatteryLevel": 40,
-                    "timerInterval": 2
+                    "timerInterval": 2,
+                    "enabled": true
                 }
             }
         }
