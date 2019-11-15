@@ -116,3 +116,8 @@ feature has its own configuration. Default values are displayed below, you may c
 As for now, it is a good idea to create a new home in Apple's Home app. Name
 the new home to the same name of your car. Then add the this accessory to the newly created home.
 
+
+## Updates
+
+2019-11-15 -- Accessory information updated properly with serial number (VIN) and firmware version.
+ 
