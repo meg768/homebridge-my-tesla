@@ -7,6 +7,10 @@ module.exports = class VehicleData {
         this.json = response;
     }
 
+    getCarVersion() {
+        return this.json.vehicle_state && isString(this.json.vehicle_state.car_version) ? this.json.vehicle_state.car_version : 'Unknown';
+    }
+
     getVIN() {
         return this.json.vin;
     }

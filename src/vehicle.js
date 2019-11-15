@@ -105,6 +105,8 @@ module.exports = class Vehicle extends TeslaAPI  {
                     service.setCharacteristic(Characteristic.Manufacturer, "Tesla");
                     service.setCharacteristic(Characteristic.Model, vehicleData.getModel());
                     service.setCharacteristic(Characteristic.SerialNumber, `VIN ${vehicleData.getVIN()}`);
+                    service.setCharacteristic(Characteristic.FirmwareRevision, `${vehicleData.getCarVersion()}`);
+                    
                 })
 
                 resolve(accessories);
