@@ -89,6 +89,10 @@ class VehicleData {
         return this.json.display_name;
     }
 
+    getVIN() {
+        return this.json.vin;
+    }
+
     getOptionCodes() {
         return isString(this.json.option_codes) ? this.json.option_codes.split(',') : [];
     }
