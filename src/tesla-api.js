@@ -3,7 +3,7 @@ var isDate = require('yow/isDate');
 var isString = require('yow/isString');
 var Request = require('yow/request');
 var Events = require('events');
-var VehicleData = require('./vehicle-data.js');
+var {VehicleData} = require('./vehicle-data.js');
 
 module.exports = class TeslaAPI extends Events {
 
