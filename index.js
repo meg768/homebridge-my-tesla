@@ -1,5 +1,7 @@
 "use strict";
 
+BETTERINIT
+
 var Homebridge = require('./src/homebridge.js');
 
 module.exports = function(homebridge) {
