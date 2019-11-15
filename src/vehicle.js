@@ -102,8 +102,8 @@ module.exports = class Vehicle extends TeslaAPI  {
                 accessories.forEach((accessory) => {
                     var service = accessory.getService(Service.AccessoryInformation);
                     service.setCharacteristic(Characteristic.Name, accessory.name);
-                    service.setCharacteristic(Characteristic.Manufacturer, "XXX");
-                    service.setCharacteristic(Characteristic.Model, "YYY");
+                    service.setCharacteristic(Characteristic.Manufacturer, "Tesla");
+                    service.setCharacteristic(Characteristic.Model, vehicleData.getModel());
                     service.setCharacteristic(Characteristic.SerialNumber, `VIN ${vehicleData.}`);
                 })
 
