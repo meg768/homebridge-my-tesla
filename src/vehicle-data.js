@@ -22,7 +22,7 @@ module.exports = class VehicleData {
     getModel() {
 
         var optionCodes = this.getOptionCodes();
-        var model = 'Unknown';
+        var model = 'Unknown model';
 
         optionCodes.forEach((code) => {
             switch(code) {
