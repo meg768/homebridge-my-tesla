@@ -61,7 +61,7 @@ it only adds controls to open the doors, control the HVAC and to display current
 
 If you name things correctly you might get Siri to work by saying "Lock car", "Unlock car", "Turn on fan" or "Turn off fan"...
 
-## Localise
+## Localize
 
 By default, all the features (or buttons) available are added to the Home app automatically. 
 Each feature has its own name and you may control each feature seperately since each 
