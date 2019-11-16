@@ -31,12 +31,6 @@ module.exports = class extends Accessory {
         service.getCharacteristic(Characteristic.CurrentTemperature).on('get', (callback) => {
             callback(null, this.currentTemperature);
         });
-
-        service.getCharacteristic(Characteristic.StatusActive).on('get', (callback) => {
-            this.log('***********************');
-            callback(null, this.active);
-        });
-
         
     }; 
 }
