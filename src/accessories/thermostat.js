@@ -30,8 +30,6 @@ module.exports = class extends Accessory {
         var {config, ...options} = options;
         super({...options, config:{...defaultConfig, ...config}});
 
-        this.debug(`Creating Thermostat with options ${JSON.stringify(this.config)}`);
-
         this.setttingsTimer = new Timer();
         this.timer = new Timer();
         this.timerInterval = this.config.timerInterval * 60 * 1000;
