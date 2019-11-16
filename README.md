@@ -75,9 +75,7 @@ feature has its own configuration. Default values are displayed below, you may c
         "debug": true,
         "vehicles": [
         {         
-            "name": "Model 3",       
             "vin": "5YJ3E7EB9KF240654",
-
             "username": "Replace with your username at tesla.com",
             "password": "Replace with your password at tesla.com",
 
