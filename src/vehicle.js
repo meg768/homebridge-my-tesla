@@ -10,7 +10,6 @@ var InsideTemperatureAccessory = require('./accessories/inside-temperature.js');
 var OutsideTemperatureAccessory = require('./accessories/outside-temperature.js');
 var PingAccessory = require('./accessories/ping.js');
 var ThermostatAccessory = require('./accessories/thermostat.js');
-var BatteryAccessory = require('./accessories/battery-level.js');
 
 
 module.exports = class Vehicle extends TeslaAPI  {
@@ -59,7 +58,6 @@ module.exports = class Vehicle extends TeslaAPI  {
                 addAccessory(InsideTemperatureAccessory, 'insideTemperature');
                 addAccessory(ThermostatAccessory, 'thermostat');
                 addAccessory(OutsideTemperatureAccessory, 'outsideTemperature');
-                addAccessory(BatteryAccessory, 'battery');
             })
             .then(() => {
                 return this.getVehicleData();                
