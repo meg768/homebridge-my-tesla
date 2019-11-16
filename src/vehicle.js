@@ -33,11 +33,11 @@ module.exports = class Vehicle extends TeslaAPI  {
         var accessories = [];
 
         var addAccessory = (fn, name) => {
-            var feature = this.config.features ? this.config.features[name] : undefined;
+            var accessoryConfig = this.config.accessories ? this.config.accessories[name] : undefined;
 
-            if (feature != undefined) {
-                if (feature.enabled == undefined || feature.enabled) {
-                    accessories.push(new fn({vehicle:this, config:feature}));
+            if (accessoryConfig != undefined) {
+                if (accessoryConfig.enabled == undefined || accessoryConfig.enabled) {
+                    accessories.push(new fn({vehicle:this, config:accessoryConfig}));
                 }
             }
             else {

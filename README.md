@@ -81,7 +81,7 @@ feature has its own configuration. Default values are displayed below, you may c
             "username": "Replace with your username at tesla.com",
             "password": "Replace with your password at tesla.com",
 
-            "features": {
+            "accessories": {
                 "ping": {
                     "name": "Ping",
                     "requiredBatteryLevel": 40,
