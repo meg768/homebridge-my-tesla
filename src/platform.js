@@ -1,8 +1,5 @@
 "use strict";
 
-var Vehicle = require('./vehicle.js');
-
-
 module.exports = class Platform {
 
     constructor(log, config, homebridge) {
@@ -28,6 +25,7 @@ module.exports = class Platform {
 
     accessories(callback) {
 
+        var Vehicle = require('./vehicle.js');
         var vehicles = [];
         var accessories = [];
 
@@ -53,6 +51,7 @@ module.exports = class Platform {
         })
         .catch((error) => {
             this.log(error);
+            callback([]);
         })
     }
 

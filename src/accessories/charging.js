@@ -19,11 +19,11 @@ module.exports = class extends Accessory {
         this.isCharging = false;
 
         this.enableSwitch();
-        this.enableBatteryLevel();
+        //this.enableBatteryLevel();
 
         this.vehicle.on('vehicleData', (vehicleData) => {    
             this.updateSwitch(vehicleData);
-            this.updateBatteryLevel(vehicleData);
+            //this.updateBatteryLevel(vehicleData);
         });
 
     }

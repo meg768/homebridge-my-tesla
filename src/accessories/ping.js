@@ -78,6 +78,9 @@ module.exports = class extends Accessory {
         .then(() => {
             this.getService(Service.Switch).getCharacteristic(Characteristic.On).updateValue(this.isActive);
         })
+        .catch((error) => {
+            this.log(error);
+        });
     }
 
     ping() {
