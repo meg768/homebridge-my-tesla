@@ -4,7 +4,7 @@
 
 Homebridge plugin for Tesla owners. This plugin assumes you are familiar with Homebridge. 
 
-![image](./images/bob.png | widht=100)
+![image](./images/bob.png | width=100)
 
 
 ## Installation
