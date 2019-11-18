@@ -4,6 +4,7 @@ var Characteristic  = require('../homebridge.js').Characteristic;
 var Switch = require('./switch.js');
 var Timer = require('yow/timer');
 
+
 module.exports = class extends Switch {
 
     constructor(options) {
@@ -65,7 +66,7 @@ module.exports = class extends Switch {
     
     ping() {
         this.debug('Ping!');
-        this.vehicle.getVehicleData();     
+        return this.vehicle.getVehicleData();     
     }
 
 
