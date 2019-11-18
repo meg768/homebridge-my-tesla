@@ -25,12 +25,21 @@ module.exports = class extends Switch {
 
         this.vehicle.on('vehicleData', (vehicleData) => {
 
-            if (vehicleData.getBatteryLevel() < this.requiredBatteryLevel) {
-                this.log(`Battery level too low for ping to be enabled. Turning off.`);
-                this.setState(false);
-            }
-
-            this.updateState();
+            Promise.resolve().then(() => {
+                if (vehicleData.getBatteryLevel() < this.requiredBatteryLevel) {
+                    this.log(`Battery level too low for ping to be enabled. Turning off.`);
+                    return this.setState(false);
+                }
+                else   
+                    return Promise.resolve();
+    
+            })
+            .then(() => {
+                return this.updateState();
+            })
+            .catch((error) => {
+                this.log(error);
+            });
         });
 
         // Listen to responses from Tesla API

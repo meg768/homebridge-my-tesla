@@ -14,7 +14,7 @@ module.exports = class extends Accessory {
         this.addService(service);
 
         service.getCharacteristic(Characteristic.On).on('get', (callback) => {
-            callback(null, this.state);
+            callback(null, this.getState());
         });
     
         service.getCharacteristic(Characteristic.On).on('set', (value, callback) => {
@@ -42,6 +42,7 @@ module.exports = class extends Accessory {
         }
 
         service.getCharacteristic(Characteristic.On).updateValue(this.state);
+        return Promise.resolve();
     }
 
     getState() {
@@ -58,6 +59,8 @@ module.exports = class extends Accessory {
             this.state = value;
             this.emit('stateChanged');
         }
+
+        return Promise.resolve();
     }
 
 }
