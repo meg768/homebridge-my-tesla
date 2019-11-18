@@ -1,7 +1,7 @@
 
 var Service  = require('../homebridge.js').Service;
 var Characteristic  = require('../homebridge.js').Characteristic;
-var Switch = require('./accessory.js');
+var Switch = require('./switch.js');
 var Timer = require('yow/timer');
 
 module.exports = class extends Switch {
