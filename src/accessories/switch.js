@@ -10,7 +10,7 @@ module.exports = class extends Accessory {
 
         this.state = undefined;
 
-        var service = new Service.Switch(this.name, __filename);
+        var service = new Service.Switch(this.name);
         this.addService(service);
 
         service.getCharacteristic(Characteristic.On).on('get', (callback) => {
@@ -31,11 +31,17 @@ module.exports = class extends Accessory {
 
     updateState(value) {
         var service = this.getService(Service.Switch);
-        this.state = value ? true : false;
 
-        this.debug(`Updated switch "${this.name}" state to ${this.switchState ? 'ON' : 'OFF'}.`);        
-        service.getCharacteristic(Characteristic.On).updateValue(this.switchState);
+        if (value != undefined) {
+            value = value ? true : false;
+         
+            if (value !== this.state) {
+                this.state = value;
+                this.debug(`Updated switch "${this.name}" state to ${this.state ? 'ON' : 'OFF'}.`);        
+            }
+        }
 
+        service.getCharacteristic(Characteristic.On).updateValue(this.state);
     }
 
     getState() {
@@ -45,17 +51,13 @@ module.exports = class extends Accessory {
     setState(value) {
         value = value ? true : false;
 
-        return new Promise((resolve, reject) => {
-
-            if (value === this.state) {
-            }
-            else {
-                this.debug(`Setting switch "${this.name}" state to "${value}".`);
-                this.state = value;
-                this.emit('stateChanged');
-            }
-            resolve();    
-        })
+        if (value === this.state) {
+        }
+        else {
+            this.debug(`Setting switch "${this.name}" state to "${value}".`);
+            this.state = value;
+            this.emit('stateChanged');
+        }
     }
 
 }
