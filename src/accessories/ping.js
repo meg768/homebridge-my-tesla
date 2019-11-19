@@ -45,7 +45,6 @@ class Switch extends Service.Switch {
                 if (this.getValue() === value) {
                 }
                 else {
-                    this.debug(`Setting switch "${this.name}" state to "${value}".`);
                     this.value = value;
                     this.emit('valueChanged', this.getValue());
                 }
