@@ -4,10 +4,12 @@ var Characteristic  = require('../homebridge.js').Characteristic;
 var Timer = require('yow/timer');
 var Accessory = require('../accessory.js');
 
-class Switch {
+class Switch extends Service.Switch {
 
-    constructor(name, uuid) {
-        this.service = new Service.Switch(name, uuid);
+    constructor(displayName, subtype) {
+
+        super(displayName, subtype);
+
         this.value = undefined;
 
         this.service.getCharacteristic(Characteristic.On).on('get', (callback) => {
@@ -88,7 +90,7 @@ module.exports = class extends Accessory {
 
         this.switch = new Switch(this.name);
 
-        this.addService(this.switch.service);
+        this.addService(this.switch);
 
         this.switch.on('valueChanged', (value) => {
             if (value)
