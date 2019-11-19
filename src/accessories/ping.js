@@ -48,19 +48,13 @@ module.exports = class extends Accessory {
         this.vehicle.on('response', () => {
 
             // Whenever we get a response, reset the timer
-            if (this.getState()) {
+            if (this.getSwitchState()) {
                 this.debug('Response from Tesla API, resetting ping timer.');
                 this.timer.setTimer(this.timerInterval, this.ping.bind(this));
             }
             else
                 this.timer.cancel();
 
-        });
-
-        this.on('stateChanged', () => {
-            if (this.state) {
-                this.ping();
-            }
         });
 
     }
