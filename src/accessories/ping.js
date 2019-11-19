@@ -25,6 +25,11 @@ module.exports = class extends Accessory {
 
         this.addSwitchService();
 
+        this.on('switchStateChanged', (state) => {
+            if (state)
+                this.ping();
+        });
+
         this.vehicle.on('vehicleData', (vehicleData) => {
 
             Promise.resolve().then(() => {
@@ -82,18 +87,8 @@ module.exports = class extends Accessory {
         return this.switchState;
     }
 
-    updateSwitchState(value) {
+    updateSwitchState() {
         var service = this.getService(Service.Switch);
-
-        if (value != undefined) {
-            value = value ? true : false;
-         
-            if (value !== this.state) {
-                this.switchState = value;
-                this.debug(`Updated switch "${this.name}" state to ${this.switchState ? 'ON' : 'OFF'}.`);        
-            }
-        }
-
         service.getCharacteristic(Characteristic.On).updateValue(this.switchState);
         return Promise.resolve();
     }
@@ -109,6 +104,7 @@ module.exports = class extends Accessory {
                 else {
                     this.debug(`Setting switch "${this.name}" state to "${value}".`);
                     this.switchState = value;
+                    this.emit('switchStateChanged', this.getSwitchState());
                 }
                 return Promise.resolve();
             })
