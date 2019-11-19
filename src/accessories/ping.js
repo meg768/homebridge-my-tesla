@@ -32,7 +32,7 @@ class Switch extends Service.Switch {
     }
 
     updateValue() {
-        this.service.getCharacteristic(Characteristic.On).updateValue(this.value);
+        this.getCharacteristic(Characteristic.On).updateValue(this.value);
         return Promise.resolve();
     }
 
