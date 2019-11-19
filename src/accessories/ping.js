@@ -94,7 +94,7 @@ module.exports = class extends Accessory {
             if (value) {
                 this.ping();
             }
-            else {
+            else {  
                 this.debug(`Ping turned off.`);
                 
             }
