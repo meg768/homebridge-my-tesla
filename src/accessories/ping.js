@@ -21,6 +21,7 @@ class Switch extends Service.Switch {
                 callback(null, this.getValue());
             })
             .catch((error) => {
+                console.log(error);
                 callback(null);
             })
         });
