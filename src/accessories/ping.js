@@ -21,8 +21,7 @@ class Switch extends Service.Switch {
                 callback(null, this.getValue());
             })
             .catch((error) => {
-                console.log(error);
-                callback(null);
+                callback(error);
             })
         });
     }
@@ -92,8 +91,13 @@ module.exports = class extends Accessory {
         this.addService(this.switch);
 
         this.switch.on('valueChanged', (value) => {
-            if (value)
+            if (value) {
                 this.ping();
+            }
+            else {
+                this.debug(`Ping turned off.`);
+                
+            }
         });
 
         this.vehicle.on('vehicleData', (vehicleData) => {
