@@ -12,11 +12,11 @@ class Switch extends Service.Switch {
 
         this.value = undefined;
 
-        this.service.getCharacteristic(Characteristic.On).on('get', (callback) => {
+        this.getCharacteristic(Characteristic.On).on('get', (callback) => {
             callback(null, this.getValue());
         });
     
-        this.service.getCharacteristic(Characteristic.On).on('set', (value, callback) => {
+        this.getCharacteristic(Characteristic.On).on('set', (value, callback) => {
             this.setValue(value).then(() => {
                 callback(null, this.getValue());
             })
