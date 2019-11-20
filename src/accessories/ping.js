@@ -91,7 +91,7 @@ module.exports = class extends Accessory {
 
         this.addService(new Service.Switch(this.name));
 
-        this.switch = new Wrapper(this.getService().getCharacteristic(Characteristic.On));
+        this.switch = new Wrapper(this.getService(Service.Switch).getCharacteristic(Characteristic.On));
 
         this.switch.on('valueChanged', (value) => {
             if (value) {
