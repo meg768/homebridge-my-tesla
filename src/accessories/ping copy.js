@@ -3,22 +3,20 @@ var Service  = require('../homebridge.js').Service;
 var Characteristic  = require('../homebridge.js').Characteristic;
 var Timer = require('yow/timer');
 var Accessory = require('../accessory.js');
-var Events = require('events');
 
-class Wrapper extends Events {
+class Switch extends Service.Switch {
 
-    constructor(characteristic) {
+    constructor(displayName, subtype) {
 
-        super();
+        super(displayName, subtype);
 
         this.value = undefined;
-        this.ctx = characteristic;
 
-        this.ctx.on('get', (callback) => {
+        this.getCharacteristic(Characteristic.On).on('get', (callback) => {
             callback(null, this.getValue());
         });
     
-        this.ctx.on('set', (value, callback) => {
+        this.getCharacteristic(Characteristic.On).on('set', (value, callback) => {
             this.setValue(value).then(() => {
                 callback(null, this.getValue());
             })
@@ -33,7 +31,7 @@ class Wrapper extends Events {
     }
 
     updateValue() {
-        this.ctx.updateValue(this.value);
+        this.getCharacteristic(Characteristic.On).updateValue(this.value);
         return Promise.resolve();
     }
 
@@ -88,10 +86,9 @@ module.exports = class extends Accessory {
         this.timer                  = new Timer();
         this.timerInterval          = this.config.timerInterval * 60000;
 
+        this.switch = new Switch(this.name);
 
-        this.addService(new Service.Switch(this.name));
-
-        this.switch = new Wrapper(this.getService().getCharacteristic(Characteristic.On));
+        this.addService(this.switch);
 
         this.switch.on('valueChanged', (value) => {
             if (value) {
