@@ -34,14 +34,14 @@ module.exports = class extends Accessory {
             Promise.resolve().then(() => {
                 if (this.getPingState() && (vehicleData.getBatteryLevel() < this.requiredBatteryLevel)) {
                     this.pingState = false;
-                    this.log(`Battery level too low for ping to be enabled. Setting ping state to "${this.pingState ? 'ON' : 'OFF'}".`);
-                    return this.updatePingState();
+                    this.log(`Battery level too low for ping to be enabled. Setting ping state to "${this.getPingState() ? 'ON' : 'OFF'}".`);
                 }
-                else   
-                    return Promise.resolve();
+
+                return Promise.resolve();
     
             })
             .then(() => {
+                return this.updatePingState();
             })
             .catch((error) => {
                 this.log(error);
@@ -80,9 +80,8 @@ module.exports = class extends Accessory {
         });
 
         service.getCharacteristic(Characteristic.On).on('change', (params) => {
-            this.pingState = params.newValue;
             this.debug(`Ping state changed to "${JSON.stringify(params)}. Current ping state is ${this.getPingState()}."!!!!!!`);
-            service.getCharacteristic(Characteristic.On).updateValue(this.getPingState());
+            //service.getCharacteristic(Characteristic.On).updateValue(this.getPingState());
         });
 
     }
@@ -90,7 +89,7 @@ module.exports = class extends Accessory {
     updatePingState() {
         var service = this.getService(Service.Switch);
         this.debug(`Updating ping state to "${this.getPingState()}".`);
-        service.getCharacteristic(Characteristic.On).setValue(this.getPingState());
+        service.getCharacteristic(Characteristic.On).updateValue(this.getPingState());
 
         return Promise.resolve();
     }
@@ -106,8 +105,11 @@ module.exports = class extends Accessory {
             Promise.resolve().then(() => {
                 if (this.pingState != value) {
                     this.pingState = value;
-                    this.debug(`Setting ping state to "${this.pingState}".`);
-                    return this.pingState ? this.ping() : Promise.resolve();
+                    this.debug(`Setting ping state to "${this.getPingState()}".`);
+                    return this.getPingState() ? this.ping() : Promise.resolve();
+                }
+                else {
+                    return Promise.resolve();
                 }
             })
             .then(() => {
