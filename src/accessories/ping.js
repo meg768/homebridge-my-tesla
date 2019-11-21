@@ -100,7 +100,7 @@ module.exports = class extends Accessory {
         return new Promise((resolve, reject) => {
             this.debug(`Updating ping state to "${this.pingState}".`);
 
-            this.getService(Service.Switch).getCharacteristic(Characteristic.On).updateValue(this.pingState, () => {
+            this.getService(Service.Switch).getCharacteristic(Characteristic.On).setValue(this.pingState, () => {
                 resolve();
             });
     
