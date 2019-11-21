@@ -11,7 +11,7 @@ module.exports = class extends Accessory {
 
         var defaultConfig = {
             name: 'Ping',
-            requiredBatteryLevel : 100,
+            requiredBatteryLevel : 40,
             timerInterval : 5,
             enabled: true
         };
