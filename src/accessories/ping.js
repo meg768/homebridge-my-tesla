@@ -11,7 +11,7 @@ module.exports = class extends Accessory {
 
         var defaultConfig = {
             name: 'Ping',
-            requiredBatteryLevel : 50,
+            requiredBatteryLevel : 100,
             timerInterval : 5,
             enabled: true
         };
@@ -32,6 +32,8 @@ module.exports = class extends Accessory {
         this.vehicle.on('vehicleData', (vehicleData) => {
 
             Promise.resolve().then(() => {
+                this.debug(`Checking battery level. Current level is ${vehicleData.getBatteryLevel()}%, must be above ${this.requiredBatteryLevel}%.`);
+
                 if (vehicleData.getBatteryLevel() < this.requiredBatteryLevel) {
                     if (this.getPingState()) {
                         this.log(`Battery level too low for ping to be enabled. Setting ping state to "${this.getPingState() ? 'ON' : 'OFF'}".`);
