@@ -21,6 +21,7 @@ module.exports = class extends Accessory {
 
         this.pingState              = false;
         this.requiredBatteryLevel   = config.requiredBatteryLevel;
+        this.requiredBatteryLevel   = 90;
         this.timer                  = new Timer();
         this.timerInterval          = this.config.timerInterval * 60000;
 
