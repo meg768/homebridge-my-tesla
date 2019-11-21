@@ -80,6 +80,9 @@ module.exports = class extends Accessory {
         });
 
         service.getCharacteristic(Characteristic.On).on('change', (callback, params) => {
+            this.debug('***********');
+            this.debug(params);
+            this.debug('***********');
             this.debug(`Ping state changed to "${params.newValue}"!!!!!!`);
             callback(this.getPingState());
         });
