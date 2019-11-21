@@ -89,8 +89,8 @@ module.exports = class extends Accessory {
         });
 
         service.getCharacteristic(Characteristic.On).on('change', (params) => {
-            this.debug(`Ping state changed to "${JSON.stringify(params)}. Current ping state is ${this.getPingState()}."!!!!!!`);
-            service.getCharacteristic(Characteristic.On).updateValue(this.getPingState());
+            //this.debug(`Ping state changed to "${JSON.stringify(params)}. Current ping state is ${this.getPingState()}."!!!!!!`);
+            //service.getCharacteristic(Characteristic.On).updateValue(this.getPingState());
         });
 
     }
@@ -114,8 +114,8 @@ module.exports = class extends Accessory {
             Promise.resolve().then(() => {
                 if (this.pingState != value) {
                     this.pingState = value;
-                    this.debug(`Setting ping state to "${this.getPingState()}".`);
-                    return this.getPingState() ? this.ping() : Promise.resolve();
+                    this.debug(`Setting ping state to "${this.pingState}".`);
+                    return this.pingState ? this.ping() : Promise.resolve();
                 }
                 else {
                     return Promise.resolve();
