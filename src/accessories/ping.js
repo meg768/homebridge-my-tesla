@@ -33,8 +33,8 @@ module.exports = class extends Accessory {
 
             Promise.resolve().then(() => {
                 if (this.getPingState() && (vehicleData.getBatteryLevel() < this.requiredBatteryLevel)) {
-                    this.log(`Battery level too low for ping to be enabled. Turning off.`);
                     this.pingState = false;
+                    this.log(`Battery level too low for ping to be enabled. Setting ping state to "${this.pingState ? 'ON' : 'OFF'}".`);
                     return this.updatePingState();
                 }
                 else   
@@ -89,6 +89,8 @@ module.exports = class extends Accessory {
         var service = this.getService(Service.Switch);
         this.debug(`Updating ping state to "${this.getPingState()}".`);
         service.getCharacteristic(Characteristic.On).updateValue(this.getPingState());
+
+        return Promise.resolve();
     }
 
     getPingState() {
@@ -105,9 +107,6 @@ module.exports = class extends Accessory {
                     this.debug(`Setting ping state to "${this.pingState}".`);
                     return this.pingState ? this.ping() : Promise.resolve();
                 }
-                else
-                    return Promise.resolve();
-    
             })
             .then(() => {
                 resolve();
