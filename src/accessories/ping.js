@@ -37,7 +37,7 @@ module.exports = class extends Accessory {
 
                 if (vehicleData.getBatteryLevel() < this.requiredBatteryLevel) {
                     if (this.getPingState()) {
-                        this.log(`Battery level too low for ping to be enabled. Setting ping state to "${this.getPingState() ? 'ON' : 'OFF'}".`);
+                        this.log(`Battery level too low for ping to be enabled. Setting ping state to OFF.`);
                         return this.setPingState(false);
                     }
                 }
@@ -90,7 +90,7 @@ module.exports = class extends Accessory {
 
         service.getCharacteristic(Characteristic.On).on('change', (params) => {
             this.debug(`Ping state changed to "${JSON.stringify(params)}. Current ping state is ${this.getPingState()}."!!!!!!`);
-            //service.getCharacteristic(Characteristic.On).updateValue(this.getPingState());
+            service.getCharacteristic(Characteristic.On).updateValue(this.getPingState());
         });
 
     }
