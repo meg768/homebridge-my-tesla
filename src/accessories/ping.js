@@ -96,7 +96,6 @@ module.exports = class extends Accessory {
             Promise.resolve().then(() => {
                 if (this.pingState != value) {
                     this.pingState = value;
-                    this.updatePingState();
                     this.debug(`Setting ping state to "${this.pingState}".`);
                     return this.pingState ? this.ping() : Promise.resolve();
                 }
