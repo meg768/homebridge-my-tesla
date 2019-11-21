@@ -41,7 +41,7 @@ module.exports = class extends Accessory {
     
             })
             .then(() => {
-                return this.switch.updateValue();
+                return this.updatePingState();
             })
             .catch((error) => {
                 this.log(error);
