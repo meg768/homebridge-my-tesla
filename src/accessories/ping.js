@@ -32,16 +32,16 @@ module.exports = class extends Accessory {
         this.vehicle.on('vehicleData', (vehicleData) => {
 
             Promise.resolve().then(() => {
-                if (vehicleData.getBatteryLevel() < this.requiredBatteryLevel) {
+                if (this.getPingState() && (vehicleData.getBatteryLevel() < this.requiredBatteryLevel)) {
                     this.log(`Battery level too low for ping to be enabled. Turning off.`);
-                    return this.setPingState(false);
+                    this.pingState = false;
+                    return this.updatePingState(false);
                 }
                 else   
                     return Promise.resolve();
     
             })
             .then(() => {
-                return this.updatePingState();
             })
             .catch((error) => {
                 this.log(error);
