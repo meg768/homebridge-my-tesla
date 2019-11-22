@@ -21,10 +21,9 @@ module.exports = class extends Accessory {
         super({...options, config:{...defaultConfig, ...config}});
         
         this.pingState = false;
-        this.requiredBatteryLevel = this.config.requiredBatteryLevel;
-        this.requiredBatteryLevel = 90;
 
         this.addService(new Service.Switch(this.name));
+
         this.enableOn();
         this.enablePingTimer();
 
@@ -52,13 +51,15 @@ module.exports = class extends Accessory {
 
     enableOn() {
         var service = this.getService(Service.Switch);
+        var requiredBatteryLevel = this.config.requiredBatteryLevel;
+        var requiredBatteryLevel = 90;
 
         this.vehicle.on('vehicleData', (vehicleData) => {
 
-            if (this.getPingState() && (vehicleData.getBatteryLevel() < this.requiredBatteryLevel)) {
+            if (this.getPingState() && (vehicleData.getBatteryLevel() < requiredBatteryLevel)) {
                 this.log(`Battery level too low for ping to be enabled. Setting ping state to OFF.`);
                 this.setPingState(false).then(() => {
-                    return this.updatePingState();
+                    service.getCharacteristic(Characteristic.On).updateValue(this.getPingState());
                 })
             }
         });
@@ -75,11 +76,7 @@ module.exports = class extends Accessory {
 
     }
 
-    updatePingState() {
-        var service = this.getService(Service.Switch);
-        service.getCharacteristic(Characteristic.On).updateValue(this.getPingState());
-        return Promise.resolve();
-    }
+
 
     getPingState() {
         return this.pingState;
