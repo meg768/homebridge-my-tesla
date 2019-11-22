@@ -57,6 +57,7 @@ module.exports = class extends Accessory {
     }
 
     updatePingState() {
+        var service = this.getService(Service.Switch);
         service.getCharacteristic(Characteristic.On).updateValue(this.getPingState());
         return Promise.resolve();
     }
