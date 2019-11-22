@@ -12,13 +12,16 @@ module.exports = class extends Accessory {
 
         var defaultConfig = {
             name: 'Ping',
+            requiredBatteryLevel : 40,
+            timerInterval : 5,
             enabled: true
         };
 
         var {config, ...options} = options;
         super({...options, config:{...defaultConfig, ...config}});
-
+        
         this.pingState              = false;
+        this.requiredBatteryLevel   = 90; //config.requiredBatteryLevel;
 
         this.addService(new Service.Switch(this.name));
         this.enableOn();
@@ -29,16 +32,28 @@ module.exports = class extends Accessory {
     enableOn() {
         var service = this.getService(Service.Switch);
 
+        this.vehicle.on('vehicleData', (vehicleData) => {
+
+            this.debug(`Checking battery level. Current level is ${vehicleData.getBatteryLevel()}%, must be above ${this.requiredBatteryLevel}%.`);
+
+            if (this.pingState && (vehicleData.getBatteryLevel() < this.requiredBatteryLevel)) {
+                this.log(`Battery level too low for ping to be enabled. Setting ping state to OFF.`);
+                this.pingState = false;
+                service.getCharacteristic(Characteristic.On).updateValue(this.pingState);
+            }
+            else {
+                this.debug(`Checking battery level. OK!`);
+            }
+
+        });
+
         service.getCharacteristic(Characteristic.On).on('set', (value, callback) => {
             this.pingState = value ? true : false;
 
             if (this.pingState) {
-                var timer = new Timer();
-                timer.setTimer(2000, () => {
-                    this.pingState = false;
-                    service.getCharacteristic(Characteristic.On).updateValue(this.pingState);
-                });
+                this.ping();
             }
+
             callback();
         });
 
@@ -49,7 +64,10 @@ module.exports = class extends Accessory {
 
     }
 
-
+    ping() {
+        this.debug('Ping!');
+        return this.vehicle.getVehicleData();     
+    }
 
 }
 
