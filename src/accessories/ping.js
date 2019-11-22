@@ -34,26 +34,15 @@ module.exports = class extends Accessory {
 
         this.vehicle.on('vehicleData', (vehicleData) => {
 
-            this.debug(`Checking battery level. Current level is ${vehicleData.getBatteryLevel()}%, must be above ${this.requiredBatteryLevel}%.`);
-
             if (this.pingState && (vehicleData.getBatteryLevel() < this.requiredBatteryLevel)) {
                 this.log(`Battery level too low for ping to be enabled. Setting ping state to OFF.`);
                 this.pingState = false;
                 service.getCharacteristic(Characteristic.On).updateValue(this.pingState);
             }
-            else {
-                this.debug(`Checking battery level. OK!`);
-            }
-
         });
 
         service.getCharacteristic(Characteristic.On).on('set', (value, callback) => {
-            this.pingState = value ? true : false;
-
-            if (this.pingState) {
-                this.ping();
-            }
-
+            this.setPingState(value);
             callback();
         });
 
@@ -62,6 +51,31 @@ module.exports = class extends Accessory {
         });
 
 
+    }
+
+
+    setPingState(value) {
+        value = value ? true : false;
+
+        return new Promise((resolve, reject) => {
+            Promise.resolve().then(() => {
+                if (this.pingState != value) {
+                    this.pingState = value;
+                    this.debug(`Setting ping state to "${this.pingState}".`);
+                    return this.pingState ? this.ping() : Promise.resolve();
+                }
+                else {
+                    return Promise.resolve();
+                }
+            })
+            .then(() => {
+                resolve();
+            })
+            .catch((error) => {
+                this.log(error);
+                reject();
+            })
+        });
     }
 
     ping() {
