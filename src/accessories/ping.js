@@ -25,12 +25,12 @@ module.exports = class extends Accessory {
         this.addService(new Service.Switch(this.name));
 
         this.enableOn();
-        this.enablePingTimer();
+        this.enableTimer();
 
 
     }
 
-    enablePingTimer() {
+    enableTimer() {
         var timer = new Timer();
         var timerInterval = this.config.timerInterval * 60000;
 
