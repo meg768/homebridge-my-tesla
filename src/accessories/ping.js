@@ -31,29 +31,20 @@ module.exports = class extends Accessory {
 
         this.vehicle.on('vehicleData', (vehicleData) => {
 
-            Promise.resolve().then(() => {
-                this.debug(`Checking battery level. Current level is ${vehicleData.getBatteryLevel()}%, must be above ${this.requiredBatteryLevel}%.`);
+            this.debug(`Checking battery level. Current level is ${vehicleData.getBatteryLevel()}%, must be above ${this.requiredBatteryLevel}%.`);
 
-                if (vehicleData.getBatteryLevel() < this.requiredBatteryLevel) {
-                    if (this.getPingState()) {
-                        this.log(`Battery level too low for ping to be enabled. Setting ping state to OFF.`);
-                        return this.setPingState(false);
-                    }
+            if (vehicleData.getBatteryLevel() < this.requiredBatteryLevel) {
+                if (this.getPingState()) {
+                    this.log(`Battery level too low for ping to be enabled. Setting ping state to OFF.`);
+                    this.pingState = false;
+                    this.getService(Service.Switch).getCharacteristic(Characteristic.On).updateValue(this.pingState = false);
                 }
-                else {
-                    this.debug(`Checking battery level. OK!`);
+            }
+            else {
+                this.debug(`Checking battery level. OK!`);
 
-                }
+            }
 
-                return Promise.resolve();
-    
-            })
-            .then(() => {
-                return this.updatePingState();
-            })
-            .catch((error) => {
-                this.log(error);
-            });
         });
 
         // Listen to responses from Tesla API
