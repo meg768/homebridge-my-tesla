@@ -23,6 +23,22 @@ module.exports = class extends Accessory {
         this.pingState              = false;
         this.requiredBatteryLevel   = 90; //config.requiredBatteryLevel;
 
+
+
+        // Listen to responses from Tesla API
+        this.vehicle.on('response', () => {
+
+            // Whenever we get a response, reset the timer
+            if (this.getPingState()) {
+                this.debug('Response from Tesla API, resetting ping timer.');
+                this.timer.setTimer(this.timerInterval, this.ping.bind(this));
+            }
+            else
+                this.timer.cancel();
+
+        });
+
+
         this.addService(new Service.Switch(this.name));
         this.enableOn();
 
@@ -34,10 +50,11 @@ module.exports = class extends Accessory {
 
         this.vehicle.on('vehicleData', (vehicleData) => {
 
-            if (this.pingState && (vehicleData.getBatteryLevel() < this.requiredBatteryLevel)) {
+            if (this.getPingState() && (vehicleData.getBatteryLevel() < this.requiredBatteryLevel)) {
                 this.log(`Battery level too low for ping to be enabled. Setting ping state to OFF.`);
-                this.pingState = false;
-                service.getCharacteristic(Characteristic.On).updateValue(this.pingState);
+                this.setPingState(false).then(() => {
+                    return this.updatePingState();
+                })
             }
         });
 
@@ -53,6 +70,14 @@ module.exports = class extends Accessory {
 
     }
 
+    updatePingState() {
+        service.getCharacteristic(Characteristic.On).updateValue(this.getPingState());
+        return Promise.resolve();
+    }
+
+    getPingState() {
+        return this.pingState;
+    }
 
     setPingState(value) {
         value = value ? true : false;
