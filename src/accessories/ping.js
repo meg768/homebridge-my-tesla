@@ -5,6 +5,7 @@ var Timer = require('yow/timer');
 var Accessory = require('../accessory.js');
 
 
+
 module.exports = class extends Accessory {
 
     constructor(options) {
@@ -25,24 +26,23 @@ module.exports = class extends Accessory {
         this.timerInterval          = this.config.timerInterval * 60000;
 
         this.addService(new Service.Switch(this.name));
-
         this.enableOn();
-
 
         this.vehicle.on('vehicleData', (vehicleData) => {
 
             this.debug(`Checking battery level. Current level is ${vehicleData.getBatteryLevel()}%, must be above ${this.requiredBatteryLevel}%.`);
 
-            if (vehicleData.getBatteryLevel() < this.requiredBatteryLevel) {
-                if (this.getPingState()) {
-                    this.log(`Battery level too low for ping to be enabled. Setting ping state to OFF.`);
-                    this.pingState = false;
-                    this.getService(Service.Switch).getCharacteristic(Characteristic.On).updateValue(this.pingState = false);
-                }
+            if (this.getPingState() && (vehicleData.getBatteryLevel() < this.requiredBatteryLevel)) {
+                this.log(`Battery level too low for ping to be enabled. Setting ping state to OFF.`);
+                this.setPingState(false).then(() => {
+                    return this.updatePingState();
+                })
+                .catch((error) => {
+                    this.log(error);
+                })
             }
             else {
                 this.debug(`Checking battery level. OK!`);
-
             }
 
         });
@@ -75,7 +75,7 @@ module.exports = class extends Accessory {
         });
 
         service.getCharacteristic(Characteristic.On).on('get', (callback) => {
-            callback(this.getPingState());
+            callback(null, this.getPingState());
         });
 
         service.getCharacteristic(Characteristic.On).on('change', (params) => {
@@ -86,16 +86,9 @@ module.exports = class extends Accessory {
     }
 
     updatePingState() {
-
-        return new Promise((resolve, reject) => {
-            this.debug(`Updating ping state to "${this.pingState}".`);
-
-            this.getService(Service.Switch).getCharacteristic(Characteristic.On).setValue(this.pingState, () => {
-                resolve();
-            });
-    
-        });
-
+        this.debug(`Updating ping state to "${this.pingState}".`);
+        this.getService(Service.Switch).getCharacteristic(Characteristic.On).updateValue(this.pingState);
+        return Promise.resolve();
     }
 
     getPingState() {
@@ -133,9 +126,6 @@ module.exports = class extends Accessory {
 
 
 }
-
-
-
 
 
 
