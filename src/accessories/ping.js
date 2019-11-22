@@ -12,6 +12,57 @@ module.exports = class extends Accessory {
 
         var defaultConfig = {
             name: 'Ping',
+            enabled: true
+        };
+
+        var {config, ...options} = options;
+        super({...options, config:{...defaultConfig, ...config}});
+
+        this.pingState              = false;
+
+        this.addService(new Service.Switch(this.name));
+        this.enableOn();
+
+
+    }
+
+    enableOn() {
+        var service = this.getService(Service.Switch);
+
+        service.getCharacteristic(Characteristic.On).on('set', (value, callback) => {
+            this.pingState = value ? true : false;
+
+            if (this.pingState) {
+                var timer = new Timer();
+                timer.setTimer(2000, () => {
+                    this.pingState = false;
+                    service.getCharacteristic(Characteristic.On).updateValue(this.pingState);
+                });
+            }
+            callback();
+        });
+
+        service.getCharacteristic(Characteristic.On).on('get', (callback) => {
+            callback(null, this.pingState);
+        });
+
+
+    }
+
+
+
+}
+
+
+
+/*
+
+module.exports = class extends Accessory {
+
+    constructor(options) {
+
+        var defaultConfig = {
+            name: 'Ping',
             requiredBatteryLevel : 40,
             timerInterval : 5,
             enabled: true
@@ -130,3 +181,4 @@ module.exports = class extends Accessory {
 
 
 
+*/
