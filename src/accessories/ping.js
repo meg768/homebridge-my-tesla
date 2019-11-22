@@ -51,6 +51,7 @@ module.exports = class extends Accessory {
     enableOn() {
         var service = this.getService(Service.Switch);
         var requiredBatteryLevel = this.config.requiredBatteryLevel || 40;
+        var requiredBatteryLevel = 90;
 
         this.vehicle.on('vehicleData', (vehicleData) => {
 
