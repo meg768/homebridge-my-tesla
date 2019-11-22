@@ -67,7 +67,7 @@ module.exports = class extends Accessory {
 
         service.getCharacteristic(Characteristic.On).on('set', (value, callback) => {
             this.setPingState(value).then(() => {
-                callback(null, this.getPingState());
+                callback(null, this.pingState);
             })
             .catch((error) => {
                 callback(error);
@@ -75,7 +75,7 @@ module.exports = class extends Accessory {
         });
 
         service.getCharacteristic(Characteristic.On).on('get', (callback) => {
-            callback(null, this.getPingState());
+            callback(null, this.pingState);
         });
 
         service.getCharacteristic(Characteristic.On).on('change', (params) => {
