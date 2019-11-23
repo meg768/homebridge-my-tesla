@@ -28,7 +28,7 @@ module.exports = class extends Switch {
 
             // Whenever we get a response, reset the timer
             if (this.getSwitchState()) {
-                this.debug('Response from Tesla API, resetting ping timer.');
+                this.debug('Resetting ping timer.');
                 timer.setTimer(timerInterval, this.ping.bind(this));
             }
             else
