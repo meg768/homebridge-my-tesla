@@ -16,7 +16,9 @@ class Switch extends Accessory {
         this.addService(new Service.Switch(this.name));
 
         this.getService(Service.Switch).getCharacteristic(Characteristic.On).on('set', (value, callback) => {
-            this.setSwitchState(value).catch((error) => {
+            this.setSwitchState(value).then(() => {
+            })
+            .catch((error) => {
                 this.log(error);
             })
             .then(() => {
@@ -43,14 +45,12 @@ class Switch extends Accessory {
 
         return new Promise((resolve, reject) => {
             Promise.resolve().then(() => {
-                if (this.switchState != value) {
-                    this.switchState = value;
-                    this.debug(`Setting switch "${this.name}" state to "${this.switchState}".`);
-                    return this.switchState ? this.turnOn() : this.turnOff();
-                }
-                else {
+                if (this.switchState == value)
                     return Promise.resolve();
-                }
+
+                this.switchState = value;
+                this.debug(`Setting switch "${this.name}" state to "${this.switchState}".`);
+                return this.switchState ? this.turnOn() : this.turnOff();
             })
             .then(() => {
                 resolve();
