@@ -121,8 +121,13 @@ module.exports = class extends Switch {
     }
 
     turnOn() {
+        return this.ping();
+    }
+
+    ping() {
         this.debug('Ping!');
         return this.vehicle.getVehicleData();     
+
     }
 
 
