@@ -29,9 +29,27 @@ module.exports = class Switch extends Accessory {
         });
     }
 
-    updateSwitchState() {
-        this.getService(Service.Switch).getCharacteristic(Characteristic.On).updateValue(this.getSwitchState());
-        return Promise.resolve();
+    updateSwitchState(value) {
+
+        var updateValue = () => {
+            this.getService(Service.Switch).getCharacteristic(Characteristic.On).updateValue(this.getSwitchState());
+            return Promise.resolve();
+        };
+
+        if (value == undefined) {
+            return updateValue();
+        }
+        return new Promise((resolve, reject) => {
+            this.setSwitchState(value).then(() => {
+                return updateValue();
+            })
+            .then(() => {
+                resolve();
+            })
+            .catch((error) => {
+                reject(error);
+            })
+        });
     }
 
     getSwitchState() {

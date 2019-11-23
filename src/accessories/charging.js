@@ -1,9 +1,9 @@
 
 var Service  = require('../homebridge.js').Service;
 var Characteristic  = require('../homebridge.js').Characteristic;
-var Accessory = require('../accessory.js');
+var Switch = require('./switch.js');
 
-module.exports = class extends Accessory {
+module.exports = class extends Switch {
 
     constructor(options) {
         var defaultConfig = {
@@ -14,88 +14,52 @@ module.exports = class extends Accessory {
         var {config, ...options} = options;
         super({...options, config:{...defaultConfig, ...config}});
 
-        this.batteryLevel = undefined;
-        this.isActive = false;
-        this.isCharging = false;
-
-        this.enableSwitch();
-        this.enableBatteryLevel();
+        this.enableBatteryService();
 
         this.vehicle.on('vehicleData', (vehicleData) => {    
-            this.updateSwitch(vehicleData);
-            this.updateBatteryLevel(vehicleData);
+            if (vehicleData.isChargingStopped() || vehicleData.isChargingDisconnected())
+                this.updateSwitchState(false);
+            else 
+                this.updateSwitchState(true);
+                
         });
 
     }
 
-    updateSwitch(vehicleData) {
-        var service = this.getService(Service.Switch);
-
-        if (vehicleData.isChargingStopped() || vehicleData.isChargingDisconnected())
-            this.isActive = false;
-        else 
-            this.isActive = true;
-
-        this.debug(`Updated charging state to ${this.isActive ? 'ON' : 'OFF'} (vehicle charging state is "${vehicleData.getChargingState()}").`);        
-        service.getCharacteristic(Characteristic.On).updateValue(this.isActive);
-    }
-
-    updateBatteryLevel(vehicleData) {
-        var service = this.getService(Service.BatteryService);
-
-        this.isCharging = vehicleData.isCharging();
-        this.batteryLevel = vehicleData.getBatteryLevel();
-
-        this.debug(`Updated battery level to ${this.batteryLevel}%.`);
-        service.getCharacteristic(Characteristic.BatteryLevel).updateValue(vehicleData.batteryLevel);
-    }
-
-
-    enableSwitch() {
-        var service = new Service.Switch(this.name, __filename);
-        this.addService(service);
-
-        service.getCharacteristic(Characteristic.On).on('get', (callback) => {
-            callback(null, this.isActive);
-        });
-    
-        service.getCharacteristic(Characteristic.On).on('set', (value, callback) => {
-            this.setActiveState(value).then(() => {
-                callback(null, this.isActive);
-            })
-            .catch((error) => {
-                this.log(error);
-                callback(null);
-            })
-        });
-    }
-
-
-    enableBatteryLevel() {
+    enableBatteryService() {
         var service = new Service.BatteryService(this.name);
+        var batteryLevel = undefined;
+        var chargingState = undefined;
+
         this.addService(service);
+
+        this.vehicle.on('vehicleData', (vehicleData) => {    
+            chargingState = vehicleData.isCharging() ? Characteristic.ChargingState.CHARGING : Characteristic.ChargingState.NOT_CHARGING;
+            batteryLevel = vehicleData.getBatteryLevel();
+
+            this.debug(`Updated battery level to ${batteryLevel}% and charging state to ${chargingState == Characteristic.ChargingState.CHARGING ? "ON" : "OFF"}.`);
+
+            service.getCharacteristic(Characteristic.BatteryLevel).updateValue(batteryLevel);
+            service.getCharacteristic(Characteristic.ChargingState).updateValue(chargingState);
+        });
 
         service.getCharacteristic(Characteristic.BatteryLevel).on('get', (callback) => {
-            callback(null, this.batteryLevel);    
+            callback(null, batteryLevel);    
         });
 
         service.getCharacteristic(Characteristic.ChargingState).on('get', (callback) => {
-            callback(null, this.isCharging ? Characteristic.ChargingState.CHARGING : Characteristic.ChargingState.NOT_CHARGING);    
+            callback(null, chargingState);    
         });
 
     }
     
-
-
-    setChargingState(value) {
-        value = value ? true : false;
-
+    turnOn() {
         return new Promise((resolve, reject) => {
             Promise.resolve().then(() => {
-                return value ? this.vehicle.chargePortDoorOpen() : this.vehicle.chargeStop();
+                return this.vehicle.chargePortDoorOpen();
             })
             .then(() => {
-                return value ? this.vehicle.chargeStart() : this.vehicle.chargePortDoorOpen();
+                return this.vehicle.chargeStart();
             })
             .then(() => {
                 return this.pause(1000);
@@ -110,30 +74,33 @@ module.exports = class extends Accessory {
                 reject(error);
             })
         });
-    }    
 
+    }
 
-    setActiveState(value) {
-        value = value ? true : false;
-
+    turnOff() {
         return new Promise((resolve, reject) => {
-
-            this.debug(`Setting charging state to "${value}".`);
-
             Promise.resolve().then(() => {
-                return Promise.resolve();
+                return this.vehicle.chargeStop();
             })
             .then(() => {
-                this.isActive = value;
-                this.setChargingState(value);
+                return this.vehicle.chargePortDoorClose();
+            })
+            .then(() => {
+                return this.pause(1000);
+            })
+            .then(() => {
+                return this.vehicle.getVehicleData();
+            })
+            .then(() => {
                 resolve();
             })
             .catch((error) => {
                 reject(error);
-            });
-    
-        })
+            })
+        });
+
     }
+
 
 
 

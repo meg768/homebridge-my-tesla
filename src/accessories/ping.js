@@ -40,8 +40,7 @@ module.exports = class extends Switch {
 
             if (this.getSwitchState() && (vehicleData.getBatteryLevel() < requiredBatteryLevel)) {
                 this.log(`Battery level too low for ping to be enabled. Setting ping state to OFF.`);
-                this.setSwitchState(false).then(() => {
-                    return this.updateSwitchState();
+                this.updateSwitchState(false).then(() => {
                 })
                 .catch((error) => {
                     this.log(error);
