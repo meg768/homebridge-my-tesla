@@ -48,8 +48,8 @@ module.exports = class extends Accessory {
         });
     }
 
+
     enableOn() {
-        var service = this.getService(Service.Switch);
         var requiredBatteryLevel = this.config.requiredBatteryLevel;
 
         this.vehicle.on('vehicleData', (vehicleData) => {
@@ -57,24 +57,35 @@ module.exports = class extends Accessory {
             if (this.getPingState() && (vehicleData.getBatteryLevel() < requiredBatteryLevel)) {
                 this.log(`Battery level too low for ping to be enabled. Setting ping state to OFF.`);
                 this.setPingState(false).then(() => {
-                    service.getCharacteristic(Characteristic.On).updateValue(this.getPingState());
+                    return this.updatePingState();
+                })
+                .catch((error) => {
+                    this.log(error);
                 })
             }
         });
 
-        service.getCharacteristic(Characteristic.On).on('set', (value, callback) => {
-            this.setPingState(value);
-            callback();
+        this.getService(Service.Switch).getCharacteristic(Characteristic.On).on('set', (value, callback) => {
+            this.setPingState(value).catch((error) => {
+                this.log(error);
+            })
+            .then(() => {
+                callback();
+
+            })
         });
 
-        service.getCharacteristic(Characteristic.On).on('get', (callback) => {
+        this.getService(Service.Switch).getCharacteristic(Characteristic.On).on('get', (callback) => {
             callback(null, this.getPingState());
         });
 
 
     }
 
-
+    updatePingState() {
+        this.getService(Service.Switch).getCharacteristic(Characteristic.On).updateValue(this.getPingState());
+        return Promise.resolve();
+    }
 
     getPingState() {
         return this.pingState;
@@ -98,7 +109,6 @@ module.exports = class extends Accessory {
                 resolve();
             })
             .catch((error) => {
-                this.log(error);
                 reject();
             })
         });
