@@ -29,7 +29,6 @@ module.exports = class extends Accessory {
     }
 
     updateSwitch(vehicleData) {
-        return;
         var service = this.getService(Service.Switch);
 
         if (vehicleData.isChargingStopped() || vehicleData.isChargingDisconnected())
@@ -53,7 +52,6 @@ module.exports = class extends Accessory {
 
 
     enableSwitch() {
-        return;
         var service = new Service.Switch(this.name, __filename);
         this.addService(service);
 
