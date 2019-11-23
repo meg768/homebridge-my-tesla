@@ -96,7 +96,7 @@ module.exports = class extends Switch {
         this.vehicle.on('response', () => {
 
             // Whenever we get a response, reset the timer
-            if (this.getPingState()) {
+            if (this.getSwitchState()) {
                 this.debug('Response from Tesla API, resetting ping timer.');
                 timer.setTimer(timerInterval, this.ping.bind(this));
             }
@@ -107,7 +107,7 @@ module.exports = class extends Switch {
 
         this.vehicle.on('vehicleData', (vehicleData) => {
 
-            if (this.getPingState() && (vehicleData.getBatteryLevel() < requiredBatteryLevel)) {
+            if (this.getSwitchState() && (vehicleData.getBatteryLevel() < requiredBatteryLevel)) {
                 this.log(`Battery level too low for ping to be enabled. Setting ping state to OFF.`);
                 this.setSwitchState(false).then(() => {
                     return this.updateSwitchState();
