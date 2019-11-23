@@ -16,7 +16,7 @@ module.exports = class Switch extends Accessory {
 
         this.addService(this.switchService);
 
-        this.this.switchService.getCharacteristic(Characteristic.On).on('set', (value, callback) => {
+        this.switchService.getCharacteristic(Characteristic.On).on('set', (value, callback) => {
             this.setSwitchState(value).then(() => {
             })
             .catch((error) => {
