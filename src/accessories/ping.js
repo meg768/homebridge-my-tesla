@@ -62,11 +62,11 @@ class Switch extends Accessory {
     }
 
     turnOn() {
-        return this.resolve();
+        return Promise.resolve();
     }
 
     turnOff() {
-        return this.resolve();
+        return Promise.resolve();
     }
 
 }
