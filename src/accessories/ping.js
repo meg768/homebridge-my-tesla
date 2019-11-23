@@ -5,8 +5,6 @@ var Timer = require('yow/timer');
 var Switch = require('./switch.js');
 
 
-
-
 module.exports = class extends Switch {
 
     constructor(options) {
