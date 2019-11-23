@@ -7,13 +7,26 @@ module.exports = class Switch extends Accessory {
 
     constructor(options) {
 
-        var {SwitchService = Service.Switch, ...options} = options;
+        var {switchType = 'switch', ...options} = options;
 
         super(options);
-        
+ 
         this.switchState = false;
-        this.switchService = new SwitchService(this.name);
-
+        
+        switch (switchType) {
+            case 'fan': {
+                this.switchService = new Service.Fan(this.name);
+                break;
+            }
+            case 'switch': {
+                this.switchService = new Service.Switch(this.name);
+                break;
+            }
+            default: {
+                throw new Error(`Invalid switch type "${switchType}".`);
+            }
+        }
+ 
         this.addService(this.switchService);
 
         this.switchService.getCharacteristic(Characteristic.On).on('set', (value, callback) => {
