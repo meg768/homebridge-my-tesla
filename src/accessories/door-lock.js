@@ -9,15 +9,12 @@ module.exports = class extends Lock {
             "name": "Door"
         };
 
-        var {config, ...options} = options;
-        super({...options, config:{...defaultConfig, ...config}});
-/*
-        var xxx ={config:defaultConfig, ...options};
-        console.log('****************'); 
-        console.log(xxx); 
-        console.log('****************'); 
-        super({config:defaultConfig, ...options});
-*/
+//        var {config, ...options} = options;
+  //      super({...options, config:{...defaultConfig, ...config}});
+
+ 
+      super({config:defaultConfig, ...options});
+
         this.vehicle.on('vehicleData', (data) => {       
             this.targetLockState = this.currentLockState = (data.vehicleState.isLocked() ? Lock.SECURED : Lock.UNSECURED);
 
