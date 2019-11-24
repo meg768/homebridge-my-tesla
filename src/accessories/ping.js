@@ -16,11 +16,11 @@ module.exports = class extends Switch {
         };
 
         var x = {...options, config:Object.assign({}, config, options.config)};
+        super(x);
 
         this.log('*************');
         this.log(x);
         this.log('*************');
-        super(x);
 
         
         var timer = new Timer();
