@@ -9,6 +9,10 @@ module.exports = class extends Lock {
             "name": "Door"
         };
 
+        var xxx ={config:defaultConfig, ...options};
+        console.log('****************'); 
+        console.log(xxx); 
+        console.log('****************'); 
         super({config:defaultConfig, ...options});
 
         this.vehicle.on('vehicleData', (data) => {       
