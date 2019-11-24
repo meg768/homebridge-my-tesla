@@ -4,10 +4,6 @@ var Accessory = require('../accessory.js');
 
 class Lock extends Accessory {
 
-    static UNSECURED = Characteristic.LockCurrentState.UNSECURED;
-    static SECURED   = Characteristic.LockCurrentState.SECURED;
-    static JAMMED    = Characteristic.LockCurrentState.JAMMED;
-    static UNKNOWN   = Characteristic.LockCurrentState.UNKNOWN;
 
     constructor(options) {
         super(options);
@@ -111,6 +107,11 @@ class Lock extends Accessory {
 
 
 }
+
+Lock.UNSECURED = Characteristic.LockCurrentState.UNSECURED;
+Lock.SECURED   = Characteristic.LockCurrentState.SECURED;
+Lock.JAMMED    = Characteristic.LockCurrentState.JAMMED;
+Lock.UNKNOWN   = Characteristic.LockCurrentState.UNKNOWN;
 
 
 module.exports = class extends Accessory {
