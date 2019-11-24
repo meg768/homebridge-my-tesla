@@ -6,7 +6,7 @@ module.exports = class extends Lock {
 
     constructor(options) {
         var config = {
-            "name": "Dörren"
+            "name": "Door"
         };
 
         super({config:config, ...options});
