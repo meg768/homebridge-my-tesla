@@ -5,20 +5,12 @@ var Lock = require('./lock.js');
 module.exports = class extends Lock {
 
     constructor(options) {
-        var defaultConfig = {
-            "name": "Door"
+        var config = {
+            "name": "Dörren"
         };
 
-        var xxx = {config:defaultConfig, ...options};
-        console.log('***************');
-        console.log(xxx);
-        console.log('***************');
-//        var {config, ...options} = options;
-  //      super({...options, config:{...defaultConfig, ...config}});
-
-      super(xxx);
+        super({config:config, ...options});
  
-
         this.vehicle.on('vehicleData', (data) => {       
             this.targetLockState = this.currentLockState = (data.vehicleState.isLocked() ? Lock.SECURED : Lock.UNSECURED);
 
