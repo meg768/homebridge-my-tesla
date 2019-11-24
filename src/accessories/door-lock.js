@@ -24,7 +24,7 @@ module.exports = class extends Accessory {
         this.addService(service);
 
         this.vehicle.on('vehicleData', (data) => {       
-            this.currentState = data.isVehicleLocked() ? Characteristic.LockCurrentState.SECURED : Characteristic.LockCurrentState.UNSECURED;
+            this.currentState = data.vehicleState.isLocked() ? Characteristic.LockCurrentState.SECURED : Characteristic.LockCurrentState.UNSECURED;
             this.targetState = this.currentState;
 
             this.debug(`Updated door lock status to ${this.currentState ? 'LOCKED' : 'UNLOCKED'}.`);
