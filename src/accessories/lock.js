@@ -75,26 +75,22 @@ module.exports = class Lock extends Accessory {
 
     setTargetLockState(value) {
         return new Promise((resolve, reject) => {
-            if (value === this.targetLockState)
+            Promise.resolve().then(() => {
+                this.log(`Turning lock "${this.name}" to state ${this.getLockStateName(value)}...`);
+                return value ? this.lock() : this.unlock();
+
+            })
+            .then(() => {
+                this.currentLockState = this.targetLockState = value;
+                this.updateCurrentLockState();
+                return Promise.resolve();
+            })
+            .then(() => {
                 resolve();
-            else {
-                Promise.resolve().then(() => {
-                    this.log(`Turning lock "${this.name}" to state ${this.getLockStateName(value)}...`);
-                    return value ? this.lock() : this.unlock();
-    
-                })
-                .then(() => {
-                    this.currentLockState = this.targetLockState = value;
-                    this.updateCurrentLockState();
-                    return Promise.resolve();
-                })
-                .then(() => {
-                    resolve();
-                })
-                .catch((error) => {
-                    reject(error);
-                })
-            }
+            })
+            .catch((error) => {
+                reject(error);
+            })
         });
 
     }

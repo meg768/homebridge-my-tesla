@@ -23,17 +23,7 @@ module.exports = class extends Lock {
     }
 
     lock() {
-        return Promise.resolve((resolve, reject) => {
-            Promise.resolve().then(() => {
-                return this.vehicle.doorLock();
-            })
-            .then(() => {
-                resolve();    
-            })
-            .catch((error) => {
-                reject(error);
-            })            
-        });
+        return this.vehicle.doorLock();
     }
 
     unlock() {
