@@ -69,6 +69,10 @@ class ChargeState {
         return this.json.battery_level;
     }
 
+    isCharging() {
+        return this.getChargingState() == 'Charging';
+    }
+
     isChargingStarting() {
         return this.getChargingState() == 'Starting';
     }
@@ -91,15 +95,11 @@ class ChargeState {
 class VehicleData {
 
     constructor(json) {
-        this.json = json;
+        this.json         = json;
         this.vehicleState = new VehicleState(json.vehicle_state);
         this.climateState = new ClimateState(json.climate_state);
         this.chargeState  = new ChargeState(json.charge_state);
         this.driveState   = new DriveState(json.drive_state);
-    }
-
-    getCarVersion() {
-        return this.vehicleState.getCarVersion();
     }
 
     getDisplayName() {
@@ -146,52 +146,6 @@ class VehicleData {
 
     }
 
-    isVehicleLocked() {
-        return this.vehicleState.isLocked();
-    }
-
-    isClimateOn() {
-        return this.climateState.isClimateOn();
-    }
-
-
-    getInsideTemperature() {
-        return this.climateState.getInsideTemperature();
-    }
-
-    getOutsideTemperature() {
-        return this.climateState.getOutsideTemperature();
-    }
-
-    getBatteryLevel() {
-        return this.chargeState.getBatteryLevel();
-    }
-
-    getChargingState() {
-        return this.chargeState.getChargingState();
-    }
-
-    isCharging() {
-        return this.chargeState.getChargingState() == 'Charging';
-    }
-
-    isChargingStarting() {
-        return this.chargeState.getChargingState() == 'Starting';
-    }
-
-    isChargingStopped() {
-        return this.chargeState.getChargingState() == 'Stopped';
-    }
-
-    isChargingComplete() {
-        return this.chargeState.getChargingState() == 'Complete';
-    }
-
-    isChargingDisconnected() {
-        return this.chargeState.getChargingState() == 'Disconnected';
-    }
-
-
 }
 
 
@@ -199,4 +153,5 @@ module.exports.VehicleData = VehicleData;
 module.exports.ClimateState = ClimateState;
 module.exports.ChargeState = ChargeState;
 module.exports.VehicleState = VehicleState;
+module.exports.DriveState = DriveState;
 
