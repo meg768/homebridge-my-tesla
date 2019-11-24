@@ -9,6 +9,10 @@ module.exports = class extends Lock {
             "name": "Door"
         };
 
+        var xxx = {...options, config:{...defaultConfig, ...config}};
+        console.log('***************');
+        console.log(xxx);
+        console.log('***************');
 //        var {config, ...options} = options;
   //      super({...options, config:{...defaultConfig, ...config}});
 
