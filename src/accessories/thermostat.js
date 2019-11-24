@@ -262,7 +262,7 @@ module.exports = class extends Accessory {
             var {vehicleData, action} = response;
 
             var insideTemperature = vehicleData.climateState.getInsideTemperature();
-            var batteryLevel = vehicleData.chargingState.getBatteryLevel();
+            var batteryLevel = vehicleData.chargeState.getBatteryLevel();
             var isClimateOn = vehicleData.climateState.isClimateOn();
             var isPluggedIn = vehicleData.chargeState.isCharging() || vehicleData.chargeState.isChargingComplete() || vehicleData.chargeState.isChargingStopped();
             var isDriving = vehicleData.driveState.isDriving();
