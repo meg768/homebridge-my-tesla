@@ -61,7 +61,7 @@ class Lock extends Accessory {
         return this.targetLockState;
     }
 
-    getLockState(state) {
+    getLockStateName(state) {
         switch(state) {
             case Lock.SECURED: {
                 return 'SECURED';
@@ -80,7 +80,7 @@ class Lock extends Accessory {
                 resolve();
             else {
                 Promise.resolve().then(() => {
-                    this.log(`Turning lock "${this.name}" to state ${this.getLockState(value)}...`);
+                    this.log(`Turning lock "${this.name}" to state ${this.getLockStateName(value)}...`);
                     return value ? this.lock() : this.unlock();
     
                 })
@@ -219,7 +219,7 @@ module.exports = class extends Lock {
         this.vehicle.on('vehicleData', (data) => {       
             this.targetLockState = this.currentLockState = (data.vehicleState.isLocked() ? Lock.SECURED : Lock.UNSECURED);
 
-            this.debug(`Updated door lock status to ${this.getLockState(this.currentLockState)}.`);
+            this.debug(`Updated door lock status to ${this.getLockStateName(this.currentLockState)}.`);
 
             this.updateCurrentLockState();
             this.updateTargetLockState();
