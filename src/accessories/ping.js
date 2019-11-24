@@ -3,21 +3,20 @@ var Service  = require('../homebridge.js').Service;
 var Characteristic  = require('../homebridge.js').Characteristic;
 var Timer = require('yow/timer');
 var Switch = require('./switch.js');
-
+var merge = require('yow/merge');
 
 module.exports = class extends Switch {
 
     constructor(options) {
 
-        var defaultConfig = {
+        var config = {
             name: 'Ping',
             requiredBatteryLevel : 40,
-            timerInterval : 5,
-            enabled: true
+            timerInterval : 5
         };
 
-        var {config, ...options} = options;
-        super({...options, config:{...defaultConfig, ...config}});
+        super({...options, config:Object.assign({}, config, options.config)});
+
         
         var timer = new Timer();
         var timerInterval = this.config.timerInterval * 60000;

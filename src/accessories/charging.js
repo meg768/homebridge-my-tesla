@@ -6,13 +6,11 @@ var Switch = require('./switch.js');
 module.exports = class extends Switch {
 
     constructor(options) {
-        var defaultConfig = {
-            "name": "Charging",
-            "enabled": true
+        var config = {
+            "name": "Charging"
         };
 
-        var {config, ...options} = options;
-        super({...options, config:{...defaultConfig, ...config}});
+        super({...options, config:Object.assign({}, config, options.config)});
 
         this.enableBatteryService();
 

@@ -7,13 +7,11 @@ module.exports = class extends Accessory {
 
     constructor(options) {
 
-        var defaultConfig = {
-            name: 'Outside',
-            enabled: true
+        var config = {
+            name: 'Outside'
         };
 
-        var {config, ...options} = options;
-        super({...options, config:{...defaultConfig, ...config}});
+        super({...options, config:Object.assign({}, config, options.config)});
 
         this.currentTemperature = undefined;
         this.active = true;

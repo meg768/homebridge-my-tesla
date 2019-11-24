@@ -7,13 +7,11 @@ var Accessory = require('../accessory.js');
 module.exports = class extends Accessory {
 
     constructor(options) {
-        var defaultConfig = {
-            "name": "Fan",
-            "enabled": true
+        var config = {
+            "name": "Fan"
         };
 
-        var {config, ...options} = options;
-        super({...options, config:{...defaultConfig, ...config}});
+        super({...options, config:Object.assign({}, config, options.config)});
 
         this.isClimateOn = undefined;
 
