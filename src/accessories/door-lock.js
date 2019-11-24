@@ -6,8 +6,7 @@ module.exports = class extends Lock {
 
     constructor(options) {
         var defaultConfig = {
-            "name": "Door",
-            "enabled": true
+            "name": "Door"
         };
 
         super({config:{...defaultConfig}, ...options});
