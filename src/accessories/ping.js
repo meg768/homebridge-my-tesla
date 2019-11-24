@@ -15,7 +15,12 @@ module.exports = class extends Switch {
             timerInterval : 5
         };
 
-        super({...options, config:Object.assign({}, config, options.config)});
+        var x = {...options, config:Object.assign({}, config, options.config)};
+
+        this.log('*************');
+        this.log(x);
+        this.log('*************');
+        super(x);
 
         
         var timer = new Timer();
