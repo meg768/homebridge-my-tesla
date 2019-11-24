@@ -3,7 +3,6 @@ var Service  = require('../homebridge.js').Service;
 var Characteristic  = require('../homebridge.js').Characteristic;
 var Timer = require('yow/timer');
 var Switch = require('./switch.js');
-var merge = require('yow/merge');
 
 module.exports = class extends Switch {
 
@@ -15,13 +14,7 @@ module.exports = class extends Switch {
             timerInterval : 5
         };
 
-        var x = {...options, config:Object.assign({}, config, options.config)};
-        super(x);
-
-        this.log('*************');
-        this.log(x);
-        this.log('*************');
-
+        super({...options, config:Object.assign({}, config, options.config)});
         
         var timer = new Timer();
         var timerInterval = this.config.timerInterval * 60000;
