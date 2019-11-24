@@ -261,13 +261,14 @@ module.exports = class extends Accessory {
         .then((response) => {
             var {vehicleData, action} = response;
 
-            var insideTemperature = vehicleData.getInsideTemperature();
-            var batteryLevel = vehicleData.getBatteryLevel();
-            var isClimateOn = vehicleData.isClimateOn();
-            var isPluggedIn = vehicleData.isCharging() || vehicleData.isChargingComplete() || vehicleData.isChargingStopped();
+            var insideTemperature = vehicleData.climateState.getInsideTemperature();
+            var batteryLevel = vehicleData.chargingState.getBatteryLevel();
+            var isClimateOn = vehicleData.climateState.isClimateOn();
+            var isPluggedIn = vehicleData.chargeState.isCharging() || vehicleData.chargeState.isChargingComplete() || vehicleData.chargeState.isChargingStopped();
+            var isDriving = vehicleData.driveState.isDriving();
 
-            if (!isPluggedIn) {
-                this.log(`The car is not connected to a charger. Turning off defrosting since current charge state is "${vehicleData.getChargingState()}".`);
+            if (isDriving) {
+                this.log(`Turning off thermostat since car is currently driving.`);
                 action = ACTION_STOP_TIMER;
             }
             else if (insideTemperature < this.heatingThresholdTemperature) {

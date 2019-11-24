@@ -1,6 +1,22 @@
 var isString = require('yow/isString');
 
 
+class DriveState {
+
+    constructor(json) {
+        this.json = json || {};
+    }
+
+    getShiftState() {
+        return isString(this.json.shift_state) ? this.json.shift_state : '';
+    }
+
+    isDriving() {
+        return this.getShiftState() != '';
+    }
+
+}
+
 class VehicleState {
 
     constructor(json) {
@@ -78,7 +94,8 @@ class VehicleData {
         this.json = json;
         this.vehicleState = new VehicleState(json.vehicle_state);
         this.climateState = new ClimateState(json.climate_state);
-        this.chargeState = new ChargeState(json.charge_state);
+        this.chargeState  = new ChargeState(json.charge_state);
+        this.driveState   = new DriveState(json.drive_state);
     }
 
     getCarVersion() {
