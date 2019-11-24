@@ -10,8 +10,7 @@ module.exports = class extends Lock {
             "enabled": true
         };
 
-        var {config, ...options} = options;
-        super({...options, config:{...defaultConfig, ...config}});
+        super({config:{...defaultConfig}, ...options});
 
         this.vehicle.on('vehicleData', (data) => {       
             this.targetLockState = this.currentLockState = (data.vehicleState.isLocked() ? Lock.SECURED : Lock.UNSECURED);
