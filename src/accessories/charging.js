@@ -17,7 +17,7 @@ module.exports = class extends Switch {
         this.enableBatteryService();
 
         this.vehicle.on('vehicleData', (vehicleData) => {    
-            if (vehicleData.isChargingStopped() || vehicleData.isChargingDisconnected())
+            if (vehicleData.changeState.isChargingStopped() || vehicleData.changeState.isChargingDisconnected())
                 this.updateSwitchState(false);
             else 
                 this.updateSwitchState(true);
@@ -34,7 +34,7 @@ module.exports = class extends Switch {
         this.addService(service);
 
         this.vehicle.on('vehicleData', (vehicleData) => {    
-            chargingState = vehicleData.isCharging() ? Characteristic.ChargingState.CHARGING : Characteristic.ChargingState.NOT_CHARGING;
+            chargingState = vehicleData.changeState.isCharging() ? Characteristic.ChargingState.CHARGING : Characteristic.ChargingState.NOT_CHARGING;
             batteryLevel = vehicleData.getBatteryLevel();
 
             this.debug(`Updated battery level to ${batteryLevel}% and charging state to ${chargingState == Characteristic.ChargingState.CHARGING ? "ON" : "OFF"}.`);
