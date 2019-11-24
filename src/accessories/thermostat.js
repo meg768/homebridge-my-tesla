@@ -66,9 +66,9 @@ module.exports = class extends Accessory {
         this.vehicle.on('vehicleData', (data) => {
             var service = this.getService(Service.Thermostat);
 
-            this.outsideTemperature = data.getOutsideTemperature();
-            this.currentTemperature = data.getInsideTemperature();
-            this.currentHeatingCoolingState = data.isClimateOn();
+            this.outsideTemperature = data.climateState.getOutsideTemperature();
+            this.currentTemperature = data.climateState.getInsideTemperature();
+            this.currentHeatingCoolingState = data.climateState.isClimateOn();
 
             service.getCharacteristic(Characteristic.CurrentTemperature).updateValue(this.currentTemperature);
             this.debug(`Updated temperature for thermostat to ${this.currentTemperature} °C.`); 
