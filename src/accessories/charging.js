@@ -35,7 +35,7 @@ module.exports = class extends Switch {
 
         this.vehicle.on('vehicleData', (vehicleData) => {    
             chargingState = vehicleData.changeState.isCharging() ? Characteristic.ChargingState.CHARGING : Characteristic.ChargingState.NOT_CHARGING;
-            batteryLevel = vehicleData.getBatteryLevel();
+            batteryLevel = vehicleData.changeState.getBatteryLevel();
 
             this.debug(`Updated battery level to ${batteryLevel}% and charging state to ${chargingState == Characteristic.ChargingState.CHARGING ? "ON" : "OFF"}.`);
 
