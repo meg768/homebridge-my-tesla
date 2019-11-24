@@ -40,7 +40,7 @@ module.exports = class Vehicle extends TeslaAPI  {
                 }
             }
             else {
-                accessories.push(new fn({vehicle:this, config:undefined}));
+                accessories.push(new fn({vehicle:this}));
 
             }
 
