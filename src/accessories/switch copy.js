@@ -6,12 +6,8 @@ var Accessory = require('../accessory.js');
 class CharacteristicOn extends Characteristic.On {
 
     constructor() {
-        super(...arguments);
-        console.log('CREATED INSTANCE OF XXX')
-
-
+        super(...arguments)
     }
-
 }
 
 module.exports = class Switch extends Accessory {
