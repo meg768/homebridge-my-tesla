@@ -3,16 +3,7 @@ var Service  = require('../homebridge.js').Service;
 var Characteristic  = require('../homebridge.js').Characteristic;
 var Accessory = require('../accessory.js');
 
-class CharacteristicOn extends Characteristic.On {
 
-    constructor() {
-        super(...arguments);
-        console.log('CREATED INSTANCE OF XXX')
-
-
-    }
-
-}
 
 module.exports = class Switch extends Accessory {
 
@@ -40,7 +31,7 @@ module.exports = class Switch extends Accessory {
  
         this.addService(this.switchService);
 
-        this.switchService.getCharacteristic(CharacteristicOn).on('set', (value, callback) => {
+        this.switchService.getCharacteristic(Characteristic.On).on('set', (value, callback) => {
             this.setSwitchState(value).then(() => {
             })
             .catch((error) => {
@@ -51,7 +42,7 @@ module.exports = class Switch extends Accessory {
             })
         });
 
-        this.switchService.getCharacteristic(CharacteristicOn).on('get', (callback) => {
+        this.switchService.getCharacteristic(Characteristic.On).on('get', (callback) => {
             callback(null, this.getSwitchState());
         });
     }
@@ -59,7 +50,7 @@ module.exports = class Switch extends Accessory {
     updateSwitchState(value) {
 
         var updateValue = () => {
-            this.switchService.getCharacteristic(CharacteristicOn).updateValue(this.getSwitchState());
+            this.switchService.getCharacteristic(Characteristic.On).updateValue(this.getSwitchState());
             return Promise.resolve();
         };
 
