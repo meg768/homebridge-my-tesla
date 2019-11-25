@@ -2,9 +2,40 @@
 var Service = require('../homebridge.js').Service;
 var Characteristic = require('../homebridge.js').Characteristic;
 var Accessory = require('../accessory.js');
+var Switch = require('./switch.js');
 
 
-module.exports = class extends Accessory {
+module.exports = class extends Switch {
+
+    constructor(options) {
+        var config = {
+            "name": "Fan"
+        };
+
+        super({...options, switchType:'fan', config:Object.assign({}, config, options.config)});
+
+        this.vehicle.on('vehicleData', (vehicleData) => {    
+            var isClimateOn = vehicleData.climateState.isClimateOn();
+            this.debug(`Updated HVAC status to ${isClimateOn ? 'ON' : 'OFF'}.`);
+            this.updateSwitchState(isClimateOn);
+        });
+
+    }
+
+    turnOn() {
+        return this.vehicle.autoConditioningStart();
+    }
+
+    turnOff() {
+        return this.vehicle.autoConditioningStop();
+    }
+
+
+}
+
+
+
+class Kalle extends Accessory {
 
     constructor(options) {
         var config = {
