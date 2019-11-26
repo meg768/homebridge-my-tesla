@@ -10,16 +10,16 @@ const SwitchEx = (Base) => {
     return class extends Base {
 
         constructor(options) {
-            console.log(`Constructing class Switch with arguments ${JSON.stringify(options)}...`)
+
+            var {service, ...options} = options;
             super(options);
 
             this.switchState = false;
-            this.switchService = new Service.Switch(this.name);
+            this.switchService = service;
         }
 
 
         updateSwitchState(value) {
-
             var updateValue = () => {
                 this.switchService.getCharacteristic(Characteristic.On).updateValue(this.getSwitchState());
                 return Promise.resolve();
@@ -88,8 +88,10 @@ class Ping extends SwitchEx(Accessory) {
             timerInterval : 5
         };
 
-        super({...options, config:Object.assign({}, config, options.config)});
+        super({...options, service:new Service.Switch(this.name), config:Object.assign({}, config, options.config)});
         
+//        this.addService(new Service.Switch(this.name));
+
         var timer = new Timer();
         var timerInterval = this.config.timerInterval * 60000;
         var requiredBatteryLevel = this.config.requiredBatteryLevel;
