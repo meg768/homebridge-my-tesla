@@ -15,13 +15,13 @@ const SwitchEx = (Base) => {
             super(options);
 
             this.switchState = false;
-            this.switchService = service;
         }
 
 
         updateSwitchState(value) {
+
             var updateValue = () => {
-                this.switchService.getCharacteristic(Characteristic.On).updateValue(this.getSwitchState());
+                this.getSwitchService().getCharacteristic(Characteristic.On).updateValue(this.getSwitchState());
                 return Promise.resolve();
             };
     
@@ -88,9 +88,10 @@ class Ping extends SwitchEx(Accessory) {
             timerInterval : 5
         };
 
-        super({...options, service:new Service.Switch(this.name), config:Object.assign({}, config, options.config)});
         
-//        this.addService(new Service.Switch(this.name));
+        super({...options, config:Object.assign({}, config, options.config)});
+        
+        this.addService(new Service.Switch(this.name));
 
         var timer = new Timer();
         var timerInterval = this.config.timerInterval * 60000;
@@ -120,6 +121,11 @@ class Ping extends SwitchEx(Accessory) {
                 })
             }
         });
+
+    }
+
+    getSwitchService() {
+        return this.getService(Service.Switch);
 
     }
 
