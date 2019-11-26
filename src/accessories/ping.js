@@ -9,12 +9,12 @@ const SwitchEx = (Base) => {
 
     return class extends Base {
 
-        constructor(...args) {
-            console.log(`Constructing class Switch with arguments ${JSON.stringify(...args)}...`)
-            super(...args);
+        constructor(options) {
+            console.log(`Constructing class Switch with arguments ${JSON.stringify(options)}...`)
+            super(options);
 
             this.switchState = false;
-            this.switchService = new Service.Switch(super.name);
+            this.switchService = new Service.Switch(this.name);
         }
 
 
