@@ -3,8 +3,9 @@ var Service  = require('../homebridge.js').Service;
 var Characteristic  = require('../homebridge.js').Characteristic;
 var Timer = require('yow/timer');
 var Accessory = require('../accessory.js');
+var Switch = require('./switch.js');
 
-const Switch = (Base) => {
+const SwitchEx = (Base) => {
 
     return class extends Base {
 
@@ -77,7 +78,7 @@ const Switch = (Base) => {
     
 };
 
-class Ping extends Accessory {
+class Ping extends Switch {
 
     constructor(options) {
 
@@ -134,4 +135,4 @@ class Ping extends Accessory {
 }
 
 
-module.exports = Switch(Ping);
+module.exports = Ping;
