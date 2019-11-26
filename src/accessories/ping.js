@@ -78,7 +78,7 @@ const SwitchEx = (Base) => {
     
 };
 
-class Ping extends Switch {
+class Ping extends SwitchEx(Accessory) {
 
     constructor(options) {
 
