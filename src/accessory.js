@@ -42,6 +42,12 @@ class Accessory extends Events {
         this.UUID = uuid;
     }
 
+    pause(ms) {
+        return new Promise((resolve, reject) => {
+            setTimeout(resolve, ms);
+        });
+    }
+    
     addService(service) {
         this.services.push(service);
     }
@@ -52,7 +58,6 @@ class Accessory extends Events {
             service.getCharacteristic(characteristic).on('get', callback => {
                 callback(null, getter());
             });
-    
         }
 
         if (setter != undefined) {
@@ -120,14 +125,6 @@ class VehicleAccessory extends Accessory {
 
  
     }
-
-    pause(ms) {
-        return new Promise((resolve, reject) => {
-            setTimeout(resolve, ms);
-        });
-    }
-    
-
 };
 
 module.exports = VehicleAccessory;
