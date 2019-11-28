@@ -46,6 +46,33 @@ class Accessory extends Events {
         this.services.push(service);
     }
 
+    addCharacteristic(service, characteristic, getter, setter) {
+
+        if (getter != undefined) {
+            service.getCharacteristic(characteristic).on('get', callback => {
+                callback(null, getter());
+            });
+    
+        }
+
+        if (setter != undefined) {
+            service.getCharacteristic(characteristic).on('set', (value, callback) => {
+                var response = setter(value);
+
+                if (response instanceof Promise) {
+                    response.then(() => {
+                        callback(null);                        
+                    })
+                }
+                else
+                    callback(null);
+            });
+    
+        }
+
+    }
+
+
     getService(name) {
         for (var index in this.services) {
             var service = this.services[index];

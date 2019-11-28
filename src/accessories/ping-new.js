@@ -5,19 +5,19 @@ var Timer = require('yow/timer');
 var Accessory = require('../accessory.js');
 var Switch = require('./switch.js');
 
-const SwitchEx = (Base) => {
 
-    return class extends Base {
+var enableCharacteristicOn = (parent, service) => {
 
-        constructor(options) {
+};
+const CharacteristicOn = (Accessory) => {
 
-            var {service, ...options} = options;
-            super(options);
+    return class extends Accessory {
 
-            this.switchState = false;
+        enableOn(service) {
+            this.onState = false;
 
-            this.switchService.getCharacteristic(Characteristic.On).on('set', (value, callback) => {
-                this.setSwitchState(value).then(() => {
+            service.getCharacteristic(Characteristic.On).on('set', (value, callback) => {
+                this.setOn(value).then(() => {
                 })
                 .catch((error) => {
                     this.log(error);
@@ -27,14 +27,14 @@ const SwitchEx = (Base) => {
                 })
             });
     
-            this.switchService.getCharacteristic(Characteristic.On).on('get', (callback) => {
-                callback(null, this.getSwitchState());
+            service.getCharacteristic(Characteristic.On).on('get', (callback) => {
+                callback(null, this.getOn());
             });
     
-        }
 
+        } 
 
-        updateSwitchState(value) {
+        updateOn(value) {
 
             var updateValue = () => {
                 this.getSwitchService().getCharacteristic(Characteristic.On).updateValue(this.getSwitchState());
@@ -57,21 +57,21 @@ const SwitchEx = (Base) => {
             });
         }
     
-        getSwitchState() {
-            return this.switchState;
+        getOn() {
+            return this.on;
         }
     
-        setSwitchState(value) {
+        setOnState(value) {
             value = value ? true : false;
     
             return new Promise((resolve, reject) => {
                 Promise.resolve().then(() => {
-                    if (this.switchState == value)
+                    if (this.onState == value)
                         return Promise.resolve();
     
-                    this.switchState = value;
-                    this.debug(`Setting switch "${this.name}" state to "${this.switchState}".`);
-                    return this.switchState ? this.turnOn() : this.turnOff();
+                    this.onState = value;
+                    this.debug(`Setting switch "${this.name}" state to "${this.onState}".`);
+                    return this.onState ? this.turnOn() : this.turnOff();
                 })
                 .then(() => {
                     resolve();
@@ -94,7 +94,7 @@ const SwitchEx = (Base) => {
     
 };
 
-class Ping extends SwitchEx(Accessory) {
+class Ping extends CharacteristicOn(Accessory) {
 
     constructor(options) {
 
@@ -107,7 +107,11 @@ class Ping extends SwitchEx(Accessory) {
         
         super({...options, config:Object.assign({}, config, options.config)});
         
-        this.addService(new Service.Switch(this.name));
+        var service = new Service.Switch(this.name);
+        this.addService(service);
+
+        this.addCharacteristic(service, Characteristic.On, this.getSwitchState, this.setSwitchState);
+
 
         var timer = new Timer();
         var timerInterval = this.config.timerInterval * 60000;
