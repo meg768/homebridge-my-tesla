@@ -61,8 +61,13 @@ class Accessory extends Events {
 
                 if (response instanceof Promise) {
                     response.then(() => {
-                        callback(null);                        
                     })
+                    .catch((error) => {
+                        this.log(error);
+                    })
+                    .then(() => {
+                        callback(null);                        
+                    });
                 }
                 else
                     callback(null);
