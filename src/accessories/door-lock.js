@@ -12,12 +12,12 @@ module.exports = class extends Lock {
         super({...options, config:Object.assign({}, config, options.config)});
 
         this.vehicle.on('vehicleData', (data) => {       
-            this.targetLockState = this.currentLockState = (data.vehicleState.isLocked() ? Lock.SECURED : Lock.UNSECURED);
+            this.lockTargetState = this.lockCurrentState = (data.vehicleState.isLocked() ? Lock.SECURED : Lock.UNSECURED);
 
-            this.debug(`Updated door lock status to ${this.getLockStateName(this.currentLockState)}.`);
+            this.debug(`Updated door lock status to ${this.getLockStateName(this.lockCurrentState)}.`);
 
-            this.updateCurrentLockState();
-            this.updateTargetLockState();
+            this.updateLockCurrentState();
+            this.updateLockTargetState();
         });
 
     }

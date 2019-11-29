@@ -11,14 +11,14 @@ module.exports = class Lock extends Accessory {
     constructor(options) {
         super(options);
 
-        this.currentLockState = Lock.UNKNOWN;
-        this.targetLockState  = Lock.UNKNOWN;
+        this.lockCurrentState = Lock.UNKNOWN;
+        this.lockTargetState  = Lock.UNKNOWN;
 
         var service = new Service.LockMechanism(this.name);
         this.addService(service);
 
-        this.enableCharacteristic(Service.LockMechanism, Characteristic.LockCurrentState, this.getCurrentLockState.bind(this));
-        this.enableCharacteristic(Service.LockMechanism, Characteristic.LockTargetState, this.getTargetLockState.bind(this), this.setTargetLockState.bind(this));
+        this.enableCharacteristic(Service.LockMechanism, Characteristic.LockCurrentState, this.getLockCurrentState.bind(this));
+        this.enableCharacteristic(Service.LockMechanism, Characteristic.LockTargetState, this.getLockTargetState.bind(this), this.setLockTargetState.bind(this));
 
 /*
         service.getCharacteristic(Characteristic.LockCurrentState).on('get', (callback) => {
@@ -44,26 +44,24 @@ module.exports = class Lock extends Accessory {
 */
     }
 
-    getLockMechanismService() {
+    getLockMechanism() {
         return this.getService(Service.LockMechanism);
     }
 
-    updateCurrentLockState() {
-        var service = this.getLockMechanismService();
-        service.getCharacteristic(Characteristic.LockCurrentState).updateValue(this.currentLockState);
+    updateLockCurrentState() {
+        this.getLockMechanism().getCharacteristic(Characteristic.LockCurrentState).updateValue(this.lockCurrentState);
     }
 
-    updateTargetLockState(value) {
-        var service = this.getLockMechanismService();
-        service.getCharacteristic(Characteristic.LockTargetState).updateValue(this.targetLockState);
+    updateLockTargetState(value) {
+        this.getLockMechanism().getCharacteristic(Characteristic.LockTargetState).updateValue(this.lockTargetState);
     }
 
-    getCurrentLockState() {
-        return this.currentLockState;
+    getLockCurrentState() {
+        return this.lockCurrentState;
     }
 
-    getTargetLockState() {
-        return this.targetLockState;
+    getLockTargetState() {
+        return this.lockTargetState;
     }
 
     getLockStateName(state) {
@@ -79,7 +77,7 @@ module.exports = class Lock extends Accessory {
         return 'UNKNOWN';
     }
 
-    setTargetLockState(value) {
+    setLockTargetState(value) {
         return new Promise((resolve, reject) => {
             Promise.resolve().then(() => {
                 this.log(`Turning lock "${this.name}" to state ${this.getLockStateName(value)}...`);
@@ -87,7 +85,7 @@ module.exports = class Lock extends Accessory {
 
             })
             .then(() => {
-                this.currentLockState = this.targetLockState = value;
+                this.lockCurrentState = this.lockTargetState = value;
                 this.updateCurrentLockState();
                 return Promise.resolve();
             })
