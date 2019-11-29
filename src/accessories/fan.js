@@ -3,24 +3,23 @@ var Service  = require('../homebridge.js').Service;
 var Characteristic  = require('../homebridge.js').Characteristic;
 var Accessory = require('../accessory.js');
 
-
-module.exports = class Switch extends Accessory {
+module.exports = class Fan extends Accessory {
 
     constructor(options) {
 
         super(options);
  
-        this.switchState = false;
+        this.fanState = false;
         
-        this.addService(new Service.Switch(this.name));
-        this.enableCharacteristic(Service.Switch, Characteristic.On, this.getSwitchState.bind(this), this.setSwitchState.bind(this));
+        this.addService(new Service.Fan(this.name));
+        this.enableCharacteristic(Service.Fan, Characteristic.On, this.getFanState.bind(this), this.setFanState.bind(this));
     }
 
-    updateSwitchState(value) {
-        var service = this.getService(Service.Switch);
+    updateFanState(value) {
+        var service = this.getService(Service.Fan);
 
         var updateValue = () => {
-            service.getCharacteristic(Characteristic.On).updateValue(this.getSwitchState());
+            service.getCharacteristic(Characteristic.On).updateValue(this.getFanState());
             return Promise.resolve();
         };
 
@@ -28,7 +27,7 @@ module.exports = class Switch extends Accessory {
             return updateValue();
         }
         return new Promise((resolve, reject) => {
-            this.setSwitchState(value).then(() => {
+            this.setFanState(value).then(() => {
                 return updateValue();
             })
             .then(() => {
@@ -40,21 +39,21 @@ module.exports = class Switch extends Accessory {
         });
     }
 
-    getSwitchState() {
-        return this.switchState;
+    getFanState() {
+        return this.fanState;
     }
 
-    setSwitchState(value) {
+    setFanState(value) {
         value = value ? true : false;
 
         return new Promise((resolve, reject) => {
             Promise.resolve().then(() => {
-                if (this.switchState == value)
+                if (this.fanState == value)
                     return Promise.resolve();
 
-                this.switchState = value;
-                this.debug(`Setting switch "${this.name}" state to "${this.switchState}".`);
-                return this.switchState ? this.turnOn() : this.turnOff();
+                this.fanState = value;
+                this.debug(`Setting fan "${this.name}" state to "${this.fanState}".`);
+                return this.fanState ? this.turnOn() : this.turnOff();
             })
             .then(() => {
                 resolve();

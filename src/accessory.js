@@ -52,15 +52,17 @@ class Accessory extends Events {
         this.services.push(service);
     }
 
-    addCharacteristic(service, characteristic, getter, setter) {
+    enableCharacteristic(service, characteristic, getter, setter) {
 
-        if (getter != undefined) {
+        service = this.getService(service);
+        
+        if (typeof getter === 'function') {
             service.getCharacteristic(characteristic).on('get', callback => {
                 callback(null, getter());
             });
         }
 
-        if (setter != undefined) {
+        if (typeof setter === 'function') {
             service.getCharacteristic(characteristic).on('set', (value, callback) => {
                 var response = setter(value);
 
@@ -81,6 +83,7 @@ class Accessory extends Events {
         }
 
     }
+
 
 
     getService(name) {

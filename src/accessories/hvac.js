@@ -2,22 +2,21 @@
 var Service = require('../homebridge.js').Service;
 var Characteristic = require('../homebridge.js').Characteristic;
 var Accessory = require('../accessory.js');
-var Switch = require('./switch.js');
+var Fan = require('./fan.js');
 
-
-module.exports = class extends Switch {
+module.exports = class extends Fan {
 
     constructor(options) {
         var config = {
             "name": "Fan"
         };
 
-        super({...options, switchType:'fan', config:Object.assign({}, config, options.config)});
+        super({...options, config:Object.assign({}, config, options.config)});
 
         this.vehicle.on('vehicleData', (vehicleData) => {    
             var isClimateOn = vehicleData.climateState.isClimateOn();
             this.debug(`Updated HVAC status to ${isClimateOn ? 'ON' : 'OFF'}.`);
-            this.updateSwitchState(isClimateOn);
+            this.updateFanState(isClimateOn);
         });
 
     }
