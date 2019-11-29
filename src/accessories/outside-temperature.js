@@ -1,9 +1,7 @@
 
-var Service  = require('../homebridge.js').Service;
-var Characteristic  = require('../homebridge.js').Characteristic;
-var Accessory = require('../accessory.js');
+var TemperatureSensor = require('./temperature-sensor.js');
 
-module.exports = class extends Accessory {
+module.exports = class extends TemperatureSensor {
 
     constructor(options) {
 
@@ -13,23 +11,10 @@ module.exports = class extends Accessory {
 
         super({...options, config:Object.assign({}, config, options.config)});
 
-        this.currentTemperature = undefined;
-        this.active = true;
-
-        var service = new Service.TemperatureSensor(this.name, __filename);
-        this.addService(service);
-
-        this.vehicle.on('vehicleData', (data) => {
-            this.currentTemperature = data.climateState.getOutsideTemperature();
-            this.debug(`Updated outside temperature to ${this.currentTemperature}.`);  
-
-            service.getCharacteristic(Characteristic.CurrentTemperature).updateValue(this.currentTemperature);
-        });
-
-        service.getCharacteristic(Characteristic.CurrentTemperature).on('get', (callback) => {
-            callback(null, this.currentTemperature);
-        });
         
-    }; 
-}
+    }
 
+    getTemperature(vehicleData) {
+        return vehicleData.climateState.getOutsideTemperature();
+    }
+}
