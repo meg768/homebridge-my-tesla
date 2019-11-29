@@ -22,14 +22,13 @@ module.exports = class extends Accessory {
 
         var config = {
             "name": 'Thermostat',
-            "timerInterval": 5,
+            "timerInterval": 1,
             "requiredBatteryLevel": 40,
             "enabled": true
         }
 
         super({...options, config:Object.assign({}, config, options.config)});
 
-        this.setttingsTimer = new Timer();
         this.timer = new Timer();
         this.timerInterval = this.config.timerInterval * 60 * 1000;
 
@@ -119,7 +118,7 @@ module.exports = class extends Accessory {
             if (this.targetHeatingCoolingState != value) {
                 this.debug(`Setting thermostat to state "${getTargetHeatingCoolingStateName(value)}".`);
                 this.targetHeatingCoolingState = value;
-                this.updateSettings();
+                this.checkTemperatureAfterDelay();
 
                 if (value == Characteristic.TargetHeatingCoolingState.OFF) {
                     this.setAutoConditioningState(false);
@@ -163,7 +162,7 @@ module.exports = class extends Accessory {
 
         characteristic.on('set', (value, callback) => {
             this.targetTemperature = value;
-            this.updateSettings();
+            this.delayedCheckTemperature();
             callback(null);
         });
 
@@ -179,7 +178,7 @@ module.exports = class extends Accessory {
         });
         characteristic.on('set', (value, callback) => {
             this.temperatureDisplayUnits = value;
-            this.updateSettings();
+            this.delayedCheckTemperature();
             callback(null);
         });
     }
@@ -199,7 +198,7 @@ module.exports = class extends Accessory {
         });
         characteristic.on('set', (value, callback) => {
             this.coolingThresholdTemperature = value;
-            this.updateSettings();
+            this.delayedCheckTemperature();
 
             callback(null);
         });
@@ -220,9 +219,10 @@ module.exports = class extends Accessory {
         characteristic.on('get', callback => {
             callback(null, this.heatingThresholdTemperature);
         });
+
         characteristic.on('set', (value, callback) => {
             this.heatingThresholdTemperature = value;
-            this.updateSettings();
+            this.delayedCheckTemperature();
 
             callback(null);
         });
@@ -230,17 +230,13 @@ module.exports = class extends Accessory {
     }
 
 
-    updateSettings() {
-        this.setttingsTimer.setTimer(1000, () => {
-            this.timer.cancel();
-
+    delayedCheckTemperature(delay = 1000) {
+        this.timer.setTimer(delay, () => {
             if (this.targetHeatingCoolingState != Characteristic.TargetHeatingCoolingState.OFF)
                 this.checkTemperature();
     
         });
     }
-
-
 
     checkTemperature() {
 
