@@ -52,6 +52,10 @@ class Accessory extends Events {
         this.services.push(service);
     }
 
+    updateCharacteristicValue(service, characteristic, value) {
+        this.getService(service).getCharacteristic(characteristic).updateValue(value);
+    }
+
     enableCharacteristic(service, characteristic, getter, setter) {
 
         service = this.getService(service);
@@ -84,12 +88,10 @@ class Accessory extends Events {
 
     }
 
-
-
     getService(name) {
         if (name instanceof Service)
             return name;
-            
+
         for (var index in this.services) {
             var service = this.services[index];
             
@@ -100,7 +102,7 @@ class Accessory extends Events {
           }
         
     }
-    // Add the method getServices for static platforms
+
     getServices() {
         return this.services;
     }

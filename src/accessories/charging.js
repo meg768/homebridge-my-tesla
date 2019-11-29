@@ -51,8 +51,6 @@ module.exports = class extends Switch {
 
         this.enableCharacteristic(Service.BatteryService, Characteristic.BatteryLevel, getBatteryLevel);
         this.enableCharacteristic(Service.BatteryService, Characteristic.ChargingState, getChargingState);
-
-
     }
     
     turnOn() {
