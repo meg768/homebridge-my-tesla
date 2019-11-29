@@ -48,11 +48,17 @@ module.exports = class Lock extends Accessory {
         return this.getService(Service.LockMechanism);
     }
 
-    updateLockCurrentState() {
+    updateLockCurrentState(value) {
+        if (value != undefined)
+            this.lockCurrentState = value;
+        
         this.getLockMechanism().getCharacteristic(Characteristic.LockCurrentState).updateValue(this.lockCurrentState);
     }
 
     updateLockTargetState(value) {
+        if (value != undefined)
+            this.lockTargetState = value;
+ 
         this.getLockMechanism().getCharacteristic(Characteristic.LockTargetState).updateValue(this.lockTargetState);
     }
 
@@ -85,8 +91,9 @@ module.exports = class Lock extends Accessory {
 
             })
             .then(() => {
-                this.lockCurrentState = this.lockTargetState = value;
-                this.updateLockCurrentState();
+//                this.lockCurrentState = this.lockTargetState = value;
+                this.updateLockCurrentState(value);
+                this.updateLockTargetState(value);
                 return Promise.resolve();
             })
             .then(() => {
