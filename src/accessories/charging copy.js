@@ -31,17 +31,9 @@ module.exports = class extends Switch {
 
         this.addService(service);
 
-        var getBatteryLevel = () => {
-            return batteryLevel;
-        }
-
-        var getChargingState = () => {
-            return chargingState;
-        }
-
         this.vehicle.on('vehicleData', (vehicleData) => {    
             chargingState = vehicleData.chargeState.isCharging() ? Characteristic.ChargingState.CHARGING : Characteristic.ChargingState.NOT_CHARGING;
-            batteryLevel  = vehicleData.chargeState.getBatteryLevel();
+            batteryLevel = vehicleData.chargeState.getBatteryLevel();
 
             this.debug(`Updated battery level to ${batteryLevel}% and charging state to ${chargingState == Characteristic.ChargingState.CHARGING ? "ON" : "OFF"}.`);
 
@@ -49,9 +41,13 @@ module.exports = class extends Switch {
             service.getCharacteristic(Characteristic.ChargingState).updateValue(chargingState);
         });
 
-        this.enableCharacteristic(Service.BatteryService, Characteristic.BatteryLevel, getBatteryLevel);
-        this.enableCharacteristic(Service.BatteryService, Characteristic.ChargingState, getChargingState);
+        service.getCharacteristic(Characteristic.BatteryLevel).on('get', (callback) => {
+            callback(null, batteryLevel);    
+        });
 
+        service.getCharacteristic(Characteristic.ChargingState).on('get', (callback) => {
+            callback(null, chargingState);    
+        });
 
     }
     
