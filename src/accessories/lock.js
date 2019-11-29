@@ -17,6 +17,10 @@ module.exports = class Lock extends Accessory {
         var service = new Service.LockMechanism(this.name);
         this.addService(service);
 
+        this.enableCharacteristic(Service.LockMechanism, Characteristic.LockCurrentState, this.getCurrentLockState.bind(this));
+        this.enableCharacteristic(Service.LockMechanism, Characteristic.LockTargetState, this.getTargetLockState.bind(this), this.setTargetLockState.bind(this));
+
+/*
         service.getCharacteristic(Characteristic.LockCurrentState).on('get', (callback) => {
             callback(null, this.getCurrentLockState());
         });
@@ -36,6 +40,8 @@ module.exports = class Lock extends Accessory {
                 callback(null);
             })
         });
+
+*/
     }
 
     getLockMechanismService() {

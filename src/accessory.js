@@ -73,11 +73,11 @@ class Accessory extends Events {
                         this.log(error);
                     })
                     .then(() => {
-                        callback(null);                        
+                        callback(null, getter());                
                     });
                 }
                 else
-                    callback(null);
+                    callback(null, getter());
             });
     
         }
@@ -87,6 +87,9 @@ class Accessory extends Events {
 
 
     getService(name) {
+        if (name instanceof Service)
+            return name;
+            
         for (var index in this.services) {
             var service = this.services[index];
             
