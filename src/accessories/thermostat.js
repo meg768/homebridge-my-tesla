@@ -22,7 +22,7 @@ module.exports = class extends Accessory {
 
         var config = {
             "name": 'Thermostat',
-            "timerInterval": 1,
+            "timerInterval": 5,
             "requiredBatteryLevel": 40,
             "enabled": true
         }
