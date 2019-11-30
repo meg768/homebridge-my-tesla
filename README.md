@@ -151,4 +151,5 @@ the new home to the same name of your car. Then add the this accessory to the ne
 ## Updates
 
 - **2019-11-15** - Accessory information updated properly with serial number (VIN) and firmware version.
+- **2019-11-30** - Updated documentation.
 
