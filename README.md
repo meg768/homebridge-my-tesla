@@ -155,6 +155,19 @@ Displays the outside temperature.
 This enables you to control the inside temperature of your Tesla. Set it to 4 - 10 Celsius in the winter time to have a frost free vehicle in the morning.
 Use automation to turn it on at a specific time.
 
+```json
+"thermostat": {
+    "name": "Termostat",
+    "requiredBatteryLevel": 40,
+    "timerInterval": 2,
+    "enabled": true
+}
+ ```
+
+* **name** - Localized name, specify the name you want in the Apple Home app.
+* **requiredBatteryLevel** - Specifes the required battery level to operate. If battery level is below this level, the thermostat function will stop.
+* **timerInterval** - Specifies the number of minutes between checking the temperature.
+* **enabled** - Set this to **false** if you do not wish to expose this accessory to Apple Home. 
 
 ## Siri
 
