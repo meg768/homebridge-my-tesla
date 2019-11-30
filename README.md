@@ -56,6 +56,30 @@ Of course, you have to supply your own name and **VIN** number and login credent
 This plugin adds a number of controls to Apple HomeKit. Currently
 it only adds controls to open the doors, control the HVAC and to display current temperature.
 
+### Added accessories
+
+#### Ping
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin condimentum, tortor quis mattis varius, mauris nisi eleifend quam, vel viverra tortor turpis sed leo. Curabitur sem odio, pulvinar ut eros.
+
+#### Charging
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin condimentum, tortor quis mattis varius, mauris nisi eleifend quam, vel viverra tortor turpis sed leo. Curabitur sem odio, pulvinar ut eros.
+
+#### Door
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin condimentum, tortor quis mattis varius, mauris nisi eleifend quam, vel viverra tortor turpis sed leo. Curabitur sem odio, pulvinar ut eros.
+
+#### Fan
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin condimentum, tortor quis mattis varius, mauris nisi eleifend quam, vel viverra tortor turpis sed leo. Curabitur sem odio, pulvinar ut eros.
+
+#### Inside
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin condimentum, tortor quis mattis varius, mauris nisi eleifend quam, vel viverra tortor turpis sed leo. Curabitur sem odio, pulvinar ut eros.
+
+#### Outside
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin condimentum, tortor quis mattis varius, mauris nisi eleifend quam, vel viverra tortor turpis sed leo. Curabitur sem odio, pulvinar ut eros.
+
+#### Thermostat
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin condimentum, tortor quis mattis varius, mauris nisi eleifend quam, vel viverra tortor turpis sed leo. Curabitur sem odio, pulvinar ut eros.
+
+
 ## Siri
 
 If you name things correctly you might get Siri to work by saying "Lock car", "Unlock car", "Turn on fan" or "Turn off fan"...
