@@ -84,7 +84,18 @@ When this switch is active your Tesla will never go into deep sleep. Every 5 min
 * **enabled** - Set this to **false** if you do not wish to expose this switch to Apple Home. 
 
 #### Charging
+
 The charging switch reflects the charging state.
+
+```json
+"charging": {
+    "name": "Charging",
+    "enabled": true
+}
+ ```
+* **name** - Localized name, specify the name you want in the Apple Home app.
+* **enabled** - Set this to **false** if you do not wish to expose this accessory to Apple Home. 
+
 
 #### Door
 Lock or unlock the doors using this switch. Unlocking the door also also enables keyless start.
