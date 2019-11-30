@@ -96,9 +96,20 @@ The charging switch reflects the charging state.
 
 
 #### Door
+
 Lock or unlock the doors using this switch. Unlocking the door also also enables keyless start.
 
+```json
+"doors": {
+    "name": "Door",
+    "enabled": true
+}
+ ```
+
+
 #### Fan
+
+Turn the HVAC **ON** or **OFF** using this switch.
 
 ```json
 "hvac": {
@@ -107,8 +118,6 @@ Lock or unlock the doors using this switch. Unlocking the door also also enables
     "enabled": true
 }
  ```
-
-Turn the HVAC **ON** or **OFF** using this switch.
 
 #### Inside
 Displays the inside temperature.
