@@ -13,6 +13,9 @@ which was created by Nick Farina who also created Homebridge(!). Without his wor
 First, install Homebridge. See https://www.npmjs.com/package/homebridge
 for more information.
 
+
+**BTW** - Under construction...
+
 Then install this plugin.
 
     $ sudo npm install homebridge-my-tesla -g --unsafe-perm
