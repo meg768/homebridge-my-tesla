@@ -77,7 +77,8 @@ Displays the inside temperature.
 Displays the outside temperature.
 
 #### Thermostat
-This enables you to control the inside temperature of your Tesla. Set it to 4 - 10 Celsius in the winter time to have a frost free vehicle in the morning...
+This enables you to control the inside temperature of your Tesla. Set it to 4 - 10 Celsius in the winter time to have a frost free vehicle in the morning.
+Use automation to turn it on at a specific time.
 
 
 ## Siri
