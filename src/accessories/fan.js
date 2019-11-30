@@ -16,27 +16,11 @@ module.exports = class Fan extends Accessory {
     }
 
     updateFanState(value) {
-        var service = this.getService(Service.Fan);
+        if (value != undefined)
+            this.fanState = value;
 
-        var updateValue = () => {
-            service.getCharacteristic(Characteristic.On).updateValue(this.getFanState());
-            return Promise.resolve();
-        };
-
-        if (value == undefined) {
-            return updateValue();
-        }
-        return new Promise((resolve, reject) => {
-            this.setFanState(value).then(() => {
-                return updateValue();
-            })
-            .then(() => {
-                resolve();
-            })
-            .catch((error) => {
-                reject(error);
-            })
-        });
+        this.getService(Service.Fan).getCharacteristic(Characteristic.On).updateValue(this.fanState);
+        return Promise.resolve();        
     }
 
     getFanState() {

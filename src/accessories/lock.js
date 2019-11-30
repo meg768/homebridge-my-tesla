@@ -69,7 +69,6 @@ module.exports = class Lock extends Accessory {
 
             })
             .then(() => {
-//                this.lockCurrentState = this.lockTargetState = value;
                 this.updateLockCurrentState(value);
                 this.updateLockTargetState(value);
                 return Promise.resolve();

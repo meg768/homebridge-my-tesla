@@ -17,27 +17,11 @@ module.exports = class Switch extends Accessory {
     }
 
     updateSwitchState(value) {
-        var service = this.getService(Service.Switch);
+        if (value != undefined)
+            this.switchState = value;
 
-        var updateValue = () => {
-            service.getCharacteristic(Characteristic.On).updateValue(this.getSwitchState());
-            return Promise.resolve();
-        };
-
-        if (value == undefined) {
-            return updateValue();
-        }
-        return new Promise((resolve, reject) => {
-            this.setSwitchState(value).then(() => {
-                return updateValue();
-            })
-            .then(() => {
-                resolve();
-            })
-            .catch((error) => {
-                reject(error);
-            })
-        });
+        this.getService(Service.Switch).getCharacteristic(Characteristic.On).updateValue(this.switchState);
+        return Promise.resolve();        
     }
 
     getSwitchState() {

@@ -1,4 +1,4 @@
-"use strict";
+import { timingSafeEqual } from "crypto";
 
 
 // Testing multiple inheritance
@@ -25,6 +25,10 @@ const On = (Base) => {
 
         getOnState() {
             return this.onState;
+        }
+
+        setOnState(state) {
+          this.onState = state;
         }
     }
 };
