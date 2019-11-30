@@ -128,8 +128,28 @@ Turn the HVAC **ON** or **OFF** using this switch.
 #### Inside
 Displays the inside temperature.
 
+```json
+"insideTemperature": {
+    "name": "Inside",
+    "enabled": true
+}
+ ```
+* **name** - Localized name, specify the name you want in the Apple Home app.
+* **enabled** - Set this to **false** if you do not wish to expose this accessory to Apple Home. 
+
+
 #### Outside
 Displays the outside temperature.
+
+```json
+"outsideTemperature": {
+    "name": "Outside",
+    "enabled": true
+}
+ ```
+* **name** - Localized name, specify the name you want in the Apple Home app.
+* **enabled** - Set this to **false** if you do not wish to expose this accessory to Apple Home. 
+
 
 #### Thermostat
 This enables you to control the inside temperature of your Tesla. Set it to 4 - 10 Celsius in the winter time to have a frost free vehicle in the morning.
