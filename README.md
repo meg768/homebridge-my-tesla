@@ -2,6 +2,9 @@
 
 Homebridge plugin for Tesla owners. This plugin assumes you are familiar with Homebridge. 
 
+Before installing this plugin please concider the plugin https://www.npmjs.com/package/homebridge-tesla
+which was created by Nick Farina who also created Homebridge. Without him this plugin would not be possible.
+
 <img src="./images/bob.png" alt="bobdrawing" width="300"/>
 
 ## Installation
