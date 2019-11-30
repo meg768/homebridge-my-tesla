@@ -68,8 +68,6 @@ it only adds controls to open the doors, control the HVAC and to display current
 #### Ping
 When this switch is active your Tesla will never go into deep sleep. Every 5 minutes or so, a request is made to update the state of your car.  
 
-##### Configuration
-
 ```json
 "ping": {
     "name": "Ping",
@@ -101,6 +99,15 @@ The charging switch reflects the charging state.
 Lock or unlock the doors using this switch. Unlocking the door also also enables keyless start.
 
 #### Fan
+
+```json
+"hvac": {
+    "name": "Fläkten",
+    "requiredBatteryLevel": 20,
+    "enabled": true
+}
+ ```
+
 Turn the HVAC **ON** or **OFF** using this switch.
 
 #### Inside
