@@ -61,6 +61,7 @@ it only adds controls to open the doors, control the HVAC and to display current
 #### Ping
 When this switch is active your Tesla will never go into deep sleep. Every 5 minutes or so, a request is made to update the state of your car.  
 
+##### Configuration
 
 ```json
 "ping": {
@@ -70,7 +71,7 @@ When this switch is active your Tesla will never go into deep sleep. Every 5 min
     "enabled": true
 }
  ```
-
+* **name** - Localized name, specify the name you want in the Apple Home app.
 * **requiredBatteryLevel** - Specifes the required battery level to operate. If battery level is below this level, the ping function will stop.
 * **timerInterval** - Specifies the number of minutes between pings.
 * **enabled** - Set this to **false** if you do not wish to expose this switch to Apple Home. 
