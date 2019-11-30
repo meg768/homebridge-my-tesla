@@ -59,25 +59,25 @@ it only adds controls to open the doors, control the HVAC and to display current
 ### Added accessories
 
 #### Ping
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin condimentum, tortor quis mattis varius, mauris nisi eleifend quam, vel viverra tortor turpis sed leo. Curabitur sem odio, pulvinar ut eros.
+When this switch is active your Tesla will never go into deep sleep. Every 5 minutes or so, a request is made to update the state of your car.  
 
 #### Charging
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin condimentum, tortor quis mattis varius, mauris nisi eleifend quam, vel viverra tortor turpis sed leo. Curabitur sem odio, pulvinar ut eros.
+The charging switch reflects the charging state.
 
 #### Door
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin condimentum, tortor quis mattis varius, mauris nisi eleifend quam, vel viverra tortor turpis sed leo. Curabitur sem odio, pulvinar ut eros.
+Lock or unlock the doors using this switch. Unlocking the door also also enables keyless start.
 
 #### Fan
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin condimentum, tortor quis mattis varius, mauris nisi eleifend quam, vel viverra tortor turpis sed leo. Curabitur sem odio, pulvinar ut eros.
+Turn the HVAC **ON** or **OFF** using this switch.
 
 #### Inside
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin condimentum, tortor quis mattis varius, mauris nisi eleifend quam, vel viverra tortor turpis sed leo. Curabitur sem odio, pulvinar ut eros.
+Displays the inside temperature.
 
 #### Outside
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin condimentum, tortor quis mattis varius, mauris nisi eleifend quam, vel viverra tortor turpis sed leo. Curabitur sem odio, pulvinar ut eros.
+Displays the outside temperature.
 
 #### Thermostat
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin condimentum, tortor quis mattis varius, mauris nisi eleifend quam, vel viverra tortor turpis sed leo. Curabitur sem odio, pulvinar ut eros.
+This enables you to control the inside temperature of your Tesla. Set it to 4 - 10 Celsius in the winter time to have a frost free vehicle in the morning...
 
 
 ## Siri
