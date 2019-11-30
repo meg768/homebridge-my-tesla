@@ -9,6 +9,7 @@ A Swedish screen shot below but maybe explanatory.
 
 <br/>
 <img src="./images/bob.png" alt="bobdrawing" width="300"/>
+<br/>
 
 ## Installation
 
