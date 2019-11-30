@@ -71,7 +71,7 @@ When this switch is active your Tesla will never go into deep sleep. Every 5 min
     }
  ```
 
-* requiredBatteryLevel - Specifes....
+* **requiredBatteryLevel** - Specifes....
 * timerInterval - xxxx
 
 #### Charging
