@@ -63,16 +63,17 @@ When this switch is active your Tesla will never go into deep sleep. Every 5 min
 
 
 ```json
-    "ping": {
-        "name": "Ping",
-        "requiredBatteryLevel": 40,
-        "timerInterval": 5,
-        "enabled": true
-    }
+"ping": {
+    "name": "Ping",
+    "requiredBatteryLevel": 40,
+    "timerInterval": 5,
+    "enabled": true
+}
  ```
 
-* **requiredBatteryLevel** - Specifes....
-* timerInterval - xxxx
+* **requiredBatteryLevel** - Specifes the required battery level to operate. If battery level is below this level, the ping function will stop.
+* **timerInterval** - Specifies the number of minutes between pings.
+* **enabled** - Set this to **false** if you do not wish to expose this switch to Apple Home. 
 
 #### Charging
 The charging switch reflects the charging state.
