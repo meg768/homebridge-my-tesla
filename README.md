@@ -71,6 +71,9 @@ When this switch is active your Tesla will never go into deep sleep. Every 5 min
     }
  ```
 
+* requiredBatteryLevel - Specifes....
+* timerInterval - xxxx
+
 #### Charging
 The charging switch reflects the charging state.
 
