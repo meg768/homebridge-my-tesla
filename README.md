@@ -105,6 +105,8 @@ Lock or unlock the doors using this switch. Unlocking the door also also enables
     "enabled": true
 }
  ```
+* **name** - Localized name, specify the name you want in the Apple Home app.
+* **enabled** - Set this to **false** if you do not wish to expose this accessory to Apple Home. 
 
 
 #### Fan
@@ -118,6 +120,10 @@ Turn the HVAC **ON** or **OFF** using this switch.
     "enabled": true
 }
  ```
+* **name** - Localized name, specify the name you want in the Apple Home app.
+* **requiredBatteryLevel** - Specifes the required battery level to operate. If battery level is below this level, the fan function will stop.
+* **enabled** - Set this to **false** if you do not wish to expose this accessory to Apple Home. 
+
 
 #### Inside
 Displays the inside temperature.
