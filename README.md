@@ -61,6 +61,16 @@ it only adds controls to open the doors, control the HVAC and to display current
 #### Ping
 When this switch is active your Tesla will never go into deep sleep. Every 5 minutes or so, a request is made to update the state of your car.  
 
+
+```json
+    "ping": {
+        "name": "Ping",
+        "requiredBatteryLevel": 40,
+        "timerInterval": 5,
+        "enabled": true
+    }
+ ```
+
 #### Charging
 The charging switch reflects the charging state.
 
