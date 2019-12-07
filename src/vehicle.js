@@ -17,7 +17,7 @@ module.exports = class Vehicle extends TeslaAPI  {
     constructor(platform, config) {
 
 
-        super({log:platform.log, debug:platform.debug, vin:config.vin});
+        super({log:platform.log, debug:platform.debug, vin:config.vin, username:config.username, password:config.password});
 
         this.pushover = platform.pushover;
         this.config = config;

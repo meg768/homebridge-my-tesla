@@ -30,7 +30,7 @@ module.exports = class TeslaAPI extends Events {
         if (!clientID)
             throw new Error('Need Tesla credentials. A clientID must be specified');
         
-            if (!clientSecret)
+        if (!clientSecret)
             throw new Error('Need Tesla credentials. A clientSecret must be specified');
 
         if (!vin) 
