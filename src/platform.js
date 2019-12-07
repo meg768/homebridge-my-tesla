@@ -38,6 +38,9 @@ module.exports = class Platform {
 
         vehicles.forEach((vehicle) => {
             promise = promise.then(() => {
+                return vehicle.login();                
+            })
+            .then(() => {
                 return vehicle.getAccessories();                
             })
             .then((vehicleAccessories) => {
