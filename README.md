@@ -3,7 +3,7 @@
 Homebridge plugin for Tesla owners. This plugin assumes you are familiar with Homebridge. 
 
 Before installing this plugin please concider the plugin https://www.npmjs.com/package/homebridge-tesla
-which was created by Nick Farina who also created Homebridge(!). Without his work this plugin would not be possible.
+which was created by Nick Farina who also created Homebridge. Without his work this plugin would not be possible.
 
 A Swedish screen shot below but may be explanatory.
 

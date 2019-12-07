@@ -24,7 +24,7 @@ module.exports = class Platform {
     }
 
     accessories(callback) {
-
+        
         var Vehicle = require('./vehicle.js');
         var vehicles = [];
         var accessories = [];
