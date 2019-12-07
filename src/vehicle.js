@@ -85,7 +85,7 @@ module.exports = class Vehicle extends TeslaAPI  {
 
     login() {
         var configLoginOptions = {username:this.config.username, password:this.config.password, clientID:this.config.clientID, clientSecret:this.config.clientSecret};
-        var processLoginOptions = {username:process.env.TESLA_USER, password:process.env.TESLA_PASSWORD, clientID:process.env.TESLA_CLIENT_ID, clientSecret:process.env.TESLA_CLIENT_SECRET};
+//        var processLoginOptions = {username:process.env.TESLA_USER, password:process.env.TESLA_PASSWORD, clientID:process.env.TESLA_CLIENT_ID, clientSecret:process.env.TESLA_CLIENT_SECRET};
         var loginOptions = {...processLoginOptions, ...configLoginOptions};
 
         return super.login(loginOptions);
