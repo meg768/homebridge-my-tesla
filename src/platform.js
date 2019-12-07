@@ -30,7 +30,7 @@ module.exports = class Platform {
         this.config.vehicles.forEach((config, index) => {
             console.log('*************');
             console.log(config);
-            console.log('XXXXXXX');
+            console.log('YYYYY');
             vehicles.push(new Vehicle(this, config));
         });
 
