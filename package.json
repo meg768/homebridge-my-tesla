@@ -4,8 +4,6 @@
   "description": "Homebridge plugin for Teslas",
   "main": "index.js",
   "scripts": {
-    "install-config": "node ./scripts/install-config.js",
-    "copy-config": "cp ./config.json ~/.homebridge/config.json",
     "npm-install": "npm install -g",
     "npm-publish": "npm publish",
     "run-homebridge": "npm install -g && homebridge",
