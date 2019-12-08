@@ -1,6 +1,6 @@
 {
   "name": "homebridge-my-tesla",
-  "version": "1.0.33",
+  "version": "1.0.34",
   "description": "Homebridge plugin for Teslas",
   "main": "index.js",
   "scripts": {
@@ -36,8 +36,6 @@
   },
   "homepage": "https://github.com/meg768/homebridge-my-tesla#readme",
   "dependencies": {
-    "dotenv": "^7.0.0",
-    "pushover-notifications": "^1.2.0",
     "yow": "^1.0.108"
   }
 }
