@@ -35,11 +35,11 @@ module.exports = class extends Lock {
             })
             .then(() => {
                 if (this.enableRemoteStartDrive) {
-                    console.log('Remote start drive is enabled.');
+                    this.debug('Remote start drive is enabled.');
                     return this.vehicle.remoteStartDrive();
                 }
                 else {
-                    console.log('Remote start drive is disabled.');
+                    this.debug('Remote start drive is disabled.');
                     return Promise.resolve();
                 }
             })
