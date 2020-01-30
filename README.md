@@ -102,12 +102,13 @@ Lock or unlock the doors using this switch. Unlocking the door also also enables
 ```json
 "doors": {
     "name": "Door",
+    "enableRemoteStartDrive": true,
     "enabled": true
 }
  ```
 * **name** - Localized name, specify the name you want in the Apple Home app.
+* **enableRemoteStartDrive** - If enabled (default) you will not have to enter your pin code to start
 * **enabled** - Set this to **false** if you do not wish to expose this accessory to Apple Home. 
-
 
 #### Fan
 
@@ -209,6 +210,7 @@ feature has its own configuration. Default values are displayed below, you may c
                 },
                 "doors": {
                     "name": "Dörren",
+                    "enableRemoteStartDrive": true,
                     "enabled": true
                 },
                 "outsideTemperature": {
