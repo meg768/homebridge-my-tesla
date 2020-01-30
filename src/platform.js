@@ -4,6 +4,8 @@ module.exports = class Platform {
 
     constructor(log, config, homebridge) {
 
+        console.log('************************');
+        
         this.config = config;
         this.log = log;
         this.homebridge = homebridge;
