@@ -11,6 +11,8 @@ module.exports = class extends Lock {
 
         super({...options, config:Object.assign({}, config, options.config)});
 
+        this.enableRemoteStartDrive = this.config.enableRemoteStartDrive;
+
         this.vehicle.on('vehicleData', (data) => {       
             var lockState = (data.vehicleState.isLocked() ? Lock.SECURED : Lock.UNSECURED);
 
@@ -32,7 +34,14 @@ module.exports = class extends Lock {
                 return this.vehicle.doorUnlock();
             })
             .then(() => {
-                return this.vehicle.remoteStartDrive();
+                if (this.enableRemoteStartDrive) {
+                    this.debug('Remote start drive is enabled.');
+                    return this.vehicle.remoteStartDrive();
+                }
+                else {
+                    this.debug('Remote start drive is disabled.');
+                    return Promise.resolve();
+                }
             })
             .then(() => {
                 resolve();    

@@ -13,6 +13,7 @@
         "platform": "Tesla",
         "name": "Tesla",
         "debug": true,
+        
         "vehicles": [
             {         
                 "name": "Model 3",       
@@ -39,6 +40,7 @@
                     },
                     "doors": {
                         "name": "Dörren",
+                        "enableRemoteStartDrive": true,
                         "enabled": true
                     },
                     "outsideTemperature": {
