@@ -1,5 +1,5 @@
 var TeslaAPI = require('./tesla-api.js');
-var merge = require('yow/merge');
+var Events = require('events');
 var {Service, Characteristic} = require('./homebridge.js');
 
 
@@ -12,21 +12,27 @@ var PingAccessory = require('./accessories/ping.js');
 var ThermostatAccessory = require('./accessories/thermostat.js');
 
 
-module.exports = class Vehicle extends TeslaAPI  {
+module.exports = class Vehicle extends Events  {
 
     constructor(platform, config) {
 
-        super({log:platform.log, debug:platform.debug, vin:config.vin, username:config.username, password:config.password});
+		super();
 
+		this.log = platform.log;
+		this.debug = platform.debug;
         this.pushover = platform.pushover;
         this.config = config;
         this.name = config.name;
         this.accessories = [];
         this.uuid = platform.generateUUID(config.vin);
         this.platform = platform;
+		this.api = new TeslaAPI({token:config.token, vin:config.vin, username:config.username, password:config.password});
     }
 
-    getAccessories() {
+
+
+
+    async getAccessories() {
 
         var accessories = [];
 
@@ -45,44 +51,66 @@ module.exports = class Vehicle extends TeslaAPI  {
 
         };
 
-        return new Promise((resolve, reject) => {
-            Promise.resolve().then(() => {
-                return this.login();
-            })
-            .then(() => {
-                addAccessory(DoorLockAccessory, 'doors');
-                addAccessory(ChargingAccessory, 'charging');
-                addAccessory(AirConditioningAccessory, 'hvac');
-                addAccessory(PingAccessory, 'ping');
-                addAccessory(InsideTemperatureAccessory, 'insideTemperature');
-                addAccessory(ThermostatAccessory, 'thermostat');
-                addAccessory(OutsideTemperatureAccessory, 'outsideTemperature');
-            })
-            .then(() => {
-                return this.getVehicleData();                
-            })
-            .then((vehicleData) => {
-                // Update all accessories with info from Tesla
-                accessories.forEach((accessory) => {
-                    var service = accessory.getService(Service.AccessoryInformation);
-                    service.setCharacteristic(Characteristic.Name, accessory.name);
-                    service.setCharacteristic(Characteristic.Manufacturer, "Tesla");
-                    service.setCharacteristic(Characteristic.Model, vehicleData.getModel());
-                    service.setCharacteristic(Characteristic.SerialNumber, `${vehicleData.getVIN()}`);
-                    service.setCharacteristic(Characteristic.FirmwareRevision, `${vehicleData.vehicleState.getCarVersion()}`);
-                    
-                })
 
-                resolve(accessories);
-            })
-            .catch((error) => {
-                reject(error);
-            }); 
 
-        }); 
+		addAccessory(DoorLockAccessory, 'doors');
+		addAccessory(ChargingAccessory, 'charging');
+		addAccessory(AirConditioningAccessory, 'hvac');
+		addAccessory(PingAccessory, 'ping');
+		addAccessory(InsideTemperatureAccessory, 'insideTemperature');
+		addAccessory(ThermostatAccessory, 'thermostat');
+		addAccessory(OutsideTemperatureAccessory, 'outsideTemperature');
+
+		var vehicleData = await this.getVehicleData();
+
+		// Update all accessories with info from Tesla
+		accessories.forEach((accessory) => {
+			var service = accessory.getService(Service.AccessoryInformation);
+			service.setCharacteristic(Characteristic.Name, accessory.name);
+			service.setCharacteristic(Characteristic.Manufacturer, "Tesla");
+			service.setCharacteristic(Characteristic.Model, vehicleData.getModel());
+			service.setCharacteristic(Characteristic.SerialNumber, `${vehicleData.getVIN()}`);
+			service.setCharacteristic(Characteristic.FirmwareRevision, `${vehicleData.vehicleState.getCarVersion()}`);
+			
+		})
+
+		return accessories;
+		
     }
 
- 
+	getVehicle() {
+        return this.api.vehicle;
+    }
+
+    getVehicleID() {
+        return this.api.vehicle.id_s;
+    }
+
+	async getVehicleData() {
+		var vehicle_data = await this.get('vehicle_data');
+
+		var VehicleData = require('./vehicle-data.js');
+		var vehicleData = new VehicleData(vehicle_data);
+
+		this.emit('vehicle_data', vehicle_data);
+		this.emit('vehicleData', vehicleData);
+		return vehicleData;
+    }
+
+	async request(method, path) {
+		var response = await this.api.request(method, path);
+		this.emit('response', response);
+		return response;
+	}
+
+	async post(path) {
+		return this.request('POST', path);
+	}
+
+	async get(path) {
+		return this.request('GET', path);
+	}
+
     pause(ms) {
         return new Promise((resolve, reject) => {
             setTimeout(resolve, ms);

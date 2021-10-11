@@ -1,7 +1,7 @@
 
-var Service  = require('../homebridge.js').Service;
-var Characteristic  = require('../homebridge.js').Characteristic;
-var Accessory = require('../accessory.js');
+var Service  = require('../../homebridge.js').Service;
+var Characteristic  = require('../../homebridge.js').Characteristic;
+var Accessory = require('../../accessory.js');
 
 module.exports = class Fan extends Accessory {
 

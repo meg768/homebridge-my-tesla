@@ -1,8 +1,6 @@
 
-var Service  = require('../homebridge.js').Service;
-var Characteristic  = require('../homebridge.js').Characteristic;
 var Timer = require('yow/timer');
-var Switch = require('./switch.js');
+var Switch = require('./core/switch.js');
 
 module.exports = class extends Switch {
 
@@ -33,11 +31,15 @@ module.exports = class extends Switch {
 
         });
 
-        this.vehicle.on('vehicleData', (vehicleData) => {
+		this.vehicle.on('vehicle_data', async (vehicleData) => {
 
-            if (this.getSwitchState() && (vehicleData.chargeState.getBatteryLevel() < requiredBatteryLevel)) {
+			var batteryLevel = vehicleData.charge_state.battery_level;
+
+            if (this.getSwitchState() && batteryLevel < requiredBatteryLevel) {
                 this.log(`Battery level too low for ping to be enabled. Setting ping state to OFF.`);
-                this.setSwitchState(false).then(() => {
+                
+				await this.setSwitchState(false); 
+				this.setSwitchState(false).then(() => {
                     this.updateSwitchState();
                 })
                 .catch((error) => {

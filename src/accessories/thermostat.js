@@ -324,6 +324,16 @@ module.exports = class extends Accessory {
     }
 
 
+    autoConditioningStart() {
+        return this.vehicle.post('command/auto_conditioning_start');
+    }
+
+    autoConditioningStop() {
+        return this.vehicle.post('command/auto_conditioning_stop');
+    }
+
+
+
     setAutoConditioningState(value) {
         value = value ? true : false;
 

@@ -19,6 +19,7 @@
                 "name": "Model 3",       
                 "vin": "5YJ3E7EB9KF240654",
 
+                "token": "Your Tesla API access token",
                 "username": "Replace with your username at tesla.com",
                 "password": "Replace with your password at tesla.com",
 

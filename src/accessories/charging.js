@@ -1,7 +1,6 @@
 
-var Service  = require('../homebridge.js').Service;
-var Characteristic  = require('../homebridge.js').Characteristic;
-var Switch = require('./switch.js');
+var {Service, Characteristic} = require('../homebridge.js');
+var Switch = require('./core/switch.js');
 
 module.exports = class extends Switch {
 
@@ -14,13 +13,12 @@ module.exports = class extends Switch {
 
         this.enableBatteryService();
 
-        this.vehicle.on('vehicleData', (vehicleData) => {    
-            if (vehicleData.chargeState.isChargingStopped() || vehicleData.chargeState.isChargingDisconnected())
-                this.updateSwitchState(false);
-            else 
-                this.updateSwitchState(true);
-                
+        this.vehicle.on('vehicle_data', (vehicleData) => {    
+			var chargingState = vehicleData.charge_state.charging_state == "Charging" ? Characteristic.ChargingState.CHARGING : Characteristic.ChargingState.NOT_CHARGING;
+			this.updateSwitchState(chargingState == Characteristic.ChargingState.CHARGING);
         });
+
+
 
     }
 
@@ -39,9 +37,11 @@ module.exports = class extends Switch {
             return chargingState;
         }
 
-        this.vehicle.on('vehicleData', (vehicleData) => {    
-            chargingState = vehicleData.chargeState.isCharging() ? Characteristic.ChargingState.CHARGING : Characteristic.ChargingState.NOT_CHARGING;
-            batteryLevel  = vehicleData.chargeState.getBatteryLevel();
+
+		this.vehicle.on('vehicle_data', (vehicleData) => {   
+			
+            chargingState = vehicleData.charge_state.charging_state == "Charging" ? Characteristic.ChargingState.CHARGING : Characteristic.ChargingState.NOT_CHARGING;
+            batteryLevel  = vehicleData.charge_state.battery_level;
 
             this.debug(`Updated battery level to ${batteryLevel}% and charging state to ${chargingState == Characteristic.ChargingState.CHARGING ? "ON" : "OFF"}.`);
 
@@ -53,54 +53,24 @@ module.exports = class extends Switch {
         this.enableCharacteristic(Service.BatteryService, Characteristic.ChargingState, getChargingState);
     }
     
-    turnOn() {
-        return new Promise((resolve, reject) => {
-            Promise.resolve().then(() => {
-                return this.vehicle.chargePortDoorOpen();
-            })
-            .then(() => {
-                return this.vehicle.chargeStart();
-            })
-            .then(() => {
-                return this.pause(1000);
-            })
-            .then(() => {
-                return this.vehicle.getVehicleData();
-            })
-            .then(() => {
-                resolve();
-            })
-            .catch((error) => {
-                reject(error);
-            })
-        });
+    async turnOn() {
+		await this.vehicle.post('command/charge_port_door_open');
+		await this.vehicle.post('command/charge_start');
 
-    }
+		setTimeout(() => {
+			this.vehicle.getVehicleData();
+		}, 5000);
+	}
 
-    turnOff() {
-        return new Promise((resolve, reject) => {
-            Promise.resolve().then(() => {
-                return this.vehicle.chargeStop();
-            })
-            .then(() => {
-                return this.vehicle.chargePortDoorClose();
-            })
-            .then(() => {
-                return this.pause(1000);
-            })
-            .then(() => {
-                return this.vehicle.getVehicleData();
-            })
-            .then(() => {
-                resolve();
-            })
-            .catch((error) => {
-                reject(error);
-            })
-        });
+    async turnOff() {
+		await this.vehicle.post('command/charge_stop');
+		await this.vehicle.post('command/charge_port_door_close');
 
-    }
+		setTimeout(() => {
+			this.vehicle.getVehicleData();
+		}, 5000);
 
+	}
 
 
 

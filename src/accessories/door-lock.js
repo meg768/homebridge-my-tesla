@@ -1,5 +1,5 @@
 var {Service, Characteristic} = require('../homebridge.js');
-var Lock = require('./lock.js');
+var Lock = require('./core/lock.js');
 
 
 module.exports = class extends Lock {
@@ -13,8 +13,10 @@ module.exports = class extends Lock {
 
         this.enableRemoteStartDrive = (this.config.enableRemoteStartDrive == undefined) ? true : this.config.enableRemoteStartDrive;
 
-        this.vehicle.on('vehicleData', (data) => {       
-            var lockState = (data.vehicleState.isLocked() ? Lock.SECURED : Lock.UNSECURED);
+
+
+		this.vehicle.on('vehicle_data', (data) => {       
+            var lockState = (data.vehicle_state.locked ? Lock.SECURED : Lock.UNSECURED);
 
             this.debug(`Updated door lock status to ${this.getLockStateName(lockState)}.`);
 
@@ -22,12 +24,18 @@ module.exports = class extends Lock {
             this.updateLockTargetState(lockState);
         });
 
+
     }
 
     lock() {
-        return this.vehicle.doorLock();
+        return this.vehicle.post('command/door_lock');
     }
 
+	unlock() {
+        return this.vehicle.post('command/door_unlock');
+
+	}
+/*
     unlock() {
         return new Promise((resolve, reject) => {
             Promise.resolve().then(() => {
@@ -51,6 +59,6 @@ module.exports = class extends Lock {
             })            
         });
     }
-
+*/
 
 };

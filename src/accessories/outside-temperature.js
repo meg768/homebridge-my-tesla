@@ -1,5 +1,5 @@
 
-var TemperatureSensor = require('./temperature-sensor.js');
+var TemperatureSensor = require('./core/temperature.js');
 
 module.exports = class extends TemperatureSensor {
 
@@ -15,6 +15,6 @@ module.exports = class extends TemperatureSensor {
     }
 
     getTemperature(vehicleData) {
-        return vehicleData.climateState.getOutsideTemperature();
+        return vehicleData.climate_state.outside_temp;
     }
 }

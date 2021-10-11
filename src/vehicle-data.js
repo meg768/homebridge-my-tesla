@@ -149,9 +149,5 @@ class VehicleData {
 }
 
 
-module.exports.VehicleData = VehicleData;
-module.exports.ClimateState = ClimateState;
-module.exports.ChargeState = ChargeState;
-module.exports.VehicleState = VehicleState;
-module.exports.DriveState = DriveState;
+module.exports = VehicleData;
 
