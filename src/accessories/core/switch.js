@@ -16,12 +16,11 @@ module.exports = class Switch extends Accessory {
         this.enableCharacteristic(Service.Switch, Characteristic.On, this.getSwitchState.bind(this), this.setSwitchState.bind(this));
     }
 
-    updateSwitchState(value) {
+    async updateSwitchState(value) {
         if (value != undefined)
             this.switchState = value;
 
         this.getService(Service.Switch).getCharacteristic(Characteristic.On).updateValue(this.switchState);
-        return Promise.resolve();        
     }
 
     getSwitchState() {
@@ -31,9 +30,10 @@ module.exports = class Switch extends Accessory {
     async setSwitchState(value) {
         value = value ? true : false;
 
-		this.debug(`Setting switch "${this.name}" state to "${this.switchState}".`);
 
 		if (this.switchState != value) {
+			this.debug(`Setting switch "${this.name}" state to ${value}.`);
+
 			this.switchState = value;
 			this.switchState ? await this.turnOn() : await this.turnOff();
 
@@ -49,4 +49,5 @@ module.exports = class Switch extends Accessory {
     }
 
 }
+
 

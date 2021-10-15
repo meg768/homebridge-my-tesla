@@ -1,4 +1,3 @@
-
 var {Service, Characteristic} = require('../homebridge.js');
 var Switch = require('./core/switch.js');
 

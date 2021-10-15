@@ -26,34 +26,35 @@ module.exports = class Fan extends Accessory {
     getFanState() {
         return this.fanState;
     }
-
-    setFanState(value) {
+	
+    async setSwitchState(value) {
         value = value ? true : false;
 
-        return new Promise((resolve, reject) => {
-            Promise.resolve().then(() => {
-                if (this.fanState == value)
-                    return Promise.resolve();
+		this.debug(`Setting switch "${this.name}" state to "${this.switchState}".`);
 
-                this.fanState = value;
-                this.debug(`Setting fan "${this.name}" state to "${this.fanState}".`);
-                return this.fanState ? this.turnOn() : this.turnOff();
-            })
-            .then(() => {
-                resolve();
-            })
-            .catch((error) => {
-                reject(error);
-            })
-        });
+		if (this.switchState != value) {
+			this.switchState = value;
+			this.switchState ? await this.turnOn() : await this.turnOff();
+
+		}
+
+
     }
 
-    turnOn() {
-        return Promise.resolve();
+    async setFanState(value) {
+        value = value ? true : false;
+
+		if (this.fanState != value) {
+			this.fanState = value;
+			this.debug(`Setting fan "${this.name}" state to "${this.fanState}".`);
+			this.fanState ? await this.turnOn() : await this.turnOff();
+		}
     }
 
-    turnOff() {
-        return Promise.resolve();
+    async turnOn() {
+    }
+
+    async turnOff() {
     }
 
 }

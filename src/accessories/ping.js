@@ -33,19 +33,20 @@ module.exports = class extends Switch {
 
 		this.vehicle.on('vehicle_data', async (vehicleData) => {
 
-			var batteryLevel = vehicleData.charge_state.battery_level;
+			try {
+				var batteryLevel = vehicleData.charge_state.battery_level;
 
-            if (this.getSwitchState() && batteryLevel < requiredBatteryLevel) {
-                this.log(`Battery level too low for ping to be enabled. Setting ping state to OFF.`);
-                
-				await this.setSwitchState(false); 
-				this.setSwitchState(false).then(() => {
-                    this.updateSwitchState();
-                })
-                .catch((error) => {
-                    this.log(error);
-                })
-            }
+				if (this.getSwitchState() && batteryLevel < requiredBatteryLevel) {
+					this.log(`Battery level too low for ping to be enabled. Setting ping state to OFF.`);
+					
+					await this.setSwitchState(false); 
+					await this.updateSwitchState();
+				}
+	
+			}
+			catch(error) {
+				this.log(error);
+			}
         });
 
     }
