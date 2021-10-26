@@ -102,12 +102,12 @@ Lock or unlock the doors using this switch. Unlocking the door also also enables
 ```json
 "doors": {
     "name": "Door",
-    "enableRemoteStartDrive": true,
+    "remoteStartDrivePassword": "tesla-login-password",
     "enabled": true
 }
  ```
 * **name** - Localized name, specify the name you want in the Apple Home app.
-* **enableRemoteStartDrive** - If enabled (default) you will not have to enter your pin code to start driving.
+* **remoteStartDrivePassword** - Your Tesla login password. If specified you will not have to enter your pin code to start driving.
 * **enabled** - Set this to **false** if you do not wish to expose this accessory to Apple Home. 
 
 #### Fan

@@ -28,17 +28,24 @@ module.exports = class Switch extends Accessory {
     }
 
     async setSwitchState(value) {
-        value = value ? true : false;
+
+		try {
+			value = value ? true : false;
 
 
-		if (this.switchState != value) {
-			this.debug(`Setting switch "${this.name}" state to ${value}.`);
-
-			this.switchState = value;
-			this.switchState ? await this.turnOn() : await this.turnOff();
-
+			if (this.switchState != value) {
+				this.debug(`Setting switch "${this.name}" state to ${value}.`);
+	
+				this.switchState = value;
+				this.switchState ? await this.turnOn() : await this.turnOff();
+	
+			}
+	
+	
 		}
-
+		catch (error) {
+			this.debug(error);
+		}
 
     }
 

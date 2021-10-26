@@ -20,43 +20,35 @@
                 "vin": "5YJ3E7EB9KF240654",
 
                 "token": "Your Tesla API access token",
-                "username": "Replace with your username at tesla.com",
-                "password": "Replace with your password at tesla.com",
+				"expose": ["ping", "charging", "hvac"],
 
                 "accessories": {
                     "ping": {
                         "name": "Ping",
                         "requiredBatteryLevel": 40,
-                        "timerInterval": 5,
-                        "enabled": true
+                        "timerInterval": 5
                     },
                     "charging": {
-                        "name": "Laddning",
-                        "enabled": true
+                        "name": "Laddning"
                     },
                     "hvac": {
                         "name": "Fläkten",
-                        "requiredBatteryLevel": 20,
-                        "enabled": true
+                        "requiredBatteryLevel": 20
                     },
                     "doors": {
                         "name": "Dörren",
-                        "enableRemoteStartDrive": true,
-                        "enabled": true
+                        "remoteStartDrivePassword": "omit-or-specify-your-tesla-login-password"
                     },
                     "outsideTemperature": {
-                        "name": "Ute",
-                        "enabled": true
+                        "name": "Ute"
                     },
                     "insideTemperature": {
-                        "name": "Inne",
-                        "enabled": true
+                        "name": "Inne"
                     },
                    "thermostat": {
                         "name": "Termostat",
                         "requiredBatteryLevel": 40,
-                        "timerInterval": 2,
-                        "enabled": true
+                        "timerInterval": 2
                     }
                 }
             }

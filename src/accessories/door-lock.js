@@ -1,5 +1,6 @@
 var {Service, Characteristic} = require('../homebridge.js');
 var Lock = require('./core/lock.js');
+var isString = require('yow/isString');
 
 
 module.exports = class extends Lock {
@@ -10,10 +11,6 @@ module.exports = class extends Lock {
         };
 
         super({...options, config:Object.assign({}, config, options.config)});
-
-        this.enableRemoteStartDrive = (this.config.enableRemoteStartDrive == undefined) ? true : this.config.enableRemoteStartDrive;
-
-
 
 		this.vehicle.on('vehicle_data', (data) => {       
             var lockState = (data.vehicle_state.locked ? Lock.SECURED : Lock.UNSECURED);
@@ -27,38 +24,16 @@ module.exports = class extends Lock {
 
     }
 
-    lock() {
-        return this.vehicle.post('command/door_lock');
+    async lock() {
+        return await this.vehicle.post('command/door_lock');
     }
 
-	unlock() {
-        return this.vehicle.post('command/door_unlock');
+	async unlock() {
+        await this.vehicle.post('command/door_unlock');
+
+		if (isString(this.config.remoteStartDrivePassword))
+			await this.vehicle.post(`command/remote_start_drive?password=${this.config.remoteStartDrivePassword}`);
 
 	}
-/*
-    unlock() {
-        return new Promise((resolve, reject) => {
-            Promise.resolve().then(() => {
-                return this.vehicle.doorUnlock();
-            })
-            .then(() => {
-                if (this.enableRemoteStartDrive) {
-                    this.debug('Remote start drive is enabled.');
-                    return this.vehicle.remoteStartDrive();
-                }
-                else {
-                    this.debug('Remote start drive is disabled.');
-                    return Promise.resolve();
-                }
-            })
-            .then(() => {
-                resolve();    
-            })
-            .catch((error) => {
-                reject(error);
-            })            
-        });
-    }
-*/
 
 };

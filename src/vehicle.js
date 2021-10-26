@@ -1,16 +1,10 @@
 var TeslaAPI = require('./tesla-api-request.js');
 var Events = require('events');
+var isObject = require('yow/isObject');
+var isString = require('yow/isString');
 var {Service, Characteristic} = require('./homebridge.js');
 
 
-var DoorLockAccessory = require('./accessories/door-lock.js');
-var ChargingAccessory = require('./accessories/charging.js');
-var AirConditioningAccessory = require('./accessories/hvac.js');
-var InsideTemperatureAccessory = require('./accessories/inside-temperature.js');
-var OutsideTemperatureAccessory = require('./accessories/outside-temperature.js');
-var PingAccessory = require('./accessories/ping.js');
-var ThermostatAccessory = require('./accessories/thermostat.js');
-var TrunkAccessory = require('./accessories/trunk.js');
 
 
 module.exports = class Vehicle extends Events  {
@@ -21,47 +15,80 @@ module.exports = class Vehicle extends Events  {
 
 		this.log = platform.log;
 		this.debug = platform.debug;
-        this.pushover = platform.pushover;
         this.config = config;
         this.name = config.name;
         this.accessories = [];
         this.uuid = platform.generateUUID(config.vin);
         this.platform = platform;
-		this.api = new TeslaAPI({token:config.token, vin:config.vin});
+		this.api = new TeslaAPI({token:config.token, vin:config.vin, debug:this.debug});
     }
 
 
+	async pushover(message) {
+		try {
+			var Request = require('./json-api-request.js'); 
+			var api = new Request('https://api.pushover.net/1');
+			var payload = {...this.config.pushover, message:undefined}
 
+			if (payload == undefined || payload.user == undefined || payload.token == undefined)
+				return;
+
+			if (isString(message) && message.length > 0) {
+				payload.message = message;
+			}
+
+			this.debug('Sending Pushover payload:', JSON.stringify(payload));
+			await api.post('messages.json', {body:payload});
+
+
+		} 
+		catch (error) {
+			this.log(error);
+		}
+	}
+
+	async notifyError(error) {
+		try {
+			this.debug(error);
+			await this.pushover(error.message);
+		}
+		catch(error) {
+			this.log(error);
+		}
+		finally {
+
+		}
+	}
 
     async getAccessories() {
 
         var accessories = [];
 
         var addAccessory = (fn, name) => {
-            var accessoryConfig = this.config.accessories ? this.config.accessories[name] : undefined;
+			this.debug(`Searching for accessory ${name}...`);
 
-            if (accessoryConfig != undefined) {
-                if (accessoryConfig.enabled == undefined || accessoryConfig.enabled) {
-                    accessories.push(new fn({vehicle:this, config:accessoryConfig}));
-                }
-            }
-            else {
-                accessories.push(new fn({vehicle:this}));
+			if  (this.config.expose == undefined || this.config.expose.indexOf(name) >= 0) {
+				this.debug(`Exposing accessory ${name}...`);
+				var config = this.config.accessories ? this.config.accessories[name] : {};
 
-            }
+				if (config == undefined || config.enabled == undefined || config.enabled) {
+					accessories.push(new fn({vehicle:this, config:config || {}}));
+				}
+	
+			}
 
         };
 
-
-
-		addAccessory(DoorLockAccessory, 'doors');
-		addAccessory(ChargingAccessory, 'charging');
-		addAccessory(AirConditioningAccessory, 'hvac');
-		addAccessory(PingAccessory, 'ping');
-		addAccessory(InsideTemperatureAccessory, 'insideTemperature');
-		addAccessory(ThermostatAccessory, 'thermostat');
-		addAccessory(OutsideTemperatureAccessory, 'outsideTemperature');
-		addAccessory(TrunkAccessory, 'trunk');
+		addAccessory(require('./accessories/door-lock.js'), 'doors');
+		addAccessory(require('./accessories/charging.js'), 'charging');
+		addAccessory(require('./accessories/hvac.js'), 'hvac');
+		addAccessory(require('./accessories/ping.js'), 'ping');
+		addAccessory(require('./accessories/inside-temperature.js'), 'insideTemperature');
+//		addAccessory(require('./accessories/thermostat.js'), 'thermostat');
+		addAccessory(require('./accessories/outside-temperature.js'), 'outsideTemperature');
+		addAccessory(require('./accessories/trunk.js'), 'trunk');
+		addAccessory(require('./accessories/defrost.js'), 'defrost');
+		addAccessory(require('./accessories/steering-wheel-heater.js'), 'steeringWheelHeater');
 
 		var vehicleData = await this.getVehicleData();
 		var model = 'Unknown';
@@ -112,10 +139,14 @@ module.exports = class Vehicle extends Events  {
         return this.api.vehicle.id_s;
     }
 
-	async getVehicleData() {
+	async getVehicleData(delay) {
+		if (typeof delay == 'number') {
+			await this.pause(delay);
+		}
+
 		var vehicle_data = await this.get('vehicle_data');
 		this.emit('vehicle_data', vehicle_data);
-		return vehicle_data;
+		return vehicle_data;	
     }
 
 	async request(method, path, options) {

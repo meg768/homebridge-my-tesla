@@ -15,30 +15,15 @@ module.exports = class Fan extends Accessory {
         this.enableCharacteristic(Service.Fan, Characteristic.On, this.getFanState.bind(this), this.setFanState.bind(this));
     }
 
-    updateFanState(value) {
+    async updateFanState(value) {
         if (value != undefined)
             this.fanState = value;
 
         this.getService(Service.Fan).getCharacteristic(Characteristic.On).updateValue(this.fanState);
-        return Promise.resolve();        
     }
 
     getFanState() {
         return this.fanState;
-    }
-	
-    async setSwitchState(value) {
-        value = value ? true : false;
-
-		this.debug(`Setting switch "${this.name}" state to "${this.switchState}".`);
-
-		if (this.switchState != value) {
-			this.switchState = value;
-			this.switchState ? await this.turnOn() : await this.turnOff();
-
-		}
-
-
     }
 
     async setFanState(value) {

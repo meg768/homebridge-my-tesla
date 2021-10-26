@@ -8,22 +8,25 @@ module.exports = class extends Fan {
         };
 
         super({...options, config:Object.assign({}, config, options.config)});
-
 		
 		this.vehicle.on('vehicle_data', (vehicleData) => {    
-            var isClimateOn = vehicleData.climate_state.is_climate_on;
-            this.debug(`Updated HVAC status to ${isClimateOn ? 'ON' : 'OFF'}.`);
-            this.updateFanState(isClimateOn);
+            //var fanStatus = vehicleData.climate_state.fan_status;
+			var isClimateOn = vehicleData.climate_state.is_climate_on;
+			var status = isClimateOn;
+			this.debug(`Updated HVAC status to ${status ? 'ON' : 'OFF'}.`);
+            this.updateFanState(status);
         });
 
     }
 
-    turnOn() {
-        return this.vehicle.post('command/auto_conditioning_start');
+    async turnOn() {
+        await this.vehicle.post('command/auto_conditioning_start');
+		this.vehicle.getVehicleData(1000);
     }
 
-    turnOff() {
-        return this.vehicle.post('command/auto_conditioning_stop');
+    async turnOff() {
+        await this.vehicle.post('command/auto_conditioning_stop');
+		this.vehicle.getVehicleData(1000);
     }
 
 

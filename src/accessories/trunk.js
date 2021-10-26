@@ -1,5 +1,6 @@
 var {Service, Characteristic} = require('../homebridge.js');
 var Switch = require('./core/switch.js');
+var Lock = require('./core/lock.js');
 
 module.exports = class extends Switch {
 
@@ -11,15 +12,14 @@ module.exports = class extends Switch {
         super({...options, config:Object.assign({}, config, options.config)});
     }
 
-    
     async turnOn() {
 		try {
-			await this.updateSwitchState(true);
 			await this.vehicle.post('command/actuate_trunk', {which_trunk:'rear'});
+			await this.updateSwitchState(true);
 
 		}
 		catch(error) {
-			this.log(error);
+			this.debug(error);
 		}
 		finally {
 			setTimeout(() => {
