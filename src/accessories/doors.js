@@ -2,68 +2,63 @@ var {Service, Characteristic} = require('../homebridge.js');
 var Accessory = require('../accessory.js');
 var isString = require('yow/isString');
 
+var UNSECURED = Characteristic.LockCurrentState.UNSECURED;
+var SECURED   = Characteristic.LockCurrentState.SECURED;
+var JAMMED    = Characteristic.LockCurrentState.JAMMED;
+var UNKNOWN   = Characteristic.LockCurrentState.UNKNOWN;
+
 
 module.exports = class extends Accessory {
-
 
     constructor(options) {
         var config = {
             "name": "Doors"
         };
 
-		super({...options, config:Object.assign({}, config, options.config)});
+		super({...options, config:{...config, ...options.config}});
 
-		this.doorPosition = 0;
+        this.lockState = UNKNOWN;
 
-		this.addService(new Service.Door(this.name));
+        this.addService(new Service.LockMechanism(this.name));
 
-        this.enableCharacteristic(Service.Door, Characteristic.CurrentPosition, this.getCurrentPosition.bind(this));
-        this.enableCharacteristic(Service.Door, Characteristic.PositionState, this.getPositionState.bind(this));
-        this.enableCharacteristic(Service.Door, Characteristic.TargetPosition, this.getTargetPosition.bind(this), this.setTargetPosition.bind(this));
+		this.enableCharacteristic(Service.LockMechanism, Characteristic.LockCurrentState, this.getLockState.bind(this));
+		this.enableCharacteristic(Service.LockMechanism, Characteristic.LockTargetState, this.getLockState.bind(this), this.setLockState.bind(this));
 
 		this.vehicle.on('vehicle_data', (data) => {       
-            this.doorPosition = data.vehicle_state.locked ? 0 : 100;
-			
-            this.debug(`Updated door position to ${this.doorPosition}%.`);
+            this.lockState = (data.vehicle_state.locked ? SECURED : UNSECURED);
 
-			this.getService(Service.Door).getCharacteristic(Characteristic.CurrentPosition).updateValue(this.doorPosition);
-			this.getService(Service.Door).getCharacteristic(Characteristic.PositionState).updateValue(this.doorPosition);
+			this.debug(`Updated door lock status to ${this.lockState == SECURED ? 'SECURED' : 'UNSECURED'}.`);
 
+			this.getService(Service.LockMechanism).getCharacteristic(Characteristic.LockTargetState).updateValue(this.lockState); 
+			this.getService(Service.LockMechanism).getCharacteristic(Characteristic.LockCurrentState).updateValue(this.lockState);
+	
         });
-
-
     }
 
-	getCurrentPosition() {
-		return this.doorPosition;
-	}
 
-	getPositionState() {
-		return 2;
-		
-	}
+    getLockState() {
+        return this.lockState;
+    }
 
-	getTargetPosition() {
-		return this.doorPosition;
-	}
-
-    async setTargetPosition(value) {
-		if (value < 50) {
-			await this.vehicle.post('command/door_lock');
-			this.doorPosition = 0;
-
-		}
-		else {
-			await this.vehicle.post('command/door_unlock');
-
-			if (isString(this.config.remoteStartDrivePassword))
-				await this.vehicle.post(`command/remote_start_drive?password=${this.config.remoteStartDrivePassword}`);
+    async setLockState(value) {
+		try {
+			if (value) {
+				await this.vehicle.post('command/door_lock');
+			}
+			else {
+				await this.vehicle.post('command/door_unlock');
+				
+				if (isString(this.config.remoteStartDrivePassword))
+					await this.vehicle.post(`command/remote_start_drive?password=${this.config.remoteStartDrivePassword}`);
+			}
 	
-			this.doorPosition = 100;
 		}
-
-		this.vehicle.getVehicleData(1000);
-
+		catch(error) {
+			this.log(error);
+		}
+		finally {
+			this.vehicle.getVehicleData(1000);
+		}
     }
 
 
