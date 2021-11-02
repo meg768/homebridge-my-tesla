@@ -2,9 +2,9 @@
 {
     "bridge": {
         "name": "Tesla",
-        "username": "11:11:11:11:11:19",
+        "username": "11:11:11:11:11:21",
         "port": 51821,
-        "pin": "111-11-119"
+        "pin": "111-11-120"
     },
 
     "description": "Sample configuration file",

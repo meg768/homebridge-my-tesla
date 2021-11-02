@@ -1,35 +1,4 @@
-/*
-var Path = require('path');
-var URL = require('url');
 
-function isString(arg) {
-	return typeof arg == 'string';
-};
-
-function isObject(arg) {
-	return typeof arg == 'object' && arg != null;
-};
-
-function isFunction(arg) {
-	return typeof arg === 'function';
-};
-
-
-class Request {
-
-	constructor() {
-
-	}
-
-	request() {
-
-	}
-
-	debug() {
-
-	}
-}
-*/
 module.exports = function Request() {
 
 	var Path = require('path');

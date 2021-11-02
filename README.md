@@ -182,54 +182,67 @@ feature has its own configuration. Default values are displayed below, you may c
 
 ```json
 
+
+{
+    "bridge": {
+        "name": "Tesla",
+        "username": "11:11:11:11:11:21",
+        "port": 51821,
+        "pin": "111-11-120"
+    },
+
+    "description": "Sample configuration file",
+
     "platforms": [{
         "platform": "Tesla",
         "name": "Tesla",
         "debug": true,
+        
         "vehicles": [
-        {         
-            "vin": "5YJ3E7EB9KF240654",
-            "username": "Replace with your username at tesla.com",
-            "password": "Replace with your password at tesla.com",
+            {         
+                "name": "Model 3",       
+                "vin": "5YJ3E7EB9KF240654",
 
-            "accessories": {
-                "ping": {
-                    "name": "Ping",
-                    "requiredBatteryLevel": 40,
-                    "timerInterval": 5,
-                    "enabled": true
-                },
-                "charging": {
-                    "name": "Laddning",
-                    "enabled": true
-                },
-                "hvac": {
-                    "name": "Fläkten",
-                    "requiredBatteryLevel": 20,
-                    "enabled": true
-                },
-                "doors": {
-                    "name": "Dörren",
-                    "enableRemoteStartDrive": true,
-                    "enabled": true
-                },
-                "outsideTemperature": {
-                    "name": "Ute",
-                    "enabled": true
-                },
-                "insideTemperature": {
-                    "name": "Inne",
-                    "enabled": true
-                },
-                "thermostat": {
-                    "name": "Termostat",
-                    "requiredBatteryLevel": 40,
-                    "timerInterval": 2,
-                    "enabled": true
+                "token": "Your Tesla API refresh access token",
+				"expose": ["ping", "charging", "hvac"],
+
+                "accessories": {
+                    "ping": {
+                        "name": "Ping",
+                        "requiredBatteryLevel": 40,
+                        "timerInterval": 5
+                    },
+                    "charging": {
+                        "name": "Laddning"
+                    },
+                    "hvac": {
+                        "name": "Fläkten",
+                        "requiredBatteryLevel": 20
+                    },
+                    "doors": {
+                        "name": "Dörren",
+                        "remoteStartDrivePassword": "omit-or-specify-your-tesla-login-password"
+                    },
+                    "outsideTemperature": {
+                        "name": "Ute"
+                    },
+                    "insideTemperature": {
+                        "name": "Inne"
+                    },
+                   "thermostat": {
+                        "name": "Termostat",
+                        "requiredBatteryLevel": 40,
+                        "timerInterval": 2
+                    }
                 }
             }
-        }
-    ]
+        ]
+    }]
+
+
+}
+
+
 ```
 
 ## Usage

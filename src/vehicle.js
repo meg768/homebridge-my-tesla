@@ -79,16 +79,19 @@ module.exports = class Vehicle extends Events  {
 
         };
 
+
 		addAccessory(require('./accessories/door-lock.js'), 'doors');
 		addAccessory(require('./accessories/charging.js'), 'charging');
 		addAccessory(require('./accessories/hvac.js'), 'hvac');
 		addAccessory(require('./accessories/ping.js'), 'ping');
 		addAccessory(require('./accessories/inside-temperature.js'), 'insideTemperature');
-//		addAccessory(require('./accessories/thermostat.js'), 'thermostat');
+		//addAccessory(require('./accessories/thermostat.js'), 'thermostat');
 		addAccessory(require('./accessories/outside-temperature.js'), 'outsideTemperature');
 		addAccessory(require('./accessories/trunk.js'), 'trunk');
 		addAccessory(require('./accessories/defrost.js'), 'defrost');
 		addAccessory(require('./accessories/steering-wheel-heater.js'), 'steeringWheelHeater');
+		//addAccessory(require('./accessories/battery.js'), 'battery');
+
 
 		var vehicleData = await this.getVehicleData();
 		var model = 'Unknown';
@@ -145,7 +148,10 @@ module.exports = class Vehicle extends Events  {
 		}
 
 		var vehicle_data = await this.get('vehicle_data');
-		this.emit('vehicle_data', vehicle_data);
+
+		if (vehicle_data)
+			this.emit('vehicle_data', vehicle_data);
+
 		return vehicle_data;	
     }
 
@@ -165,10 +171,13 @@ module.exports = class Vehicle extends Events  {
 
 
 
-    pause(ms) {
-        return new Promise((resolve, reject) => {
-            setTimeout(resolve, ms);
-        });
+    async pause(ms, fn) {
+
+		await this.delay(ms);
+
+		if (fn)
+			fn();
+
     }
 
 

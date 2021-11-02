@@ -1,35 +1,52 @@
 var {Service, Characteristic} = require('../homebridge.js');
-var Switch = require('./core/switch.js');
-var Lock = require('./core/lock.js');
+var Accessory = require('../accessory.js');
 
-module.exports = class extends Switch {
+module.exports = class extends Accessory {
 
     constructor(options) {
         var config = {
             "name": "Trunk"
         };
 
-        super({...options, config:Object.assign({}, config, options.config)});
+		super({...options, config:{...config, ...options.config}});
+
+		this.state = false;
+        this.addService(new Service.Switch(this.name));
+        this.enableCharacteristic(Service.Switch, Characteristic.On, this.getState.bind(this), this.setState.bind(this));
     }
 
-    async turnOn() {
-		try {
-			await this.vehicle.post('command/actuate_trunk', {which_trunk:'rear'});
-			await this.updateSwitchState(true);
+	async updateState(state) {
+		state = state ? true : false;
 
+		if (state != this.state) {
+			this.getService(Service.Switch).getCharacteristic(Characteristic.On).updateValue(this.state = state);
+		}
+	}
+
+	getState() {
+		return this.state;
+	}
+
+	async setState(state) {
+		try {
+			state = state ? true : false;
+
+			if (state) {
+				this.debug(`Setting trunk state to "${state}".`);
+	
+				await this.updateState(true);
+				await this.vehicle.post('command/actuate_trunk', {which_trunk:'rear'});
+
+			}
 		}
 		catch(error) {
-			this.debug(error);
+			this.log(error);
 		}
 		finally {
-			setTimeout(() => {
-				this.updateSwitchState(false);
-			}, 1000);	
+			await this.updateState(false);
 		}
-	}
+    }	
 
-    async turnOff() {
-	}
 
 
 

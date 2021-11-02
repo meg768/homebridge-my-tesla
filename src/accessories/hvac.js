@@ -1,33 +1,55 @@
-var Fan = require('./core/fan.js');
+var Service  = require('../homebridge.js').Service;
+var Characteristic  = require('../homebridge.js').Characteristic;
+var Accessory = require('../accessory.js');
 
-module.exports = class extends Fan {
+module.exports = class extends Accessory {
 
     constructor(options) {
         var config = {
-            "name": "Fan"
+            "name": "HVAC"
         };
 
-        super({...options, config:Object.assign({}, config, options.config)});
-		
+		super({...options, config:{...config, ...options.config}});
+
+		this.state = false;
+        this.addService(new Service.Fan(this.name));
+        this.enableCharacteristic(Service.Fan, Characteristic.On, this.getState.bind(this), this.setState.bind(this));
+
 		this.vehicle.on('vehicle_data', (vehicleData) => {    
-            //var fanStatus = vehicleData.climate_state.fan_status;
-			var isClimateOn = vehicleData.climate_state.is_climate_on;
-			var status = isClimateOn;
-			this.debug(`Updated HVAC status to ${status ? 'ON' : 'OFF'}.`);
-            this.updateFanState(status);
+			this.state = vehicleData.climate_state.is_climate_on;
+			this.debug(`Updated HVAC status to ${this.state ? 'ON' : 'OFF'}.`);
+			this.getService(Service.Fan).getCharacteristic(Characteristic.On).updateValue(this.state);
         });
 
     }
 
-    async turnOn() {
-        await this.vehicle.post('command/auto_conditioning_start');
-		this.vehicle.getVehicleData(1000);
+    getState() {
+        return this.state;
     }
 
-    async turnOff() {
-        await this.vehicle.post('command/auto_conditioning_stop');
-		this.vehicle.getVehicleData(1000);
-    }
+    async setState(value) {
+		try {
+			value = value ? true : false;
+
+			if (this.state != value) {
+				this.debug(`Setting HVAC state to "${value}".`);
+	
+				if (value) {
+					await this.vehicle.post('command/auto_conditioning_start');
+				}
+				else {
+					await this.vehicle.post('command/auto_conditioning_stop');
+				}	
+			}
+		}
+		catch(error) {
+			this.log(error);
+		}
+		finally {
+			this.vehicle.getVehicleData(1000);
+		}
+    }	
+
 
 
 }

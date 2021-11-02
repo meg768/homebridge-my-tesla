@@ -70,15 +70,15 @@ module.exports = class TeslaAPI {
 			var request = new Request("https://auth.tesla.com");
 			var reply = await request.post("oauth2/v3/token", options);
 	
-			return reply.body.access_token;
+			return reply.body;
 		}
 
-		var accessToken = await getAccessToken();
+		var token = await getAccessToken();
 
 		var options = {
             headers: {
                 "content-type": `application/json; charset=utf-8`,
-				"authorization": `Bearer ${accessToken}`
+				"authorization": `Bearer ${token.access_token}`
             }
         };
 
@@ -87,7 +87,7 @@ module.exports = class TeslaAPI {
 
 		// Make sure we create a new API within a week or so
 		this.apiInvalidAfter = new Date();
-		this.apiInvalidAfter.setDate(this.apiInvalidAfter.getDate() + 7);
+		this.apiInvalidAfter.setTime(this.apiInvalidAfter.getTime() + 1000 * token.expires_in);
 
 		this.debug(`This access token will expire ${this.apiInvalidAfter}.`);
 
@@ -140,6 +140,7 @@ module.exports = class TeslaAPI {
 				throw new Error('Your Tesla cannot be reached within timeout period.');
 
 			if (response.state == "online") {
+				this.debug(`Vehicle ${this.vin} is awake.`);
 				return response;
 			}
 			else {

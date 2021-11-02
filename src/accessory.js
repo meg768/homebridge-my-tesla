@@ -42,12 +42,22 @@ class Accessory extends Events {
         this.UUID = uuid;
     }
 
-    pause(ms) {
+
+    async pause(ms, fn) {
+
+		await this.delay(ms);
+
+		if (fn)
+			fn();
+
+    }
+
+    delay(ms) {
         return new Promise((resolve, reject) => {
             setTimeout(resolve, ms);
         });
     }
-    
+
     addService(service) {
         this.services.push(service);
     }

@@ -1,8 +1,9 @@
-
+var Service = require('../homebridge.js').Service;
+var Characteristic  = require('../homebridge.js').Characteristic;
+var Accessory = require('../accessory.js');
 var Timer = require('yow/timer');
-var Switch = require('./core/switch.js');
 
-module.exports = class extends Switch {
+module.exports = class extends Accessory {
 
     constructor(options) {
 
@@ -12,8 +13,12 @@ module.exports = class extends Switch {
             timerInterval : 5
         };
 
-        super({...options, config:Object.assign({}, config, options.config)});
-        
+		super({...options, config:{...config, ...options.config}});
+
+		this.state = false;
+		this.addService(new Service.Switch(this.name));
+        this.enableCharacteristic(Service.Switch, Characteristic.On, this.getState.bind(this), this.setState.bind(this));
+
         var timer = new Timer();
         var timerInterval = this.config.timerInterval * 60000;
         var requiredBatteryLevel = this.config.requiredBatteryLevel;
@@ -22,7 +27,7 @@ module.exports = class extends Switch {
         this.vehicle.on('response', () => {
 
             // Whenever we get a response, reset the timer
-            if (this.getSwitchState()) {
+            if (this.getState()) {
                 this.debug('Resetting ping timer.');
                 timer.setTimer(timerInterval, this.ping.bind(this));
             }
@@ -36,11 +41,11 @@ module.exports = class extends Switch {
 			try {
 				var batteryLevel = vehicleData.charge_state.battery_level;
 
-				if (this.getSwitchState() && batteryLevel < requiredBatteryLevel) {
+				if (this.getState() && batteryLevel < requiredBatteryLevel) {
 					this.log(`Battery level too low for ping to be enabled. Setting ping state to OFF.`);
 					
-					await this.setSwitchState(false); 
-					await this.updateSwitchState();
+					await this.setState(false); 
+					await this.updateState();
 				}
 	
 			}
@@ -51,15 +56,39 @@ module.exports = class extends Switch {
 
     }
 
-    turnOn() {
-        return this.ping();
-    }
+	getState() {
+		return this.state;
+	}
 
-    ping() {
-        this.debug('Ping!');
-        return this.vehicle.getVehicleData();     
+	async updateState() {
+		this.getService(Service.Switch).getCharacteristic(Characteristic.On).updateValue(this.state);
+	}
 
-    }
+	async setState(state) {
+
+		try {
+			state = state ? true : false;
+
+			if (state != this.state) {
+				
+				if (state)
+					await this.ping();
+				else	
+					this.debug(`Ping turned OFF.`);
+
+				this.state = state;
+			}	
+		}
+		catch(error) {
+			this.log(error);
+		}
+	}
+
+	async ping() {
+		this.debug('Ping!');
+		await this.vehicle.getVehicleData();     
+	}
+
 
 
 }
