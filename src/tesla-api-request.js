@@ -206,7 +206,7 @@ module.exports = class TeslaAPI {
 		this.api = undefined;
 		this.apiInvalidAfter = undefined;
 		this.vin = options.vin;
-		this.vehicle = undefined;
+		this.vehicleID = undefined;
         this.wakeupTimeout = 60000;
 		this.debug = () => {};
 
@@ -274,7 +274,7 @@ module.exports = class TeslaAPI {
 		return this.api;				
 	}
 
-	async connect() {
+	async getVehicle() {
 
 		var api = await this.getAPI();
 		var request = await api.get('vehicles');
@@ -288,15 +288,16 @@ module.exports = class TeslaAPI {
 			throw new Error(`Vehicle ${this.vin} could not be found.`);
 		}		
 
-		this.vehicle = vehicle;
+		return vehicle;
 	}
-
 
 	async request(method, path, options) {
 
 		// Connect if not already done
-		if (this.vehicle == undefined) {
-			await this.connect();
+		if (this.vehicleID == undefined) {
+			var vehicle = await this.getVehicle();
+
+			this.vehicleID = vehicle.id;
 		}
 
 		var api = await this.getAPI();
@@ -313,7 +314,7 @@ module.exports = class TeslaAPI {
 
 			this.debug(`Sending wakeup to vehicle ${this.vin}...`);
 
-			var reply = await api.post(`vehicles/${this.vehicle.id}/wake_up`);
+			var reply = await api.post(`vehicles/${this.vehicleID}/wake_up`);
 			var response = reply.body.response;
 	
 			if (now.getTime() - then.getTime() > this.wakeupTimeout)
@@ -330,7 +331,7 @@ module.exports = class TeslaAPI {
 		}
 
 
-		var path = `vehicles/${this.vehicle.id}/${path}`;
+		var path = `vehicles/${this.vehicleID}/${path}`;
 		var response = await api.request(method, path, options);
 	
 		switch(response.statusCode) {

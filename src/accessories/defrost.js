@@ -44,7 +44,6 @@ module.exports = class extends Accessory {
 				}
 				else {
 					await this.vehicle.post('command/set_preconditioning_max', {on:false});
-					await this.vehicle.post('command/auto_conditioning_stop');
 				}	
 			}
 		}

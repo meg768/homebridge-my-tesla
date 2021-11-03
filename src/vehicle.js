@@ -1,4 +1,4 @@
-var TeslaAPI = require('tesla-api-request');
+var TeslaAPI = require('./tesla-api-request.js');
 var Events = require('events');
 var {Service, Characteristic} = require('./homebridge.js');
 
@@ -54,10 +54,10 @@ module.exports = class Vehicle extends Events  {
 		//addAccessory(require('./accessories/battery.js'), 'battery');
 
 
-		var vehicleData = await this.getVehicleData();
+		var vehicle = await this.api.getVehicle();
 		var model = 'Unknown';
 		
-		vehicleData.option_codes.split(',').forEach((code) => {
+		vehicle.option_codes.split(',').forEach((code) => {
             switch(code) {
                 case 'MDLS':
                 case 'MS03':
@@ -86,21 +86,15 @@ module.exports = class Vehicle extends Events  {
 			service.setCharacteristic(Characteristic.Name, accessory.name);
 			service.setCharacteristic(Characteristic.Manufacturer, "Tesla");
 			service.setCharacteristic(Characteristic.Model, model);
-			service.setCharacteristic(Characteristic.SerialNumber, `${vehicleData.vin}`);
-			service.setCharacteristic(Characteristic.FirmwareRevision, `${vehicleData.vehicle_state.car_version}`);
+			service.setCharacteristic(Characteristic.SerialNumber, `${vehicle.vin}`);
+			service.setCharacteristic(Characteristic.FirmwareRevision, `${vehicle.api_version}`);
 			
 		})
 
+		await this.getVehicleData();
+
 		return accessories;
 		
-    }
-
-	getVehicle() {
-        return this.api.vehicle;
-    }
-
-    getVehicleID() {
-        return this.api.vehicle.id_s;
     }
 
 	async getVehicleData(delay) {
@@ -108,18 +102,16 @@ module.exports = class Vehicle extends Events  {
 			await this.pause(delay);
 		}
 
-		var vehicle_data = await this.get('vehicle_data');
-
-		if (vehicle_data)
-			this.emit('vehicle_data', vehicle_data);
-
-		return vehicle_data;	
+		return await this.get('vehicle_data');
     }
 
 	async request(method, path, options) {
 		this.debug(`Tesla request ${method} ${path} ${options ? JSON.stringify(options) : ''}`);
 		var response = await this.api.request(method, path, options);
-		this.emit('response', response);
+
+		if (response)
+			this.emit(path, response);
+
 		return response;
 	}
 

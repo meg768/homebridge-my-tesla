@@ -16,23 +16,18 @@ module.exports = class extends Accessory {
 		super({...options, config:{...config, ...options.config}});
 
 		this.state = false;
+        this.timer = new Timer();
 		this.addService(new Service.Switch(this.name));
         this.enableCharacteristic(Service.Switch, Characteristic.On, this.getState.bind(this), this.setState.bind(this));
+/*
+        this.vehicle.on('wake_up', async (response) => {
 
-        var timer = new Timer();
-        var timerInterval = this.config.timerInterval * 60000;
-        var requiredBatteryLevel = this.config.requiredBatteryLevel;
+			if (response.state == 'online') {
+				await this.vehicle.post('vehicle_data'); 
 
-        // Listen to responses from Tesla API
-        this.vehicle.on('response', () => {
-
-            // Whenever we get a response, reset the timer
-            if (this.getState()) {
-                this.debug('Resetting ping timer.');
-                timer.setTimer(timerInterval, this.ping.bind(this));
-            }
-            else
-                timer.cancel();
+				// Reset timer
+				this.timer.setTimer(this.config.timerInterval * 60000, this.ping.bind(this));
+			}
 
         });
 
@@ -41,11 +36,12 @@ module.exports = class extends Accessory {
 			try {
 				var batteryLevel = vehicleData.charge_state.battery_level;
 
-				if (this.getState() && batteryLevel < requiredBatteryLevel) {
+				if (this.getState() && batteryLevel < this.config.requiredBatteryLevel) {
 					this.log(`Battery level too low for ping to be enabled. Setting ping state to OFF.`);
 					
 					await this.setState(false); 
-					await this.updateState();
+					
+					this.updateCharacteristicValue(Service.Switch, Characteristic.On, this.state);
 				}
 	
 			}
@@ -53,15 +49,11 @@ module.exports = class extends Accessory {
 				this.log(error);
 			}
         });
-
+*/
     }
 
 	getState() {
 		return this.state;
-	}
-
-	async updateState() {
-		this.getService(Service.Switch).getCharacteristic(Characteristic.On).updateValue(this.state);
 	}
 
 	async setState(state) {
@@ -71,12 +63,17 @@ module.exports = class extends Accessory {
 
 			if (state != this.state) {
 				
-				if (state)
+				if (state) {
 					await this.ping();
-				else	
+				}
+				else {
+					this.timer.cancel();
 					this.debug(`Ping turned OFF.`);
+				}
 
 				this.state = state;
+				this.updateCharacteristicValue(Service.Switch, Characteristic.On, this.state);
+
 			}	
 		}
 		catch(error) {
@@ -85,8 +82,14 @@ module.exports = class extends Accessory {
 	}
 
 	async ping() {
+
 		this.debug('Ping!');
-		await this.vehicle.getVehicleData();     
+
+		await this.vehicle.post('wake_up');
+
+		// Reset timer
+		this.timer.setTimer(this.config.timerInterval * 60000, this.ping.bind(this));
+
 	}
 
 
