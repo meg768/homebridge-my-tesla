@@ -19,29 +19,15 @@ module.exports = class extends Accessory {
         this.timer = new Timer();
 		this.addService(new Service.Switch(this.name));
         this.enableCharacteristic(Service.Switch, Characteristic.On, this.getState.bind(this), this.setState.bind(this));
-/*
-        this.vehicle.on('wake_up', async (response) => {
 
-			if (response.state == 'online') {
-				await this.vehicle.post('vehicle_data'); 
-
-				// Reset timer
-				this.timer.setTimer(this.config.timerInterval * 60000, this.ping.bind(this));
-			}
-
-        });
-
-		this.vehicle.on('vehicle_data', async (vehicleData) => {
+		this.vehicle.on('vehicle_data', (vehicleData) => {
 
 			try {
 				var batteryLevel = vehicleData.charge_state.battery_level;
 
 				if (this.getState() && batteryLevel < this.config.requiredBatteryLevel) {
 					this.log(`Battery level too low for ping to be enabled. Setting ping state to OFF.`);
-					
-					await this.setState(false); 
-					
-					this.updateCharacteristicValue(Service.Switch, Characteristic.On, this.state);
+					this.setState(false); 
 				}
 	
 			}
@@ -49,7 +35,7 @@ module.exports = class extends Accessory {
 				this.log(error);
 			}
         });
-*/
+
     }
 
 	getState() {
@@ -61,35 +47,32 @@ module.exports = class extends Accessory {
 		try {
 			state = state ? true : false;
 
-			if (state != this.state) {
-				
+			var ping = (state) => {
 				if (state) {
-					await this.ping();
+					this.debug('Ping!');
+					this.vehicle.getVehicleData();		
+					this.timer.setTimer(this.config.timerInterval * 60000, ping.bind(this, true));	
 				}
 				else {
+					this.debug('Ping turned OFF.');
 					this.timer.cancel();
-					this.debug(`Ping turned OFF.`);
 				}
+			}
 
+			if (state != this.state) {
+				ping(state);
 				this.state = state;
-				this.updateCharacteristicValue(Service.Switch, Characteristic.On, this.state);
 
 			}	
 		}
 		catch(error) {
 			this.log(error);
 		}
-	}
-
-	async ping() {
-
-		this.debug('Ping!');
-
-		await this.vehicle.post('wake_up');
-
-		// Reset timer
-		this.timer.setTimer(this.config.timerInterval * 60000, this.ping.bind(this));
-
+		finally {
+			setTimeout(() => {
+				this.updateCharacteristicValue(Service.Switch, Characteristic.On, this.state);
+			}, 1000);
+		}
 	}
 
 
