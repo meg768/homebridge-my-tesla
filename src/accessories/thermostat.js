@@ -69,30 +69,12 @@ module.exports = class extends Accessory {
             this.currentHeatingCoolingState = vehicleData.climate_state.is_climate_on == true;
 
             service.getCharacteristic(Characteristic.CurrentTemperature).updateValue(this.currentTemperature);
-            this.debug(`Updated temperature for thermostat to ${this.currentTemperature} °C.`); 
+            this.debug(`Updating temperature for thermostat to ${this.currentTemperature} °C.`); 
 
             service.getCharacteristic(Characteristic.CurrentHeatingCoolingState).updateValue(this.currentHeatingCoolingState);
-            this.debug(`Updated air conditioner state for thermostat to "${this.currentHeatingCoolingState ? 'ON' : 'OFF'}".`);  
+            this.debug(`Updating air conditioner state for thermostat to "${this.currentHeatingCoolingState ? 'ON' : 'OFF'}".`);  
 
         });
-
-		/*
-        this.vehicle.on('vehicleData', (data) => {
-            var service = this.getService(Service.Thermostat);
-
-            this.outsideTemperature = data.climateState.getOutsideTemperature();
-            this.currentTemperature = data.climateState.getInsideTemperature();
-            this.currentHeatingCoolingState = data.climateState.isClimateOn();
-
-            service.getCharacteristic(Characteristic.CurrentTemperature).updateValue(this.currentTemperature);
-            this.debug(`Updated temperature for thermostat to ${this.currentTemperature} °C.`); 
-
-            service.getCharacteristic(Characteristic.CurrentHeatingCoolingState).updateValue(this.currentHeatingCoolingState);
-            this.debug(`Updated air conditioner state for thermostat to "${this.currentHeatingCoolingState ? 'ON' : 'OFF'}".`);  
-
-        });
-		*/
-
 
     }
 

@@ -17,7 +17,7 @@ module.exports = class extends Accessory {
 
 		this.vehicle.on('vehicle_data', (vehicleData) => {    
 			this.state = vehicleData.climate_state.is_climate_on;
-			this.debug(`Updated HVAC status to ${this.state ? 'ON' : 'OFF'}.`);
+			this.debug(`Updating HVAC status to ${this.state ? 'ON' : 'OFF'}.`);
 			this.getService(Service.Fan).getCharacteristic(Characteristic.On).updateValue(this.state);
         });
 

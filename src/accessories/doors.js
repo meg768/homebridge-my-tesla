@@ -27,7 +27,7 @@ module.exports = class extends Accessory {
 		this.vehicle.on('vehicle_data', (data) => {       
             this.lockState = (data.vehicle_state.locked ? SECURED : UNSECURED);
 
-			this.debug(`Updated door lock status to ${this.lockState == SECURED ? 'SECURED' : 'UNSECURED'}.`);
+			this.debug(`Updating door lock status to ${this.lockState == SECURED ? 'SECURED' : 'UNSECURED'}.`);
 
 			this.getService(Service.LockMechanism).getCharacteristic(Characteristic.LockTargetState).updateValue(this.lockState); 
 			this.getService(Service.LockMechanism).getCharacteristic(Characteristic.LockCurrentState).updateValue(this.lockState);

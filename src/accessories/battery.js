@@ -26,7 +26,7 @@ module.exports = class extends Accessory {
             this.batteryLevel  = vehicleData.charge_state.battery_level;
 			this.contactSensorState = this.chargingState;
 			
-            this.debug(`Updated battery level to ${this.batteryLevel}% and charging state to ${this.chargingState == Characteristic.ChargingState.CHARGING ? "ON" : "OFF"}.`);
+            this.debug(`Updating battery level to ${this.batteryLevel}% and charging state to ${this.chargingState == Characteristic.ChargingState.CHARGING ? "ON" : "OFF"}.`);
 
             this.getService(Service.Battery).getCharacteristic(Characteristic.BatteryLevel).updateValue(this.batteryLevel);
             this.getService(Service.Battery).getCharacteristic(Characteristic.ChargingState).updateValue(this.chargingState);
