@@ -27,31 +27,73 @@ Configure your **~/.homebridge/config.json** with the following platform.
 
 ```json
 
-{
-    "bridge": {
-        "name": "Tesla",
-        "username": "11:11:11:11:11:16",
-        "port": 51821,
-        "pin": "111-11-116"
-    },
 
-    "description": "Sample configuration file",
+
+{
+	"bridge": {
+		"name": "Homebridge",
+		"username": "CC:22:3D:E3:CE:49",
+		"manufacturer": "homebridge.io",
+		"model": "homebridge",
+		"pin": "031-45-154"
+	},
+
 
     "platforms": [{
         "platform": "Tesla",
         "name": "Tesla",
-        "debug": false,
+        "debug": true,
+        
         "vehicles": [
-        {         
-            "name": "Model 3",       
-            "vin": "5YJ3E7EB9KF240655",
+            {         
+                "name": "Model 3",       
+                "vin": "my-vin-number",
+				"token": "my-refresh-token"
 
-            "username": "Your username at tesla.com",
-            "password": "Your password at tesla.com",
-        }
-    ]
+                "accessories": {
+                    "ping": {
+                        "name": "Ping",
+                        "requiredBatteryLevel": 40,
+                        "timerInterval": 1
+                    },
+					"defrost": {
+						"name": "Avfrostning"
+					},
+                    "trunk": {
+                        "name": "Bakluckan"
+                    },					
+                    "charging": {
+                        "name": "Laddning"
+                    },
+                    "hvac": {
+                        "name": "Fläkten",
+                        "requiredBatteryLevel": 20
+                    },
+                    "doors": {
+                        "name": "Dörren"
+                    },
+                    "outsideTemperature": {
+                        "name": "Ute"
+                    },
+                    "insideTemperature": {
+                        "name": "Inne"
+                    },
+                    "thermostat": {
+                        "name": "Termostat",
+                        "requiredBatteryLevel": 40,
+                        "timerInterval": 2
+                    },
+					"steeringWheelHeater": {
+						"name": "Rattvärme"
+					}
+                }
+            }
+        ]
     }]
+
+
 }
+
 
 ```
 
@@ -72,8 +114,7 @@ When this switch is active your Tesla will never go into deep sleep. Every 5 min
 "ping": {
     "name": "Ping",
     "requiredBatteryLevel": 40,
-    "timerInterval": 5,
-    "enabled": true
+    "timerInterval": 5
 }
  ```
 * **name** - Localized name, specify the name you want in the Apple Home app.
@@ -87,8 +128,7 @@ The charging switch reflects the charging state.
 
 ```json
 "charging": {
-    "name": "Charging",
-    "enabled": true
+    "name": "Charging"
 }
  ```
 * **name** - Localized name, specify the name you want in the Apple Home app.
@@ -102,8 +142,7 @@ Lock or unlock the doors using this switch. Unlocking the door also also enables
 ```json
 "doors": {
     "name": "Door",
-    "remoteStartDrivePassword": "tesla-login-password",
-    "enabled": true
+    "remoteStartDrivePassword": "tesla-login-password"
 }
  ```
 * **name** - Localized name, specify the name you want in the Apple Home app.
@@ -117,8 +156,7 @@ Turn the HVAC **ON** or **OFF** using this switch.
 ```json
 "hvac": {
     "name": "Fläkten",
-    "requiredBatteryLevel": 20,
-    "enabled": true
+    "requiredBatteryLevel": 20
 }
  ```
 * **name** - Localized name, specify the name you want in the Apple Home app.
@@ -131,8 +169,7 @@ Displays the inside temperature.
 
 ```json
 "insideTemperature": {
-    "name": "Inside",
-    "enabled": true
+    "name": "Inside"
 }
  ```
 * **name** - Localized name, specify the name you want in the Apple Home app.
@@ -144,8 +181,7 @@ Displays the outside temperature.
 
 ```json
 "outsideTemperature": {
-    "name": "Outside",
-    "enabled": true
+    "name": "Outside"
 }
  ```
 * **name** - Localized name, specify the name you want in the Apple Home app.
@@ -160,8 +196,7 @@ Use automation to turn it on at a specific time.
 "thermostat": {
     "name": "Termostat",
     "requiredBatteryLevel": 40,
-    "timerInterval": 2,
-    "enabled": true
+    "timerInterval": 2
 }
  ```
 
@@ -174,76 +209,6 @@ Use automation to turn it on at a specific time.
 
 If you name things correctly you might get Siri to work by saying "Lock car", "Unlock car", "Turn on fan" or "Turn off fan"...
 
-## Localize
-
-By default, all the features (or buttons) available are added to the Home app automatically. 
-Each feature has its own name and you may control each feature seperately since each 
-feature has its own configuration. Default values are displayed below, you may change them as you wish.
-
-```json
-
-
-{
-    "bridge": {
-        "name": "Tesla",
-        "username": "11:11:11:11:11:21",
-        "port": 51821,
-        "pin": "111-11-120"
-    },
-
-    "description": "Sample configuration file",
-
-    "platforms": [{
-        "platform": "Tesla",
-        "name": "Tesla",
-        "debug": true,
-        
-        "vehicles": [
-            {         
-                "name": "Model 3",       
-                "vin": "5YJ3E7EB9KF240654",
-
-                "token": "Your Tesla API refresh access token",
-				"expose": ["ping", "charging", "hvac"],
-
-                "accessories": {
-                    "ping": {
-                        "name": "Ping",
-                        "requiredBatteryLevel": 40,
-                        "timerInterval": 5
-                    },
-                    "charging": {
-                        "name": "Laddning"
-                    },
-                    "hvac": {
-                        "name": "Fläkten",
-                        "requiredBatteryLevel": 20
-                    },
-                    "doors": {
-                        "name": "Dörren",
-                        "remoteStartDrivePassword": "omit-or-specify-your-tesla-login-password"
-                    },
-                    "outsideTemperature": {
-                        "name": "Ute"
-                    },
-                    "insideTemperature": {
-                        "name": "Inne"
-                    },
-                   "thermostat": {
-                        "name": "Termostat",
-                        "requiredBatteryLevel": 40,
-                        "timerInterval": 2
-                    }
-                }
-            }
-        ]
-    }]
-
-
-}
-
-
-```
 
 ## Usage
 
