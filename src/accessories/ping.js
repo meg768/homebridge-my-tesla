@@ -26,7 +26,7 @@ module.exports = class extends Accessory {
 				var batteryLevel = vehicleData.charge_state.battery_level;
 
 				if (this.getState() && batteryLevel < this.config.requiredBatteryLevel) {
-					this.log(`Battery level too low for ping to be enabled. Setting ping state to OFF.`);
+					this.debug(`Battery level is now ${batteryLevel}%. Required battery level for ping is ${this.config.requiredBatteryLevel}%`);
 					this.setState(false); 
 				}
 	
