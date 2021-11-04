@@ -48,7 +48,8 @@ Configure your **~/.homebridge/config.json** with the following platform.
             {         
                 "name": "Model 3",       
                 "vin": "my-vin-number",
-				"token": "my-refresh-token"
+				"token": "my-refresh-token",
+				"expose": ['ping', 'defrost', 'trunk'],
 
                 "accessories": {
                     "ping": {
@@ -120,7 +121,6 @@ When this switch is active your Tesla will never go into deep sleep. Every 5 min
 * **name** - Localized name, specify the name you want in the Apple Home app.
 * **requiredBatteryLevel** - Specifes the required battery level to operate. If battery level is below this level, the ping function will stop.
 * **timerInterval** - Specifies the number of minutes between pings.
-* **enabled** - Set this to **false** if you do not wish to expose this switch to Apple Home. 
 
 #### Charging
 
@@ -132,7 +132,6 @@ The charging switch reflects the charging state.
 }
  ```
 * **name** - Localized name, specify the name you want in the Apple Home app.
-* **enabled** - Set this to **false** if you do not wish to expose this accessory to Apple Home. 
 
 
 #### Door
@@ -147,7 +146,6 @@ Lock or unlock the doors using this switch. Unlocking the door also also enables
  ```
 * **name** - Localized name, specify the name you want in the Apple Home app.
 * **remoteStartDrivePassword** - Your Tesla login password. If specified you will not have to enter your pin code to start driving.
-* **enabled** - Set this to **false** if you do not wish to expose this accessory to Apple Home. 
 
 #### Fan
 
@@ -161,7 +159,6 @@ Turn the HVAC **ON** or **OFF** using this switch.
  ```
 * **name** - Localized name, specify the name you want in the Apple Home app.
 * **requiredBatteryLevel** - Specifes the required battery level to operate. If battery level is below this level, the fan function will stop.
-* **enabled** - Set this to **false** if you do not wish to expose this accessory to Apple Home. 
 
 
 #### Inside
@@ -173,7 +170,6 @@ Displays the inside temperature.
 }
  ```
 * **name** - Localized name, specify the name you want in the Apple Home app.
-* **enabled** - Set this to **false** if you do not wish to expose this accessory to Apple Home. 
 
 
 #### Outside
@@ -185,7 +181,6 @@ Displays the outside temperature.
 }
  ```
 * **name** - Localized name, specify the name you want in the Apple Home app.
-* **enabled** - Set this to **false** if you do not wish to expose this accessory to Apple Home. 
 
 
 #### Thermostat
@@ -203,7 +198,6 @@ Use automation to turn it on at a specific time.
 * **name** - Localized name, specify the name you want in the Apple Home app.
 * **requiredBatteryLevel** - Specifes the required battery level to operate. If battery level is below this level, the thermostat function will stop.
 * **timerInterval** - Specifies the number of minutes between checking the temperature.
-* **enabled** - Set this to **false** if you do not wish to expose this accessory to Apple Home. 
 
 ## Siri
 
