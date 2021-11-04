@@ -24,10 +24,11 @@ module.exports = class extends Accessory {
 		this.vehicle.on('vehicle_data', (data) => {       
             this.lockState = (data.vehicle_state.rt == 0 ? SECURED : UNSECURED);
 
-			this.debug(`Updating trunk lock status to ${this.lockState == SECURED ? 'SECURED' : 'UNSECURED'}.`);
-
-			this.updateCharacteristicValue(Service.LockMechanism, Characteristic.LockTargetState, this.lockState);
-			this.updateCharacteristicValue(Service.LockMechanism, Characteristic.LockCurrentState, this.lockState);
+			this.pause(500, () => {
+				this.debug(`Updating trunk lock status to ${this.lockState == SECURED ? 'SECURED' : 'UNSECURED'}.`);
+				this.updateCharacteristicValue(Service.LockMechanism, Characteristic.LockTargetState, this.lockState);
+				this.updateCharacteristicValue(Service.LockMechanism, Characteristic.LockCurrentState, this.lockState);	
+			});
         });
     }
 
@@ -49,7 +50,7 @@ module.exports = class extends Accessory {
 		}
 		finally {
 			// Refresh after a while, it takes some time to open/close
-			this.vehicle.getVehicleData(5000);
+			this.vehicle.updateVehicleData(5000);
 		}
     }
 

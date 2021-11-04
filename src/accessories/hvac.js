@@ -46,7 +46,7 @@ module.exports = class extends Accessory {
 			this.log(error);
 		}
 		finally {
-			this.vehicle.getVehicleData(1000);
+			this.vehicle.updateVehicleData();
 		}
     }	
 

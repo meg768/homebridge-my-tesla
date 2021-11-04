@@ -23,8 +23,6 @@ module.exports = class extends Accessory {
 				this.updateCharacteristicValue(Service.Switch, Characteristic.On, this.state);
 			}, 1000);
 
-			if (this.state)
-				this.vehicle.getVehicleData(60 * 1000);
 		});
     }
 
@@ -43,7 +41,7 @@ module.exports = class extends Accessory {
 			this.log(error);
 		}
 		finally {
-			await this.vehicle.getVehicleData(1000);
+			await this.vehicle.updateVehicleData();
 		}
 
 	}

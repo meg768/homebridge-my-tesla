@@ -1,6 +1,7 @@
 var TeslaAPI = require('./tesla-api-request.js');
 var Events = require('events');
 var {Service, Characteristic} = require('./homebridge.js');
+var Timer = require('yow/timer');
 
 
 
@@ -19,6 +20,7 @@ module.exports = class Vehicle extends Events  {
         this.uuid = platform.generateUUID(config.vin);
         this.platform = platform;
 		this.api = new TeslaAPI({token:config.token, vin:config.vin, debug:this.debug});
+		this.updateVehicleTimer = new Timer();
     }
 
     async getAccessories() {
@@ -96,6 +98,12 @@ module.exports = class Vehicle extends Events  {
 		return accessories;
 		
     }
+
+	updateVehicleData(delay = 1000) {
+		this.updateVehicleTimer.setTimer(delay, () => {
+			this.get('vehicle_data');
+		});
+	}
 
 	async getVehicleData(delay) {
 		if (typeof delay == 'number') {

@@ -50,7 +50,7 @@ module.exports = class extends Accessory {
 			var ping = (state) => {
 				if (state) {
 					this.debug('Ping!');
-					this.vehicle.getVehicleData();		
+					this.vehicle.updateVehicleData();		
 					this.timer.setTimer(this.config.timerInterval * 60000, ping.bind(this, true));	
 				}
 				else {
@@ -69,9 +69,9 @@ module.exports = class extends Accessory {
 			this.log(error);
 		}
 		finally {
-			setTimeout(() => {
+			this.pause(1000, () => {
 				this.updateCharacteristicValue(Service.Switch, Characteristic.On, this.state);
-			}, 1000);
+			});
 		}
 	}
 

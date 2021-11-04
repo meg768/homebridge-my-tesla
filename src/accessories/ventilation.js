@@ -55,7 +55,7 @@ module.exports = class extends Accessory {
 			this.log(error);
 		}
 		finally {
-			await this.vehicle.getVehicleData(1000);
+			await this.vehicle.updateVehicleData(1000);
 		}
     }	
 }
