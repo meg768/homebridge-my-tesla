@@ -10,7 +10,7 @@ module.exports = class extends Accessory {
         var config = {
             name: 'Ping',
             requiredBatteryLevel : 40,
-            timerInterval : 5
+            timerInterval : 1
         };
 
 		super({...options, config:{...config, ...options.config}});
@@ -19,6 +19,15 @@ module.exports = class extends Accessory {
         this.timer = new Timer();
 		this.addService(new Service.Switch(this.name));
         this.enableCharacteristic(Service.Switch, Characteristic.On, this.getState.bind(this), this.setState.bind(this));
+
+		this.vehicle.on('wake_up', (response) => {
+			this.debug(`Vehicle ${this.vehicle.config.vin} is ${response.state}.`);
+
+			if (response.state == 'online') {
+				this.debug(`Updating vehicle data.`);
+				this.vehicle.updateVehicleData(500);
+			}
+		});
 
 		this.vehicle.on('vehicle_data', (vehicleData) => {
 
@@ -48,14 +57,20 @@ module.exports = class extends Accessory {
 			state = state ? true : false;
 
 			var ping = (state) => {
-				if (state) {
-					this.debug('Ping!');
-					this.vehicle.updateVehicleData();		
-					this.timer.setTimer(this.config.timerInterval * 60000, ping.bind(this, true));	
+				try {
+					if (state) {
+						this.debug('Ping!');
+						this.vehicle.post('wake_up');		
+						this.timer.setTimer(this.config.timerInterval * 60000, ping.bind(this, true));	
+					}
+					else {
+						this.debug('Ping turned OFF.');
+						this.timer.cancel();
+					}
+	
 				}
-				else {
-					this.debug('Ping turned OFF.');
-					this.timer.cancel();
+				catch(error) {
+					this.log(error);
 				}
 			}
 
