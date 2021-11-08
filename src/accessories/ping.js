@@ -20,13 +20,14 @@ module.exports = class extends Accessory {
 		this.addService(new Service.Switch(this.name));
         this.enableCharacteristic(Service.Switch, Characteristic.On, this.getState.bind(this), this.setState.bind(this));
 
-		this.vehicle.on('wake_up', (response) => {
+		this.vehicle.on('wake_up', async (response) => {
 			try {
 				this.debug(`Vehicle ${this.vehicle.config.vin} is ${response.state}.`);
 
 				if (response.state == 'online') {
 					this.debug(`Updating vehicle data.`);
-					this.vehicle.updateVehicleData(500);
+					await this.pause(500);
+					this.get('vehicle_data');
 				}
 	
 			}
@@ -35,7 +36,7 @@ module.exports = class extends Accessory {
 			}
 		});
 
-		this.vehicle.on('vehicle_data', (vehicleData) => {
+		this.vehicle.on('vehicle_data', async (vehicleData) => {
 
 			try {
 				var batteryLevel = vehicleData.charge_state.battery_level;
@@ -62,7 +63,7 @@ module.exports = class extends Accessory {
 		try {
 			state = state ? true : false;
 
-			var ping = (state) => {
+			var ping = async (state) => {
 				try {
 					if (state) {
 						this.debug('Ping!');
@@ -90,10 +91,9 @@ module.exports = class extends Accessory {
 			this.log(error);
 		}
 		finally {
-			this.pause(1000, () => {
-				this.debug(`Updating ping state to ${this.state}`);
-				this.updateCharacteristicValue(Service.Switch, Characteristic.On, this.state);
-			});
+			await this.pause(500);
+			this.debug(`Updating ping state to ${this.state}`);
+			this.updateCharacteristicValue(Service.Switch, Characteristic.On, this.state);
 		}
 	}
 
