@@ -21,11 +21,17 @@ module.exports = class extends Accessory {
         this.enableCharacteristic(Service.Switch, Characteristic.On, this.getState.bind(this), this.setState.bind(this));
 
 		this.vehicle.on('wake_up', (response) => {
-			this.debug(`Vehicle ${this.vehicle.config.vin} is ${response.state}.`);
+			try {
+				this.debug(`Vehicle ${this.vehicle.config.vin} is ${response.state}.`);
 
-			if (response.state == 'online') {
-				this.debug(`Updating vehicle data.`);
-				this.vehicle.updateVehicleData(500);
+				if (response.state == 'online') {
+					this.debug(`Updating vehicle data.`);
+					this.vehicle.updateVehicleData(500);
+				}
+	
+			}
+			catch(error) {
+				this.log(error);
 			}
 		});
 
