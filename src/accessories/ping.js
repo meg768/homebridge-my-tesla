@@ -27,7 +27,7 @@ module.exports = class extends Accessory {
 				if (response.state == 'online') {
 					this.debug(`Updating vehicle data.`);
 					await this.pause(500);
-					this.get('vehicle_data');
+					this.vehicle.get('vehicle_data');
 				}
 	
 			}
