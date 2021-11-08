@@ -91,6 +91,7 @@ module.exports = class extends Accessory {
 		}
 		finally {
 			this.pause(1000, () => {
+				this.debug(`Updating ping state to ${this.state}`);
 				this.updateCharacteristicValue(Service.Switch, Characteristic.On, this.state);
 			});
 		}
