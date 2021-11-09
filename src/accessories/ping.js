@@ -89,16 +89,13 @@ module.exports = class extends Accessory {
 			if (state != this.state) {
 				ping(state);
 				this.state = state;
-
+				this.debug(`Updating ping state to ${this.state}`);
+				this.updateCharacteristicValue(Service.Switch, Characteristic.On, this.state);
+	
 			}	
 		}
 		catch(error) {
 			this.log(error);
-		}
-		finally {
-			await this.pause(500);
-			this.debug(`Updating ping state to ${this.state}`);
-			this.updateCharacteristicValue(Service.Switch, Characteristic.On, this.state);
 		}
 	}
 
