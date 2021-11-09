@@ -15,14 +15,17 @@ module.exports = class extends Accessory {
         this.addService(new Service.Switch(this.name));
         this.enableCharacteristic(Service.Switch, Characteristic.On, this.getState.bind(this), this.setState.bind(this));
 	
-        this.vehicle.on('vehicle_data', (vehicleData) => {    
-			this.state = vehicleData.climate_state.steering_wheel_heater != 0;
+        this.vehicle.on('vehicle_data', async (vehicleData) => {
 
-			this.pause(1000, () => {
+			try {
+				this.state = vehicleData.climate_state.steering_wheel_heater != 0;
 				this.debug(`Updating steering wheel heating status to ${this.state ? 'ON' : 'OFF'}`);
 				this.updateCharacteristicValue(Service.Switch, Characteristic.On, this.state);
-			});
-
+	
+			}
+			catch(error) {
+				this.log(error);
+			}
         });
 	}
 	
@@ -43,7 +46,7 @@ module.exports = class extends Accessory {
 			this.log(error);
 		}
 		finally {
-			await this.vehicle.updateVehicleData(1000);
+			this.vehicle.updateVehicleData();
 		}
     }	
 }

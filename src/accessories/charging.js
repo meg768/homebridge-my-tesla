@@ -16,12 +16,15 @@ module.exports = class extends Accessory {
         this.enableCharacteristic(Service.Switch, Characteristic.On, this.getState.bind(this), this.setState.bind(this));
 
 		this.vehicle.on('vehicle_data', async (vehicleData) => {    
-			this.state = vehicleData.charge_state.charging_state == "Charging";
 
-			setTimeout(() => {
+			try {
+				this.state = vehicleData.charge_state.charging_state == "Charging";
 				this.debug(`Updating charging state to ${this.state}.`);
 				this.updateCharacteristicValue(Service.Switch, Characteristic.On, this.state);
-			}, 1000);
+			}
+			catch(error) {
+				this.log(error);
+			}
 
 		});
     }
@@ -41,7 +44,7 @@ module.exports = class extends Accessory {
 			this.log(error);
 		}
 		finally {
-			await this.vehicle.updateVehicleData();
+			this.vehicle.updateVehicleData();
 		}
 
 	}

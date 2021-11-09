@@ -21,14 +21,21 @@ module.exports = class extends Accessory {
 		this.enableCharacteristic(Service.LockMechanism, Characteristic.LockCurrentState, this.getLockState.bind(this));
 		this.enableCharacteristic(Service.LockMechanism, Characteristic.LockTargetState, this.getLockState.bind(this), this.setLockState.bind(this));
 
-		this.vehicle.on('vehicle_data', (data) => {       
-            this.lockState = (data.vehicle_state.rt == 0 ? SECURED : UNSECURED);
+		this.vehicle.on('vehicle_data', async (vehicleData) => {    
+			
+			try {
+				this.lockState = (vehicleData.vehicle_state.rt == 0 ? SECURED : UNSECURED);
 
-			this.pause(500, () => {
+				await this.pause(500);
+				
 				this.debug(`Updating trunk lock status to ${this.lockState == SECURED ? 'SECURED' : 'UNSECURED'}.`);
 				this.updateCharacteristicValue(Service.LockMechanism, Characteristic.LockTargetState, this.lockState);
 				this.updateCharacteristicValue(Service.LockMechanism, Characteristic.LockCurrentState, this.lockState);	
-			});
+			}
+			catch(error) {
+				this.log(error);
+
+			}
         });
     }
 
@@ -56,57 +63,4 @@ module.exports = class extends Accessory {
 
 
 };
-
-
-/*
-module.exports = class extends Accessory {
-
-    constructor(options) {
-        var config = {
-            "name": "Trunk"
-        };
-
-		super({...options, config:{...config, ...options.config}});
-
-		this.state = false;
-        this.addService(new Service.Switch(this.name));
-        this.enableCharacteristic(Service.Switch, Characteristic.On, this.getState.bind(this), this.setState.bind(this));
-    }
-
-	async updateState(state) {
-		state = state ? true : false;
-
-		if (state != this.state) {
-			this.getService(Service.Switch).getCharacteristic(Characteristic.On).updateValue(this.state = state);
-		}
-	}
-
-	getState() {
-		return this.state;
-	}
-
-	async setState(state) {
-		try {
-			state = state ? true : false;
-
-			if (state) {
-				this.debug(`Setting trunk state to "${state}".`);
-	
-				await this.updateState(true);
-				await this.vehicle.post('command/actuate_trunk', {which_trunk:'rear'});
-
-			}
-		}
-		catch(error) {
-			this.log(error);
-		}
-		finally {
-			await this.updateState(false);
-		}
-    }	
-}
-*/
-
-
-
 

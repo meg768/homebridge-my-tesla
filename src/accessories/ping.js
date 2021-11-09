@@ -25,7 +25,7 @@ module.exports = class extends Accessory {
 				this.debug(`Vehicle ${this.vehicle.config.vin} is ${response.state}.`);
 
 				if (response.state == 'online') {
-					this.debug(`Updating vehicle data.`);
+					this.debug(`Updating vehicle data since vehicle is online.`);
 					await this.pause(500);
 					this.vehicle.get('vehicle_data');
 				}

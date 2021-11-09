@@ -101,15 +101,17 @@ module.exports = class Vehicle extends Events  {
 
 	updateVehicleData(delay = 1000) {
 		this.updateVehicleTimer.setTimer(delay, () => {
-			this.get('vehicle_data');
+			try {
+				this.getVehicleData();
+			}
+			catch(error) {
+				this.log(error);
+
+			}
 		});
 	}
 
-	async getVehicleData(delay) {
-		if (typeof delay == 'number') {
-			await this.pause(delay);
-		}
-
+	async getVehicleData() {
 		return await this.get('vehicle_data');
     }
 

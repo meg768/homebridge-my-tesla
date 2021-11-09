@@ -14,16 +14,17 @@ module.exports = class extends Accessory {
         this.addService(new Service.Switch(this.name));
         this.enableCharacteristic(Service.Switch, Characteristic.On, this.getState.bind(this), this.setState.bind(this));
 
-        this.vehicle.on('vehicle_data', (vehicleData) => {    
-			this.updateState(vehicleData.climate_state.defrost_mode != 0);
+        this.vehicle.on('vehicle_data', async (vehicleData) => {    
+			try {
+				this.state = (vehicleData.climate_state.defrost_mode != 0);
+				this.getService(Service.Switch).getCharacteristic(Characteristic.On).updateValue(this.state);
+	
+			}
+			catch(error) {
+				this.log(error);
+			}
+
         });
-	}
-
-	async updateState(state) {
-		if (state != undefined)
-			this.state = state;
-
-		this.getService(Service.Switch).getCharacteristic(Characteristic.On).updateValue(this.state);
 	}
 
 	getState() {
@@ -36,8 +37,6 @@ module.exports = class extends Accessory {
 
 			if (this.state != state) {
 				this.debug(`Setting ${this.name} to state "${state}".`);
-
-				this.updateState(state);
 
 				if (state) {
 					await this.vehicle.post('command/set_preconditioning_max', {on:true});

@@ -15,13 +15,16 @@ module.exports = class extends Accessory {
         this.addService(new Service.Switch(this.name));
         this.enableCharacteristic(Service.Switch, Characteristic.On, this.getState.bind(this), this.setState.bind(this));
 	
-        this.vehicle.on('vehicle_data', (vehicleData) => {    
-			this.state = vehicleData.vehicle_state.fd_window != 0;
-			this.debug(`Updating ventilation state to ${this.state ? 'ON' : 'OFF'}`);
+        this.vehicle.on('vehicle_data', async (vehicleData) => {    
 
-			this.pause(500, () => {
+			try {
+				this.state = vehicleData.vehicle_state.fd_window != 0;
+				this.debug(`Updating ventilation state to ${this.state ? 'ON' : 'OFF'}`);
 				this.updateCharacteristicValue(Service.Switch, Characteristic.On, this.state);
-			});
+			}
+			catch(error) {
+				this.log(error);
+			}
 
         });
 	}
@@ -55,7 +58,7 @@ module.exports = class extends Accessory {
 			this.log(error);
 		}
 		finally {
-			await this.vehicle.updateVehicleData(1000);
+			this.vehicle.updateVehicleData(1000);
 		}
     }	
 }

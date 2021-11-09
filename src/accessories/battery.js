@@ -22,15 +22,20 @@ module.exports = class extends Accessory {
 
 		this.vehicle.on('vehicle_data', (vehicleData) => {   
 			
-            this.chargingState = vehicleData.charge_state.charging_state == "Charging" ? Characteristic.ChargingState.CHARGING : Characteristic.ChargingState.NOT_CHARGING;
-            this.batteryLevel  = vehicleData.charge_state.battery_level;
-			this.contactSensorState = this.chargingState;
-			
-            this.debug(`Updating battery level to ${this.batteryLevel}% and charging state to ${this.chargingState == Characteristic.ChargingState.CHARGING ? "ON" : "OFF"}.`);
-
-            this.getService(Service.Battery).getCharacteristic(Characteristic.BatteryLevel).updateValue(this.batteryLevel);
-            this.getService(Service.Battery).getCharacteristic(Characteristic.ChargingState).updateValue(this.chargingState);
-//            this.getService(Service.ContactSensor).getCharacteristic(Characteristic.ContactSensorState).updateValue(this.contactSensorState);
+			try {
+				this.chargingState = vehicleData.charge_state.charging_state == "Charging" ? Characteristic.ChargingState.CHARGING : Characteristic.ChargingState.NOT_CHARGING;
+				this.batteryLevel  = vehicleData.charge_state.battery_level;
+				this.contactSensorState = this.chargingState;
+				
+				this.debug(`Updating battery level to ${this.batteryLevel}% and charging state to ${this.chargingState == Characteristic.ChargingState.CHARGING ? "ON" : "OFF"}.`);
+	
+				this.getService(Service.Battery).getCharacteristic(Characteristic.BatteryLevel).updateValue(this.batteryLevel);
+				this.getService(Service.Battery).getCharacteristic(Characteristic.ChargingState).updateValue(this.chargingState);
+	
+			}
+			catch(error) {
+				this.log(error);
+			}
         });
 
 
