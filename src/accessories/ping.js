@@ -25,9 +25,8 @@ module.exports = class extends Accessory {
 				this.debug(`Vehicle ${this.vehicle.config.vin} is ${response.state}.`);
 
 				if (response.state == 'online') {
-					this.debug(`Updating vehicle data since vehicle is online.`);
-					await this.pause(500);
-					this.vehicle.get('vehicle_data');
+					this.debug(`Updating vehicle data since vehicle is online`);
+					this.vehicle.updateVehicleData();
 				}
 	
 			}
@@ -41,10 +40,16 @@ module.exports = class extends Accessory {
 			try {
 				var batteryLevel = vehicleData.charge_state.battery_level;
 
-				if (this.getState() && batteryLevel < this.config.requiredBatteryLevel) {
-					this.debug(`Battery level is now ${batteryLevel}%. Required battery level for ping is ${this.config.requiredBatteryLevel}%`);
-					this.setState(false); 
+				if (this.getState()) {
+					this.debug(`Battery level is now ${batteryLevel}%.`);
+
+					if (batteryLevel < this.config.requiredBatteryLevel) {
+						this.debug(`Required battery level for ping is ${this.config.requiredBatteryLevel}%`);
+						this.setState(false); 
+					}
+	
 				}
+
 	
 			}
 			catch(error) {
