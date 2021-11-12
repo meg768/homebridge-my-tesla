@@ -342,6 +342,9 @@ module.exports = class TeslaAPI {
 			case 401: {
 				this.debug(`Unauthorized call (401). Creating a new API and will try again.`);
 
+				// Invalidate current API
+				this.api = null;
+
 				// Unauthorized. Get a new API.
 				api = await this.getAPI();
 				response = await api.request(method, path);
