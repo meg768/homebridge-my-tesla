@@ -327,7 +327,7 @@ module.exports = class TeslaAPI {
 				return response;
 			}
 			else {
-				await pause(500);
+				await pause(1000);
 				return await wakeUp();
 			}
 		}
@@ -341,28 +341,23 @@ module.exports = class TeslaAPI {
 				break;
 			}
 
-			case 401: {
-				this.debug(`Unauthorized call (401). Creating a new API and will try again.`);
+			default: {
+				this.debug(`${response.statusMessage} (${response.statusCode}). Creating a new access token and will try again.`);
 
 				// Invalidate current API
 				this.api = null;
 
-				// Unauthorized. Get a new API.
+				// Get a new API.
 				api = await this.getAPI();
-				response = await api.request(method, path);
-				break;
-			}
-
-			case 408:
-			case 504: {
+				
+				// Wake up
 				await wakeUp();
+
+				// And try again
 				response = await api.request(method, path);
 				break;
 			}
 
-			default: {
-				throw new Error(`${response.statusMessage}. Status code ${response.statusCode}`);
-			}
 		}
 
 		response = response.body.response;
