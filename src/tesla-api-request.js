@@ -342,7 +342,7 @@ module.exports = class TeslaAPI {
 			}
 
 			default: {
-				this.debug(`${response.statusMessage} (${response.statusCode}). Creating a new access token and will try again.`);
+				this.debug(`${response.statusMessage} (${response.statusCode}).`);
 
 				// Invalidate current API
 				this.api = null;
