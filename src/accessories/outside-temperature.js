@@ -17,7 +17,7 @@ module.exports = class extends Accessory {
 
 		this.vehicle.on('vehicle_data', (vehicleData) => {
 			try {
-				this.debug(`Updating outer temperature to ${vehicleData.climate_state.inside_temp}.`);
+				this.debug(`Updating outer temperature to ${vehicleData.climate_state.outside_temp}.`);
 				this.updateCharacteristicValue(Service.TemperatureSensor, Characteristic.CurrentTemperature, vehicleData.climate_state.outside_temp);
 			}
 			catch(error) {
