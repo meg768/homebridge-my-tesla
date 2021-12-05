@@ -12,12 +12,16 @@ module.exports = class extends Accessory {
 
 		super({...options, config:{...config, ...options.config}});
 
+		this.temperature = 0;
+
 		this.addService(new Service.TemperatureSensor(this.name));
+        this.enableCharacteristic(Service.TemperatureSensor, Characteristic.CurrentTemperature, this.getTemperature.bind(this));
 
 		this.vehicle.on('vehicle_data', (vehicleData) => {
 			try {
-				this.debug(`Updating inner temperature to ${vehicleData.climate_state.inside_temp}.`);
-				this.updateCharacteristicValue(Service.TemperatureSensor, Characteristic.CurrentTemperature, vehicleData.climate_state.inside_temp);
+				this.temperature = vehicleData.climate_state.inside_temp;
+				this.debug(`Updating inner temperature to ${this.temperature}.`);
+				this.updateCharacteristicValue(Service.TemperatureSensor, Characteristic.CurrentTemperature, this.temperature);
 			}
 			catch(error) {
 				this.log(error);
@@ -26,5 +30,9 @@ module.exports = class extends Accessory {
 
         
     }
+
+	getTemperature() {
+		return this.temperature;
+	}
 
 }
