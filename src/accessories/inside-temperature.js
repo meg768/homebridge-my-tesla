@@ -12,10 +12,15 @@ module.exports = class extends Accessory {
 
 		super({...options, config:{...config, ...options.config}});
 
-		this.temperature = 0;
+		this.temperature = 20;
 
 		this.addService(new Service.TemperatureSensor(this.name));
         this.enableCharacteristic(Service.TemperatureSensor, Characteristic.CurrentTemperature, this.getTemperature.bind(this));
+
+		this.getService(Service.TemperatureSensor).getCharacteristic(Characteristic.CurrentTemperature).setProps({
+			minValue:-100,
+			maxValue:100
+		});
 
 		this.vehicle.on('vehicle_data', (vehicleData) => {
 			try {
