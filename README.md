@@ -27,74 +27,80 @@ Configure your **~/.homebridge/config.json** with the following platform.
 
 ```json
 
-
-
 {
-	"bridge": {
-		"name": "Homebridge",
-		"username": "CC:22:3D:E3:CE:49",
-		"manufacturer": "homebridge.io",
-		"model": "homebridge",
-		"pin": "031-45-154"
-	},
-
-
-    "platforms": [{
-        "platform": "Tesla",
-        "name": "Tesla",
-        "debug": true,
-        
-        "vehicles": [
-            {         
-                "name": "Model 3",       
-                "vin": "my-vin-number",
-				"token": "my-refresh-token",
-				"expose": ['ping', 'defrost', 'trunk'],
-
-                "accessories": {
-                    "ping": {
-                        "name": "Ping",
-                        "requiredBatteryLevel": 40,
-                        "timerInterval": 1
-                    },
-					"defrost": {
-						"name": "Avfrostning"
-					},
-                    "trunk": {
-                        "name": "Bakluckan"
-                    },					
-                    "charging": {
-                        "name": "Laddning"
-                    },
-                    "hvac": {
-                        "name": "Fläkten",
-                        "requiredBatteryLevel": 20
-                    },
-                    "doors": {
-                        "name": "Dörren"
-                    },
-                    "outsideTemperature": {
-                        "name": "Ute"
-                    },
-                    "insideTemperature": {
-                        "name": "Inne"
-                    },
-                    "thermostat": {
-                        "name": "Termostat",
-                        "requiredBatteryLevel": 40,
-                        "timerInterval": 2
-                    },
-					"steeringWheelHeater": {
-						"name": "Rattvärme"
-					}
+    "bridge":{
+        "name":"Tesla",
+        "username":"11:11:11:11:11:21",
+        "port":51821,
+        "pin":"111-11-120"
+    },
+    "description":"Sample configuration file",
+    "platforms":[
+        {
+            "platform":"Tesla",
+            "name":"Tesla",
+            "debug":true,
+            "vehicles":[
+                {
+                    "name":"Model 3",
+                    "vin":"your-vin-number",
+                    "token":"your-refresh-token",
+                    "expose":[
+                        "ping",
+                        "defrost",
+                        "ventilation",
+                        "trunk",
+                        "hvac",
+                        "doors",
+                        "insideTemperature",
+                        "steeringWheelHeater"
+                    ],
+                    "accessories":{
+                        "ping":{
+                            "name":"Ping",
+                            "requiredBatteryLevel":50,
+                            "timerInterval":0.25
+                        },
+                        "defrost":{
+                            "name":"Avfrostning"
+                        },
+                        "ventilation":{
+                            "name":"Ventilation"
+                        },
+                        "trunk":{
+                            "name":"Bakluckan"
+                        },
+                        "charging":{
+                            "name":"Laddning"
+                        },
+                        "hvac":{
+                            "name":"Fläkten",
+                            "requiredBatteryLevel":20
+                        },
+                        "doors":{
+                            "name":"Dörren",
+                            "remoteStartDrivePassword":"omit-or-your-tessla-password"
+                        },
+                        "outsideTemperature":{
+                            "name":"Ute"
+                        },
+                        "insideTemperature":{
+                            "name":"Inne"
+                        },
+                        "thermostat":{
+                            "name":"Termostat",
+                            "requiredBatteryLevel":40,
+                            "timerInterval":2
+                        },
+                        "steeringWheelHeater":{
+                            "name":"Rattvärme"
+                        }
+                    }
                 }
-            }
-        ]
-    }]
-
-
+            ]
+        }
+    ]
 }
-
 
 ```
 
