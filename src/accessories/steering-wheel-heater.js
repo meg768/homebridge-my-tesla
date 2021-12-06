@@ -20,7 +20,7 @@ module.exports = class extends Accessory {
 			try {
 				this.state = vehicleData.climate_state.steering_wheel_heater != 0;
 				this.debug(`Updating steering wheel heating status to ${this.state ? 'ON' : 'OFF'}`);
-				this.updateCharacteristicValue(Service.Switch, Characteristic.On, this.state);
+				this.getCharacteristic(Service.Switch, Characteristic.On).updateValue(this.state);
 	
 			}
 			catch(error) {

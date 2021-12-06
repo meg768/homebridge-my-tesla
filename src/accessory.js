@@ -66,6 +66,10 @@ class Accessory extends Events {
         this.getService(service).getCharacteristic(characteristic).updateValue(value);
     }
 
+	getCharacteristic(service, characteristic) {
+        return this.getService(service).getCharacteristic(characteristic);
+    }
+
     enableCharacteristic(service, characteristic, getter, setter) {
 
         service = this.getService(service);

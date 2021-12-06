@@ -9,11 +9,7 @@ var UNKNOWN   = Characteristic.LockCurrentState.UNKNOWN;
 module.exports = class extends Accessory {
 
     constructor(options) {
-        var config = {
-            "name": "Trunk"
-        };
-
-		super({...options, config:{...config, ...options.config}});
+		super({...options, config:{...{name:'Trunk'}, ...options.config}});
 
         this.lockState = UNKNOWN;
         this.addService(new Service.LockMechanism(this.name));
