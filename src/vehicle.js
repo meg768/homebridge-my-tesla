@@ -53,7 +53,7 @@ module.exports = class Vehicle extends Events  {
 		addAccessory(require('./accessories/defrost.js'), 'defrost');
 		addAccessory(require('./accessories/steering-wheel-heater.js'), 'steeringWheelHeater');
 		addAccessory(require('./accessories/ventilation.js'), 'ventilation');
-		//addAccessory(require('./accessories/thermostat.js'), 'thermostat');
+		addAccessory(require('./accessories/thermostat.js'), 'thermostat');
 		//addAccessory(require('./accessories/battery.js'), 'battery');
 
 

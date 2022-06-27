@@ -260,7 +260,7 @@ module.exports = class TeslaAPI {
 
 		var token = await getAccessToken();
 
-		if (token.expires_in == undefined) {
+		if (token.expires_in == undefined) {	
 			throw new Error(`Invalid response from Tesla. Cannot get access token expire date. ${JSON.stringify(token)}`);
 		}
 
