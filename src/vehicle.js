@@ -127,11 +127,11 @@ module.exports = class Vehicle extends Events  {
 	}
 
 	async post(path, body) {
-		return this.request('POST', path, {body:body});
+		return await this.request('POST', path, {body:body});
 	}
 
 	async get(path) {
-		return this.request('GET', path);
+		return await this.request('GET', path);
 	}
 
     async pause(ms, fn) {
@@ -142,7 +142,6 @@ module.exports = class Vehicle extends Events  {
 			fn();
 
     }
-
 
     delay(ms) {
         return new Promise((resolve, reject) => {
