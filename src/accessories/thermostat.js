@@ -66,7 +66,7 @@ module.exports = class extends Accessory {
 
             this.vehicleData = vehicleData;
             this.currentTemperature = vehicleData.climate_state.inside_temp;
-            this.currentHeatingCoolingState = vehicleData.climate_state.is_climate_on == true;
+            this.currentHeatingCoolingState = vehicleData.climate_state.is_auto_conditioning_on == true;
 
             service.getCharacteristic(Characteristic.CurrentTemperature).updateValue(this.currentTemperature);
             this.debug(`Updating temperature for thermostat to ${this.currentTemperature} °C.`); 
