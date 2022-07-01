@@ -68,6 +68,8 @@ module.exports = class extends Accessory {
             this.currentTemperature = vehicleData.climate_state.inside_temp;
             this.currentHeatingCoolingState = vehicleData.climate_state.is_auto_conditioning_on == true;
 
+            let isDriving = this.vehicleData.drive_state.shift_state != null;
+
             service.getCharacteristic(Characteristic.CurrentTemperature).updateValue(this.currentTemperature);
             this.debug(`Updating temperature for thermostat to ${this.currentTemperature} °C.`); 
 
@@ -228,6 +230,7 @@ module.exports = class extends Accessory {
 
     async updateHVAC(delay) {
 
+
         if (delay != undefined) {
             this.timer.setTimer(delay, async () => {
                 await this.updateHVAC();
@@ -254,60 +257,66 @@ module.exports = class extends Accessory {
         let isDriving = vehicleData.drive_state.shift_state != null;
         let wantedInsideTemperature = (vehicleData.climate_state.driver_temp_setting + vehicleData.climate_state.passenger_temp_setting) / 2;
 
+        if (!isDriving) {
+            this.debug(`Checking temperatures. Threshold is [${this.heatingThresholdTemperature} - ${this.coolingThresholdTemperature}], climate is ${isClimateOn ? 'ON' : 'OFF'}, current temperature is ${insideTemperature} °C.`);
 
-        this.debug(`Checking temperatures. Threshold is [${this.heatingThresholdTemperature} - ${this.coolingThresholdTemperature}], climate is ${isClimateOn ? 'ON' : 'OFF'}, current temperature is ${insideTemperature} °C.`);
-
-        if (this.targetHeatingCoolingState == Characteristic.TargetHeatingCoolingState.OFF) {
-            if (isClimateOn) {
-                this.debug(`Thermostat turned off, stopping HVAC.`);
-                action = ACTION_STOP_HVAC;    
+            if (this.targetHeatingCoolingState == Characteristic.TargetHeatingCoolingState.OFF) {
+                if (isClimateOn) {
+                    this.debug(`Thermostat turned off, stopping HVAC.`);
+                    action = ACTION_STOP_HVAC;    
+                }
             }
+            else if (batteryLevel < this.requiredBatteryLevel) {
+                if (isClimateOn) {
+                    this.debug(`Thermostat turned off since battery level is too low, stopping HVAC.`);
+                    action = ACTION_STOP_HVAC;    
+                }
+            }
+            else if (isDriving) {
+                if (isClimateOn) {
+                    this.debug(`Thermostat turned off since driving, stopping HVAC.`);
+                    action = ACTION_STOP_HVAC;    
+                }
+            }
+            else if (insideTemperature < this.heatingThresholdTemperature) {
+                if (!isClimateOn) {
+                    this.debug(`Starting HVAC since temperature is too low, ${insideTemperature}.`);
+                    action = ACTION_START_HVAC;    
+                }
+            }
+            else if (insideTemperature > this.coolingThresholdTemperature) {
+                if (!isClimateOn) {
+                    this.debug(`Starting HVAC since temperature is too high, ${insideTemperature}.`);
+                    action = ACTION_START_HVAC;    
+                }
+            }
+            else if (Math.abs(insideTemperature - wantedInsideTemperature) < 2) {
+                if (isClimateOn) {
+                    this.debug(`Temperature is close to wanted (${insideTemperature}), stopping HVAC.`);
+                    action = ACTION_STOP_HVAC;    
+                }
+            }
+            else {
+                this.debug(`Current temperature is ${insideTemperature} °C and inside the limits of [${this.heatingThresholdTemperature} - ${this.coolingThresholdTemperature}] °C.`);
+                action = ACTION_NONE;
+            }
+    
+            switch(action) {
+                case ACTION_START_HVAC: {
+                    await this.setAutoConditioningState(true);
+                    break;
+                }
+                case ACTION_STOP_HVAC: {
+                    await this.setAutoConditioningState(false);
+                    break;
+                }
+            }
+    
+    
         }
-        else if (batteryLevel < this.requiredBatteryLevel) {
-            if (isClimateOn) {
-                this.debug(`Thermostat turned off since battery level is too low, stopping HVAC.`);
-                action = ACTION_STOP_HVAC;    
-            }
+        else {
+            this.debug(`Currently driving. Nothing to do.`);
         }
-        else if (isDriving) {
-            if (isClimateOn) {
-                this.debug(`Thermostat turned off since driving, stopping HVAC.`);
-                action = ACTION_STOP_HVAC;    
-            }
-        }
-		else if (insideTemperature < this.heatingThresholdTemperature) {
-            if (!isClimateOn) {
-                this.debug(`Starting HVAC since temperature is too low, ${insideTemperature}.`);
-                action = ACTION_START_HVAC;    
-            }
-		}
-		else if (insideTemperature > this.coolingThresholdTemperature) {
-            if (!isClimateOn) {
-                this.debug(`Starting HVAC since temperature is too high, ${insideTemperature}.`);
-                action = ACTION_START_HVAC;    
-            }
-		}
-        else if (Math.abs(insideTemperature - wantedInsideTemperature) < 2) {
-            if (isClimateOn) {
-                this.debug(`Temperature is close to wanted (${insideTemperature}), stopping HVAC.`);
-                action = ACTION_STOP_HVAC;    
-            }
-        }
-		else {
-			this.debug(`Current temperature is ${insideTemperature} °C and inside the limits of [${this.heatingThresholdTemperature} - ${this.coolingThresholdTemperature}] °C.`);
-            action = ACTION_NONE;
-		}
-
-		switch(action) {
-			case ACTION_START_HVAC: {
-    			await this.setAutoConditioningState(true);
-				break;
-            }
-			case ACTION_STOP_HVAC: {
-    			await this.setAutoConditioningState(false);
-				break;
-			}
-		}
 
         this.timer.cancel();
 
