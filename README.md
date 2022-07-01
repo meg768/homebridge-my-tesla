@@ -79,7 +79,7 @@ Configure your **~/.homebridge/config.json** with the following platform.
                         },
                         "doors":{
                             "name":"Dörren",
-                            "remoteStartDrivePassword":"omit-or-your-tessla-password"
+                            "remoteStartDrivePassword":"omit-or-your-tesla-password"
                         },
                         "outsideTemperature":{
                             "name":"Ute"
