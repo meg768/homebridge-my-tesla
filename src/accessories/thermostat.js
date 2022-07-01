@@ -245,9 +245,9 @@ module.exports = class extends Accessory {
             return;
         }
 
-        let ACTION_START_HVAC            = 1;
-        let ACTION_STOP_HVAC             = 2;
-        let ACTION_NONE                  = 4;
+        const ACTION_START_HVAC            = 1;
+        const ACTION_STOP_HVAC             = 2;
+        const ACTION_NONE                  = 3;
 		
         let action = ACTION_NONE;
         let isClimateOn = vehicleData.climate_state.is_auto_conditioning_on;
@@ -272,27 +272,21 @@ module.exports = class extends Accessory {
                     action = ACTION_STOP_HVAC;    
                 }
             }
-            else if (isDriving) {
-                if (isClimateOn) {
-                    this.debug(`Thermostat turned off since driving, stopping HVAC.`);
-                    action = ACTION_STOP_HVAC;    
-                }
-            }
             else if (insideTemperature < this.heatingThresholdTemperature) {
                 if (!isClimateOn) {
-                    this.debug(`Starting HVAC since temperature is too low, ${insideTemperature}.`);
+                    this.debug(`Starting HVAC since temperature is too low, ${insideTemperature} °C.`);
                     action = ACTION_START_HVAC;    
                 }
             }
             else if (insideTemperature > this.coolingThresholdTemperature) {
                 if (!isClimateOn) {
-                    this.debug(`Starting HVAC since temperature is too high, ${insideTemperature}.`);
+                    this.debug(`Starting HVAC since temperature is too high, ${insideTemperature} °C.`);
                     action = ACTION_START_HVAC;    
                 }
             }
             else if (Math.abs(insideTemperature - wantedInsideTemperature) < 2) {
                 if (isClimateOn) {
-                    this.debug(`Temperature is close to wanted (${insideTemperature}), stopping HVAC.`);
+                    this.debug(`Temperature is close to wanted (${insideTemperature} °C), stopping HVAC.`);
                     action = ACTION_STOP_HVAC;    
                 }
             }
@@ -316,6 +310,14 @@ module.exports = class extends Accessory {
         }
         else {
             this.debug(`Currently driving. Nothing to do.`);
+            /*
+            if (!isClimateOn) {
+                this.debug(`Turning on HVAC since we stared to drive.`);
+                action = ACTION_START_HVAC;
+            }
+            else
+                this.debug(`Currently driving. Nothing to do.`);
+            */
         }
 
         this.timer.cancel();
@@ -328,8 +330,6 @@ module.exports = class extends Accessory {
 
     }
 
-
-
     async autoConditioningStart() {
         this.debug(`Turning HVAC on.`);
         return await this.vehicle.post('command/auto_conditioning_start');
@@ -340,11 +340,7 @@ module.exports = class extends Accessory {
         return await this.vehicle.post('command/auto_conditioning_stop');
     }
 
-
-
     async setAutoConditioningState(value) {
-        value = value ? true : false;
-
 		value ? await this.autoConditioningStart() : await this.autoConditioningStop();
 
 		await this.pause(2000);
