@@ -1,32 +1,26 @@
 var {Service, Characteristic} = require('../homebridge.js');
 var Accessory = require('../accessory.js');
 
-var UNSECURED = Characteristic.LockCurrentState.UNSECURED;
-var SECURED   = Characteristic.LockCurrentState.SECURED;
-var JAMMED    = Characteristic.LockCurrentState.JAMMED;
-var UNKNOWN   = Characteristic.LockCurrentState.UNKNOWN;
 
 module.exports = class extends Accessory {
 
     constructor(options) {
 		super({...options, config:{...{name:'Trunk'}, ...options.config}});
 
-        this.lockState = UNKNOWN;
-        this.addService(new Service.LockMechanism(this.name));
-
-		this.enableCharacteristic(Service.LockMechanism, Characteristic.LockCurrentState, this.getLockState.bind(this));
-		this.enableCharacteristic(Service.LockMechanism, Characteristic.LockTargetState, this.getLockState.bind(this), this.setLockState.bind(this));
+        this.state = undefined;
+		this.addService(new Service.Switch(this.name));
+        this.enableCharacteristic(Service.Switch, Characteristic.On, this.getState.bind(this), this.setState.bind(this));
 
 		this.vehicle.on('vehicle_data', async (vehicleData) => {    
 			
 			try {
-				this.lockState = (vehicleData.vehicle_state.rt == 0 ? SECURED : UNSECURED);
+				this.state = (vehicleData.vehicle_state.rt == 0 ? false : true);
 
 				await this.pause(500);
 				
-				this.debug(`Updating trunk lock status to ${this.lockState == SECURED ? 'SECURED' : 'UNSECURED'}.`);
-				this.updateCharacteristicValue(Service.LockMechanism, Characteristic.LockTargetState, this.lockState);
-				this.updateCharacteristicValue(Service.LockMechanism, Characteristic.LockCurrentState, this.lockState);	
+				this.debug(`Updating trunk lock status to ${this.state ? 'OPEN' : 'CLOSED'}.`);
+				this.updateCharacteristicValue(Service.Switch, Characteristic.On, this.state);
+
 			}
 			catch(error) {
 				this.log(error);
@@ -36,13 +30,13 @@ module.exports = class extends Accessory {
     }
 
 
-    getLockState() {
-        return this.lockState;
+    getState() {
+        return this.state == undefined ? false : this.state;
     }
 
-    async setLockState(value) {
+    async setState(value) {
 
-		if (value == this.lockState)
+		if (value == this.state)
 			return;
 
 		try {
