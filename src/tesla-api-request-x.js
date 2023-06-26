@@ -208,7 +208,7 @@ module.exports = class TeslaAPI {
 		this.api = undefined;
 		this.apiInvalidAfter = undefined;
 		this.vin = options.vin;
-		this.vehicleID = undefined;
+		this.vehicle = undefined;
         this.wakeupTimeout = 60000;
 		this.debug = () => {};
 
@@ -285,63 +285,63 @@ module.exports = class TeslaAPI {
 
 	async getVehicle() {
 
-		var api = await this.getAPI();
-		var request = await api.get('vehicles');
-		var vehicles = request.body.response;
+        if (this.vehicle == undefined) {
+            var api = await this.getAPI();
+            var request = await api.get('vehicles');
+            var vehicles = request.body.response;
+    
+            var vehicle = vehicles.find((item) => {
+                return item.vin == this.vin;
+            });
+    
+            if (vehicle == undefined) {
+                throw new Error(`Vehicle ${this.vin} could not be found.`);
+            }		
 
-		var vehicle = vehicles.find((item) => {
-			return item.vin == this.vin;
-		});
+            this.vehicle = vehicle;
+    
+        }
 
-		if (vehicle == undefined) {
-			throw new Error(`Vehicle ${this.vin} could not be found.`);
-		}		
-
-		return vehicle;
+		return this.vehicle;
 	}
+
+    async wait(ms = 1000) {
+        return new Promise((resolve, reject) => {
+            setTimeout(resolve, ms);
+        });            
+    };
+
+    async wakeUp(timeout = 60000) {
+
+        let then = new Date();
+        let api = await this.getAPI()
+        let vehicle = await this.getVehicle();
+
+        while (true) {
+            let now = new Date();
+
+            this.debug(`Sending wakeup to vehicle ${this.vin} (${vehicle.id})...`);
+
+            var reply = await api.post(`vehicles/${vehicle.id}/wake_up`);
+            var response = reply.body.response;
+    
+            if (now.getTime() - then.getTime() > timeout)
+                throw new Error('Your Tesla cannot be reached within timeout period.');
+    
+            if (response.state == "online") {
+                this.debug(`Vehicle ${this.vin} is online.`);
+                return response;
+            }
+
+            await this.wait(1000);
+        }
+    }
 
 	async request(method, path, options) {
 
-		// Connect if not already done
-		if (this.vehicleID == undefined) {
-			var vehicle = await this.getVehicle();
-
-			this.vehicleID = vehicle.id;
-		}
-
-		var api = await this.getAPI();
-		var then = new Date();
-
-		var pause = (ms) => {
-			return new Promise((resolve, reject) => {
-				setTimeout(resolve, ms);
-			});            
-		};
-
-		var wakeUp = async () => {
-			var now = new Date();
-
-			this.debug(`Sending wakeup to vehicle ${this.vin}...`);
-
-			var reply = await api.post(`vehicles/${this.vehicleID}/wake_up`);
-			var response = reply.body.response;
-	
-			if (now.getTime() - then.getTime() > this.wakeupTimeout)
-				throw new Error('Your Tesla cannot be reached within timeout period.');
-
-			if (response.state == "online") {
-				this.debug(`Vehicle ${this.vin} is awake.`);
-				return response;
-			}
-			else {
-				await pause(1000);
-				return await wakeUp();
-			}
-		}
-
-
-		var path = `vehicles/${this.vehicleID}/${path}`;
-		var response = await api.request(method, path, options);
+		let api = await this.getAPI();
+        let vehicle = await this.getVehicle();
+		let response = await api.request(method, `vehicles/${vehicle.id}/${path}`);
 	
 		switch(response.statusCode) {
 			case 200: {
@@ -352,16 +352,16 @@ module.exports = class TeslaAPI {
 				this.debug(`${response.statusMessage} (${response.statusCode}).`);
 
 				// Invalidate current API
-				this.api = null;
+				this.api = undefined;
 
 				// Get a new API.
 				api = await this.getAPI();
 				
 				// Wake up
-				await wakeUp();
+				await this.wakeUp(this.wakeupTimeout);
 
 				// And try again
-				response = await api.request(method, path);
+				response = await api.request(method, path, options);
 				break;
 			}
 
@@ -377,12 +377,12 @@ module.exports = class TeslaAPI {
 		return response;
 	}
 
-	async get(path) {
-		return await this.request('GET', path);
+	async get(path, options) {
+		return await this.request('GET', path, options);
 	}
 
-	async post(path, body) {
-		return await this.request('POST', path, {body:body});
+	async post(path, options) {
+		return await this.request('POST', path, options);
 	}
 
 }
