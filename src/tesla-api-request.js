@@ -320,9 +320,9 @@ module.exports = class TeslaAPI {
         while (true) {
             let now = new Date();
 
-            this.debug(`Sending wakeup to vehicle ${this.vin}...`);
+            this.debug(`Sending wakeup to vehicle ${this.vin} (${vehicle.id})...`);
 
-            var reply = await api.post(`vehicles/${vehicle.vehicle_id}/wake_up`);
+            var reply = await api.post(`vehicles/${vehicle.id}/wake_up`);
             var response = reply.body.response;
     
             if (now.getTime() - then.getTime() > timeout)
@@ -341,7 +341,7 @@ module.exports = class TeslaAPI {
 
 		let api = await this.getAPI();
         let vehicle = await this.getVehicle();
-		let response = await api.request(method, `vehicles/${vehicle.vehicle_id}/${path}`);
+		let response = await api.request(method, `vehicles/${vehicle.id}/${path}`);
 	
 		switch(response.statusCode) {
 			case 200: {
