@@ -208,7 +208,7 @@ module.exports = class TeslaAPI {
 		this.api = undefined;
 		this.apiInvalidAfter = undefined;
 		this.vin = options.vin;
-		this.vehicle = undefined;
+		this.vehicleID = undefined;
         this.wakeupTimeout = 60000;
 		this.debug = () => {};
 
@@ -285,32 +285,31 @@ module.exports = class TeslaAPI {
 
 	async getVehicle() {
 
-        if (this.vehicle == undefined) {
-            var api = await this.getAPI();
-            var request = await api.get('vehicles');
-            var vehicles = request.body.response;
-    
-            var vehicle = vehicles.find((item) => {
-                return item.vin == this.vin;
-            });
-    
-            if (vehicle == undefined) {
-                throw new Error(`Vehicle ${this.vin} could not be found.`);
-            }		
+		var api = await this.getAPI();
+		var request = await api.get('vehicles');
+		var vehicles = request.body.response;
 
-            this.vehicle = vehicle;
-    
-        }
+		var vehicle = vehicles.find((item) => {
+			return item.vin == this.vin;
+		});
 
-		return this.vehicle;
+		if (vehicle == undefined) {
+			throw new Error(`Vehicle ${this.vin} could not be found.`);
+		}		
+
+		return vehicle;
 	}
-
-
 
 	async request(method, path, options) {
 
+		// Connect if not already done
+		if (this.vehicleID == undefined) {
+			var vehicle = await this.getVehicle();
+
+			this.vehicleID = vehicle.id;
+		}
+
 		var api = await this.getAPI();
-        var vehicle = this.getVehicle();
 		var then = new Date();
 
 		var pause = (ms) => {
@@ -324,7 +323,7 @@ module.exports = class TeslaAPI {
 
 			this.debug(`Sending wakeup to vehicle ${this.vin}...`);
 
-			var reply = await api.post(`vehicles/${vehicle.vehicle_id}/wake_up`);
+			var reply = await api.post(`vehicles/${this.vehicleID}/wake_up`);
 			var response = reply.body.response;
 	
 			if (now.getTime() - then.getTime() > this.wakeupTimeout)
@@ -341,7 +340,7 @@ module.exports = class TeslaAPI {
 		}
 
 
-		var path = `vehicles/${vehicle.vehicle_id}/${path}`;
+		var path = `vehicles/${this.vehicleID}/${path}`;
 		var response = await api.request(method, path, options);
 	
 		switch(response.statusCode) {
