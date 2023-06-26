@@ -377,12 +377,12 @@ module.exports = class TeslaAPI {
 		return response;
 	}
 
-	async get(path) {
-		return await this.request('GET', path);
+	async get(path, options) {
+		return await this.request('GET', path, options);
 	}
 
-	async post(path, body) {
-		return await this.request('POST', path, {body:body});
+	async post(path, options) {
+		return await this.request('POST', path, options);
 	}
 
 }
