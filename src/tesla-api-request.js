@@ -315,6 +315,7 @@ module.exports = class TeslaAPI {
 
         let api = this.getAPI()
         let then = new Date();
+        let vehicle = await this.getVehicle();
 
         while (true) {
             let now = new Date();
