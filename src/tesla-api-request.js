@@ -337,7 +337,7 @@ module.exports = class TeslaAPI {
         }
     }
 
-	async request(method, path) {
+	async request(method, path, options) {
 
 		let api = await this.getAPI();
         let vehicle = await this.getVehicle();
@@ -361,7 +361,7 @@ module.exports = class TeslaAPI {
 				await this.wakeUp(this.wakeupTimeout);
 
 				// And try again
-				response = await api.request(method, path);
+				response = await api.request(method, path, options);
 				break;
 			}
 
