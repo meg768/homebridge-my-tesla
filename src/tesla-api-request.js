@@ -313,8 +313,8 @@ module.exports = class TeslaAPI {
 
     async wakeUp(timeout = 60000) {
 
-        let api = this.getAPI()
         let then = new Date();
+        let api = await this.getAPI()
         let vehicle = await this.getVehicle();
 
         while (true) {
