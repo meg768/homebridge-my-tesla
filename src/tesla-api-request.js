@@ -305,44 +305,43 @@ module.exports = class TeslaAPI {
 		return this.vehicle;
 	}
 
+    async wait(ms = 1000) {
+        return new Promise((resolve, reject) => {
+            setTimeout(resolve, ms);
+        });            
+    };
 
+    async wakeUp(timeout = 60000) {
 
-	async request(method, path, options) {
+        let api = this.getAPI()
+        let then = new Date();
 
-		var api = await this.getAPI();
-        var vehicle = this.getVehicle();
-		var then = new Date();
+        while (true) {
+            let now = new Date();
 
-		var pause = (ms) => {
-			return new Promise((resolve, reject) => {
-				setTimeout(resolve, ms);
-			});            
-		};
+            this.debug(`Sending wakeup to vehicle ${this.vin}...`);
 
-		var wakeUp = async () => {
-			var now = new Date();
+            var reply = await api.post(`vehicles/${vehicle.vehicle_id}/wake_up`);
+            var response = reply.body.response;
+    
+            if (now.getTime() - then.getTime() > timeout)
+                throw new Error('Your Tesla cannot be reached within timeout period.');
+    
+            if (response.state == "online") {
+                this.debug(`Vehicle ${this.vin} is online.`);
+                return response;
+            }
 
-			this.debug(`Sending wakeup to vehicle ${this.vin}...`);
+            await this.wait(1000);
+        }
+    }
 
-			var reply = await api.post(`vehicles/${vehicle.vehicle_id}/wake_up`);
-			var response = reply.body.response;
-	
-			if (now.getTime() - then.getTime() > this.wakeupTimeout)
-				throw new Error('Your Tesla cannot be reached within timeout period.');
+	async request(method, path) {
 
-			if (response.state == "online") {
-				this.debug(`Vehicle ${this.vin} is awake.`);
-				return response;
-			}
-			else {
-				await pause(1000);
-				return await wakeUp();
-			}
-		}
-
-
-		var path = `vehicles/${vehicle.vehicle_id}/${path}`;
-		var response = await api.request(method, path, options);
+		let api = await this.getAPI();
+        let vehicle = this.getVehicle();
+		let path = `vehicles/${vehicle.vehicle_id}/${path}`;
+		let response = await api.request(method, path);
 	
 		switch(response.statusCode) {
 			case 200: {
@@ -353,13 +352,13 @@ module.exports = class TeslaAPI {
 				this.debug(`${response.statusMessage} (${response.statusCode}).`);
 
 				// Invalidate current API
-				this.api = null;
+				this.api = undefined;
 
 				// Get a new API.
 				api = await this.getAPI();
 				
 				// Wake up
-				await wakeUp();
+				await this.wakeUp(this.wakeupTimeout);
 
 				// And try again
 				response = await api.request(method, path);
