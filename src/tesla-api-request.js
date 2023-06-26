@@ -339,9 +339,8 @@ module.exports = class TeslaAPI {
 	async request(method, path) {
 
 		let api = await this.getAPI();
-        let vehicle = this.getVehicle();
-		let path = `vehicles/${vehicle.vehicle_id}/${path}`;
-		let response = await api.request(method, path);
+        let vehicle = await this.getVehicle();
+		let response = await api.request(method, `vehicles/${vehicle.vehicle_id}/${path}`);
 	
 		switch(response.statusCode) {
 			case 200: {
