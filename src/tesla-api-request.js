@@ -208,7 +208,7 @@ module.exports = class TeslaAPI {
 		this.api = undefined;
 		this.apiInvalidAfter = undefined;
 		this.vin = options.vin;
-		this.vehicle = undefined;
+		this.vehicleID = undefined;
         this.wakeupTimeout = 60000;
 		this.debug = () => {};
 
@@ -283,29 +283,32 @@ module.exports = class TeslaAPI {
 		return this.api;				
 	}
 
-	async getVehicle() {
-
-        if (this.vehicle == undefined) {
+    async getVehicleID() {
+        if (this.vehicleID == undefined) {
             var api = await this.getAPI();
             var request = await api.get('vehicles');
-            var vehicles = request.body.response;
     
-            var vehicle = vehicles.find((item) => {
+            var vehicle = request.body.response.find((item) => {
                 return item.vin == this.vin;
             });
-    
+
             if (vehicle == undefined) {
                 throw new Error(`Vehicle ${this.vin} could not be found.`);
             }
 
-            this.vehicle = vehicle;
-    
+            this.vehicleID = vehicle.id;
         }
 
-		return this.vehicle;
-	}
+		return this.vehicleID;
 
+    }
 
+	async getVehicle() {
+        var api = await this.getAPI();
+        var vehicleID = await this.getVehicleID();
+        var request = await api.get(`vehicles/${vehicleID}`);
+        return request.body.response;
+    }
 
     wait(ms = 1000) {
         return new Promise((resolve, reject) => {
@@ -315,37 +318,41 @@ module.exports = class TeslaAPI {
 
     async wakeUp(timeout = 60000) {
 
-        let then = new Date();
-        let api = await this.getAPI()
         let vehicle = await this.getVehicle();
 
-        while (true) {
-            let now = new Date();
-
-            this.debug(`Sending wakeup to vehicle ${this.vin} (${vehicle.id})...`);
-
-            var reply = await api.post(`vehicles/${vehicle.id}/wake_up`);
-            var response = reply.body.response;
+        if (vehicle.state != 'online') {
+            let then = new Date();
+            let api = await this.getAPI();
+            
+            while (true) {
+                let now = new Date();
     
-            if (now.getTime() - then.getTime() > timeout)
-                throw new Error('Your Tesla cannot be reached within timeout period.');
+                this.debug(`Sending wakeup to vehicle ${this.vin} (${vehicle.id})...`);
     
-            if (response.state == "online") {
-                this.debug(`Vehicle ${this.vin} is online.`);
-                return response;
+                var reply = await api.post(`vehicles/${vehicle.id}/wake_up`);
+                var response = reply.body.response;
+        
+                if (now.getTime() - then.getTime() > timeout)
+                    throw new Error('Your Tesla cannot be reached within timeout period.');
+        
+                if (response.state == 'online') {
+                    this.debug(`Vehicle ${this.vin} is now online.`);
+                    return response;
+                }
+    
+                await this.wait(1000);
             }
-
-            await this.wait(1000);
+    
         }
     }
 
 
 	async request(method, path, options) {
 
-        var vehicle = await this.getVehicle();
+        var vehicleID = await this.getVehicleID();
 		var api = await this.getAPI();
         
-		var path = `vehicles/${vehicle.id}/${path}`;
+		var path = `vehicles/${vehicleID}/${path}`;
 		var response = await api.request(method, path, options);
 	
 		switch(response.statusCode) {
