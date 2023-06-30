@@ -287,16 +287,14 @@ module.exports = class TeslaAPI {
         if (this.vehicleID == undefined) {
             var api = await this.getAPI();
             var request = await api.get('vehicles');
-            var vehicles = request.body.response;
     
-            var vehicle = vehicles.find((item) => {
+            var vehicle = request.body.response.find((item) => {
                 return item.vin == this.vin;
             });
 
             if (vehicle == undefined) {
                 throw new Error(`Vehicle ${this.vin} could not be found.`);
             }
-
 
             this.vehicleID = vehicle.id;
         }
@@ -306,14 +304,11 @@ module.exports = class TeslaAPI {
     }
 
 	async getVehicle() {
-
         var api = await this.getAPI();
         var vehicleID = await this.getVehicleID();
         var request = await api.get(`vehicles/${vehicleID}`);
-        var vehicle = request.body.response;
-
-        return vehicle;
-	}
+        return request.body.response;
+    }
 
     wait(ms = 1000) {
         return new Promise((resolve, reject) => {
@@ -327,7 +322,7 @@ module.exports = class TeslaAPI {
 
         if (vehicle.state != 'online') {
             let then = new Date();
-            let api = await this.getAPI()
+            let api = await this.getAPI();
             
             while (true) {
                 let now = new Date();
@@ -341,7 +336,7 @@ module.exports = class TeslaAPI {
                     throw new Error('Your Tesla cannot be reached within timeout period.');
         
                 if (response.state == 'online') {
-                    this.debug(`Vehicle ${this.vin} is online.`);
+                    this.debug(`Vehicle ${this.vin} is now online.`);
                     return response;
                 }
     
