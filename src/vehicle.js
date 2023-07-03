@@ -115,6 +115,10 @@ module.exports = class Vehicle extends Events  {
 		return await this.get('vehicle_data');
     }
 
+    async getVehicle() {
+		return await this.get('vehicle');
+    }
+
 	async request(method, path, options) {
 		this.debug(`Tesla request ${method} ${path} ${options ? JSON.stringify(options) : ''}`);
 		var response = await this.api.request(method, path, options);

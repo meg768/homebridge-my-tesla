@@ -38,14 +38,14 @@ module.exports = class extends Accessory {
 		this.vehicle.on('vehicle_data', async (vehicleData) => {
 
 			try {
+				var batteryLevel = vehicleData.charge_state.battery_level;
 
 				if (this.getState()) {
-                    var batteryLevel = vehicleData.charge_state.battery_level;
+					this.debug(`Battery level is now ${batteryLevel}%.`);
 
-                    if (batteryLevel < this.config.requiredBatteryLevel) {
-                        this.debug(`Battery level is now ${batteryLevel}%.`);
+					if (batteryLevel < this.config.requiredBatteryLevel) {
 						this.debug(`Required battery level for ping is ${this.config.requiredBatteryLevel}%`);
-						await this.setState(false); 
+						this.setState(false); 
 					}
 	
 				}
@@ -59,25 +59,6 @@ module.exports = class extends Accessory {
 
     }
 
-    async ping() {
-        if (this.getState()) {
-            let vehice = await this.vehicle.get('vehicle');
-
-            if (vehice.state == 'online') {
-                await this.vehicle.get('vehicle_data');
-                this.timer.setTimer(5000, this.ping.bind(this));	
-            }
-            else {
-                await this.vehicle.post('wake_up');
-                this.timer.setTimer(5000, this.ping.bind(this));	
-            }
-        
-        }
-        else {
-            this.timer.cancel();
-        }
-    }
-
 	getState() {
 		return this.state;
 	}
@@ -87,12 +68,29 @@ module.exports = class extends Accessory {
 		try {
 			state = state ? true : false;
 
-			if (state != this.state) {
-                this.debug(`Ping turned ${state ? 'ON' : 'OFF'}.`);
-				this.state = state;
-				this.updateCharacteristicValue(Service.Switch, Characteristic.On, this.state);
+			var ping = async (state) => {
+				try {
+					if (state) {
+						this.debug('Ping!');
+						this.vehicle.post('wake_up');		
+						this.timer.setTimer(this.config.timerInterval * 60000, ping.bind(this, true));	
+					}
+					else {
+						this.debug('Ping turned OFF.');
+						this.timer.cancel();
+					}
+	
+				}
+				catch(error) {
+					this.log(error);
+				}
+			}
 
-                await this.ping();
+			if (state != this.state) {
+				ping(state);
+				this.state = state;
+				this.debug(`Updating ping state to ${this.state}`);
+				this.updateCharacteristicValue(Service.Switch, Characteristic.On, this.state);
 	
 			}	
 		}
