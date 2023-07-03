@@ -65,12 +65,12 @@ module.exports = class extends Accessory {
 
             if (vehice.state == 'online') {
                 this.vehicle.get('vehicle_data');
-                this.timer.setTimer(5000, this.ping.bind(this));	
+                this.timer.setTimer(60000, this.ping.bind(this));	
     
             }
             else {
                 this.vehicle.post('wake_up');
-                this.timer.setTimer(5000, this.ping.bind(this));	    
+                this.timer.setTimer(2000, this.ping.bind(this));	    
             }
 
         
