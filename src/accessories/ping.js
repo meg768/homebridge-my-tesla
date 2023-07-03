@@ -61,16 +61,18 @@ module.exports = class extends Accessory {
 
     async ping() {
         if (this.getState()) {
-            let vehice = await this.vehicle.get('vehicle');
+            let vehice = await this.getVehicle();
 
             if (vehice.state == 'online') {
-                await this.vehicle.get('vehicle_data');
+                this.vehicle.get('vehicle_data');
                 this.timer.setTimer(5000, this.ping.bind(this));	
+    
             }
             else {
-                await this.vehicle.post('wake_up');
-                this.timer.setTimer(5000, this.ping.bind(this));	
+                this.vehicle.post('wake_up');
+                this.timer.setTimer(5000, this.ping.bind(this));	    
             }
+
         
         }
         else {
