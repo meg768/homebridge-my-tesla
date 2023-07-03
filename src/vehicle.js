@@ -116,7 +116,7 @@ module.exports = class Vehicle extends Events  {
     }
 
     async getVehicle() {
-		return await this.get('vehicle');
+		return await this.api.getVehicle();
     }
 
 	async request(method, path, options) {
