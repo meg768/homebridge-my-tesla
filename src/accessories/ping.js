@@ -65,7 +65,7 @@ module.exports = class extends Accessory {
 
             if (vehice.state == 'online') {
                 this.vehicle.get('vehicle_data');
-                this.timer.setTimer(5000, this.ping.bind(this));	
+                this.timer.setTimer(1000, this.ping.bind(this));	
     
             }
             else {
