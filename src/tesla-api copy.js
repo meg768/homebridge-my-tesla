@@ -1,4 +1,3 @@
-var Events = require('events');
 
 
 function isString(arg) {
@@ -201,11 +200,9 @@ function Request() {
 
 
 
-module.exports = class TeslaAPI extends Events {
+module.exports = class TeslaAPI {
 
 	constructor(options) {
-
-        super();
 
 		this.token = options.refreshToken || options.token;
 		this.api = undefined;
@@ -313,20 +310,11 @@ module.exports = class TeslaAPI extends Events {
         return request.body.response;
     }
 
-    async pause(ms, fn) {
-		await this.delay(ms);
-
-		if (fn)
-			fn();
-    }
-
-    delay(ms) {
+    wait(ms = 1000) {
         return new Promise((resolve, reject) => {
             setTimeout(resolve, ms);
-        });
-    }
-
-
+        });            
+    };
 
     async wakeUp(timeout = 60000) {
 
@@ -352,21 +340,19 @@ module.exports = class TeslaAPI extends Events {
                     return response;
                 }
     
-                await this.pause(1000);
+                await this.wait(1000);
             }
     
         }
     }
 
 
-	async request(method, command, options) {
-
-        this.debug(`Tesla request ${method} ${command} ${options ? JSON.stringify(options) : ''}`);
+	async request(method, path, options) {
 
         var vehicleID = await this.getVehicleID();
 		var api = await this.getAPI();
         
-		var path = `vehicles/${vehicleID}/${command}`;
+		var path = `vehicles/${vehicleID}/${path}`;
 		var response = await api.request(method, path, options);
 	
 		switch(response.statusCode) {
@@ -399,8 +385,6 @@ module.exports = class TeslaAPI extends Events {
 			throw new Error(`Tesla request failed - ${response.reason}.`);
 
 		}
-
-        this.emit(command, response);
 
 		return response;
 	}

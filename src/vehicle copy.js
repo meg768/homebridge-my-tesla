@@ -6,18 +6,20 @@ var Timer = require('yow/timer');
 
 
 
-module.exports = class Vehicle extends TeslaAPI  {
+module.exports = class Vehicle extends Events  {
 
     constructor(platform, config) {
 
-		super({token:config.token, vin:config.vin, debug:platform.debug});
+		super();
 
 		this.log = platform.log;
+		this.debug = platform.debug;
         this.config = config;
         this.name = config.name;
         this.accessories = [];
         this.uuid = platform.generateUUID(config.vin);
         this.platform = platform;
+		this.api = new TeslaAPI({token:config.token, vin:config.vin, debug:this.debug});
 		this.updateVehicleTimer = new Timer();
     }
 
@@ -53,7 +55,7 @@ module.exports = class Vehicle extends TeslaAPI  {
 		addAccessory(require('./accessories/thermostat.js'), 'thermostat');
 
 
-		var vehicle = await this.getVehicle();
+		var vehicle = await this.api.getVehicle();
 		var model = 'Unknown';
 		
 		vehicle.option_codes.split(',').forEach((code) => {
@@ -112,6 +114,42 @@ module.exports = class Vehicle extends TeslaAPI  {
 		return await this.get('vehicle_data');
     }
 
+    async getVehicle() {
+		return await this.api.getVehicle();
+    }
+
+	async request(method, path, options) {
+		this.debug(`Tesla request ${method} ${path} ${options ? JSON.stringify(options) : ''}`);
+		var response = await this.api.request(method, path, options);
+
+		if (response)
+			this.emit(path, response);
+
+		return response;
+	}
+
+	async post(path, body) {
+		return await this.request('POST', path, {body:body});
+	}
+
+	async get(path) {
+		return await this.request('GET', path);
+	}
+
+    async pause(ms, fn) {
+
+		await this.delay(ms);
+
+		if (fn)
+			fn();
+
+    }
+
+    delay(ms) {
+        return new Promise((resolve, reject) => {
+            setTimeout(resolve, ms);
+        });
+    }
 
 
 }
