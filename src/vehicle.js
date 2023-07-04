@@ -1,5 +1,4 @@
-//var TeslaAPI = require('./tesla-api-request.js');
-var TeslaAPI = require('./tesla-api-request.js');
+var TeslaAPI = require('./tesla-api.js');
 var Events = require('events');
 var {Service, Characteristic} = require('./homebridge.js');
 var Timer = require('yow/timer');

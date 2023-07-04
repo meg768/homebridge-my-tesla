@@ -1,6 +1,6 @@
 {
   "name": "homebridge-my-tesla",
-  "version": "1.0.117",
+  "version": "1.0.118",
   "description": "Homebridge plugin for Teslas",
   "main": "index.js",
   "scripts": {
@@ -33,7 +33,6 @@
   },
   "homepage": "https://github.com/meg768/homebridge-my-tesla#readme",
   "dependencies": {
-    "tesla-api-request": "^1.0.16",
     "yow": "^1.0.110"
   }
 }
