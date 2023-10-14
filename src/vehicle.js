@@ -89,7 +89,7 @@ module.exports = class Vehicle extends TeslaAPI  {
 			
 		})
 
-		this.getVehicleData();
+		await this.getVehicleData();
 
 		return accessories;
 		
